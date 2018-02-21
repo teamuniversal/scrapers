@@ -1,0 +1,37 @@
+[B]1.0.8[/B]
+- New optional mobile user agent
+- Minor fix in input dialog
+- Added parameter in clear cache to override yesno dialog
+
+[B]1.0.7[/B]
+- Removed lite modules
+- Added theme parameter for addonmedia function
+
+[B]1.0.6[/B]
+- Updated parsedom module
+- Miscellaneous other changes
+
+[B]1.0.5[/B]
+- Some minor changes in youtube modules
+
+[B]1.0.4[/B]
+- Added orderedict module
+- Added agent appender in client module
+- Moved some variables to __init__.py
+- Made "pvr_client" action to be ignored by setProperty isPlayable
+- Added addonmedia function for compartmentalized addons
+- Removed (en/de)coder from cleantitle module
+
+[B]1.0.3[/B]
+- Added (en/de)coder in cleantitle module
+
+[B]1.0.2[/B]
+- Added trailer module
+- Added alternative settings window call
+- Miscellaneous other changes
+
+[B]1.0.1[/B]
+- Added retriever function in client module
+
+[B]1.0.0[/B]
+- Initial version
