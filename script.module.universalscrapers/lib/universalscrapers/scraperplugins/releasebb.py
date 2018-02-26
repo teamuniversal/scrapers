@@ -207,7 +207,7 @@ class Releasebb(Scraper):
                         host = host.encode('utf-8')
                         count +=1
                         if '.rar' not in url:
-                            print 'final url '+url
+#                            print 'final url '+url
                             sources.append({'source': host, 'quality': quality, 'provider': 'Releasebb', 'url': url, 'info': size, 'direct': False, 'debridonly': True})
 
                     except:

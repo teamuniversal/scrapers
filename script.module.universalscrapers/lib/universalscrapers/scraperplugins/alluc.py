@@ -156,7 +156,7 @@ class Alluc(Scraper):
 
                 if cleanmovie in clean_title(stream_title):
                     self.zen_url.append([stream_url, stream_title])
-                    print ("ALLUC r3", self.zen_url)
+                    #print ("ALLUC r3", self.zen_url)
             return self.zen_url
         except:
             return

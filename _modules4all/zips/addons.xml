@@ -17,7 +17,7 @@
     </extension>
 </addon>
 
-<addon id="script.module.universalscrapers" name="Universal Scrapers" version="1.0.0" provider-name="Team Universal">
+<addon id="script.module.universalscrapers" name="Universal Scrapers" version="1.0.1" provider-name="Team Universal">
         <requires>
                 <import addon="xbmc.python" version="2.1.0"/>
                 <import addon="script.module.beautifulsoup" version="3.2.1"/>
@@ -37,7 +37,7 @@
                 <description lang="en">Scrape common video host for URL's to be playable in XBMC/Kodi, simplifying addon development of video plugins requiring multi video hosts.
                 </description>
                 <license>GPL v3</license>
-                <source></source>
+                <source>https://</source>
         </extension>
 </addon>
 </addons>

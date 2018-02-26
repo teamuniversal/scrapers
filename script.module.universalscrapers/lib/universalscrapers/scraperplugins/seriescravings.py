@@ -56,7 +56,7 @@ class seriescravings(Scraper):
             
     def get_source(self,url):
         try:   
-            print 'checsspase '+url
+#            print 'checsspase '+url
             headers = {'User_Agent':User_Agent}
             links = requests.get(url,headers=headers,timeout=3).content   
             LINK = re.compile('<iframe.+?src="(.+?)"',re.DOTALL).findall(links)
