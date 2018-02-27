@@ -65,16 +65,16 @@ class Movie321(Scraper):
                 movie_url = '%s/film/watch-%s-%s' %(self.base_link,mock_ID.replace(' ','-'),attempt)
                 if movie_url.endswith('-'):
                     movie_url=movie_url.replace('watch-','')[:-1]
-                print 'allurls '+movie_url
+                #print 'allurls '+movie_url
                 headers={'User-Agent':User_Agent}
                 html = self.scraper.get(movie_url,headers=headers,timeout=5).content
-                print 'PAGE > '+html
+                #print 'PAGE > '+html
                 match = re.compile('name="title" value="(.+?)"',re.DOTALL).findall(html)
                 for item_title in match:
-                    print item_title
+                   # print item_title
                     if not clean_title(title.lower()) == clean_title(item_title.lower()):
                         continue
-                    print 'clean321movie pass '+ movie_url
+                   # print 'clean321movie pass '+ movie_url
                     Regex = re.compile('</iframe>.+?class="metaframe rptss" src="(.+?)"',re.DOTALL).findall(html)
                     count = 0
                     for link in Regex: 

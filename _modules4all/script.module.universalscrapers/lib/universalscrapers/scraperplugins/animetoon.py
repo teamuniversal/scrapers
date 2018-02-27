@@ -36,7 +36,7 @@ class Animetoon(Scraper):
                 for item_url, name in match:
                     #print 'grabbed %s %s '%(item_url, name)
                     if clean_title(title).lower() == clean_title(name).lower():
-                        print 'title 1> ' + item_url
+                        #print 'title 1> ' + item_url
                         headers = {'User-Agent':User_Agent}
                         show_page = requests.get(item_url,headers=headers,allow_redirects=False).content
                         #print show_page
@@ -107,7 +107,7 @@ class Animetoon(Scraper):
             
             
     def resolve(self, url):
-        print 'resolveME url '+ url
+#        print 'resolveME url '+ url
         try:        
             open = requests.get(url,timeout=3).content
 

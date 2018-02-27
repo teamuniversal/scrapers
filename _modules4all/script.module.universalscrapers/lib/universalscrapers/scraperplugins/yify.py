@@ -34,7 +34,7 @@ class yify(Scraper):
                 if not year in name:
                     continue
                 movie_link = item_url
-                print 'Grabbed movie url to pass > ' + movie_link 
+#                print 'Grabbed movie url to pass > ' + movie_link 
                 self.get_source(movie_link)
                 
             return self.sources

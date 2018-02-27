@@ -38,7 +38,7 @@ class MovieTV(Scraper):
 
             
     def get_source(self,item_url,qaul):
-        print item_url
+#        print item_url
         try:
             OPEN = requests.get(item_url,timeout=10).content
             block1 = re.compile('id="content-embed"(.+?)id="button-favorite">',re.DOTALL).findall(OPEN)

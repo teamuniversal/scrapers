@@ -31,7 +31,7 @@ class couchtuner(Scraper):
             for media_url, media_title in links:
                 if not clean_title(title).lower() == clean_title(media_title).lower():
                     continue
-                print 'couchTUNER >>>> ' +media_url
+#                print 'couchTUNER >>>> ' +media_url
                 self.get_sources(media_url,season, episode)
  
             return self.sources

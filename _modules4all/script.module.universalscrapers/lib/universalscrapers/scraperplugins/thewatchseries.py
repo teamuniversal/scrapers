@@ -71,7 +71,7 @@ class thewatchseries(Scraper):
                             spoof_link = movie_link + 'BOLLOX'
                             if episode_chk in spoof_link:
                                 movie_link = self.base_link + movie_link
-                                print 'pass TWS episode check: '+movie_link
+#                                print 'pass TWS episode check: '+movie_link
                                 self.get_source(movie_link)
                     else:pass
             return self.sources

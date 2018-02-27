@@ -20,15 +20,15 @@ class movienolimit(Scraper):
 		try:
 		    search_id = clean_search(title.lower())	
 		    start_url = '%s/search?query=%s' %(self.base_link,search_id.replace(' ','+'))
-		    print '>>>>>start_url>>>>>>>>' +start_url
+#		    print '>>>>>start_url>>>>>>>>' +start_url
 		    headers = {'User_Agent':random_agent()}
 		    html = requests.get(start_url,headers=headers,timeout=5).content
 		    match = re.compile('class="movie-title".+?href="(.+?)">(.+?)</a>',re.DOTALL).findall(html)
 		    for item_url,name in match:
 		    		if clean_title(title)==clean_title(name):
 		    			item_url1 = self.base_link+item_url
-		    			print '>>>>item_url1>>>>>>>>>>' +item_url1 
-		    			print '>>>>name>>>>>>>>>>>>>>>' +name
+		    			#print '>>>>item_url1>>>>>>>>>>' +item_url1 
+		    			#print '>>>>name>>>>>>>>>>>>>>>' +name
 		    			self.get_source(item_url1,year)
 		    return self.sources
 		except Exception, argument:
@@ -38,7 +38,7 @@ class movienolimit(Scraper):
 			
 	def get_source(self,item_url1,year):
 		try:
-			print '>>>>>movienolimit_PASS>>>>>>>>>>>' +item_url1
+			#print '>>>>>movienolimit_PASS>>>>>>>>>>>' +item_url1
 			headers={'User_Agent':random_agent()}
 			OPEN = requests.get(item_url1,headers=headers,timeout=5).content
 			#print OPEN
@@ -52,7 +52,7 @@ class movienolimit(Scraper):
 					headers = {'User-Agent': random_agent()}
 					r = requests.get(link,headers=headers,allow_redirects=False)
 					link = r.headers['location'] 
-					print '>>>>>>>>>>play_link>>>>>>>>>'     +link
+					#print '>>>>>>>>>>play_link>>>>>>>>>'     +link
 					if urlresolver.HostedMediaFile(link):
 							host = link.split('//')[1].replace('www.','')
 							host = host.split('/')[0].split('.')[0].title()

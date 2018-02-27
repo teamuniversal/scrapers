@@ -59,13 +59,13 @@ def get_raw(url, headers=None, data=None):
 
 def get_proxy_url():
     return random.choice([
-        'http://www.ultrabestproxy.com/index.php?q=%s'
-        'http://proxite.net/browse.php?u=%s&b=20',   
-        'http://unblockthatsite.net/browse.php?u=%s&b=0',
-        'http://ocaspro.com/browse.php?u=%s&b=12',
-        'http://coolbits.org/browse.php?u=%s&&b=0&f=norefer',
-        'http://www.agorafunfa.com/browse.php?u=%s&b=28&f=norefer',
-        'http://www.ultrabestproxy.com/index.php?q=%s',
-        'http://www.englandproxy.co.uk/%s/',
+        'http://www.ultrabestproxy.com/index.php?q=%s&hl=3ed'
+        'http://proxite.net/browse.php?u=%s&b=5&f=norefer',   
+        'http://unblockthatsite.net/browse.php?u=%s&b=0&f=norefer',
+        'http://ocaspro.com/browse.php?u=%s&b=13&f=norefer',
+        'http://coolbits.org/browse.php?u=%s&b=0&f=norefer',
+        'http://www.agorafunfa.com/browse.php?u=%s&b=29&f=norefer',
+        'http://www.ultrabestproxy.com/index.php?q=%s&hl=3ed',
+        'http://www.englandproxy.co.uk/%s',
          
     ])
