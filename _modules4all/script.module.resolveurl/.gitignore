@@ -8,6 +8,6 @@ doc/build
 doc/resources
 .project
 .pydevproject
-/.settings
-/.idea
+.settings
+.idea
 *~

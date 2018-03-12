@@ -87,7 +87,7 @@
   </extension>
 </addon>
 
-<addon id="script.module.resolveurl" name="ResolveURL" version="5.0.06" provider-name="jsergio">
+<addon id="script.module.resolveurl" name="ResolveURL" version="5.0.08" provider-name="jsergio">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.youtube" optional="true" />
