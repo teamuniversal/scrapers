@@ -26,8 +26,8 @@ from resolveurl.resolver import ResolveUrl, ResolverError
 
 class VidloxResolver(ResolveUrl):
     name = "vidlox"
-    domains = ['vidlox.tv']
-    pattern = '(?://|\.)(vidlox\.tv)/(?:embed-)?([0-9a-zA-Z]+)'
+    domains = ['vidlox.tv', 'vidlox.me']
+    pattern = '(?://|\.)(vidlox\.(?:tv|me))/(?:embed-)?([0-9a-zA-Z]+)'
 
     def __init__(self):
         self.net = common.Net()
