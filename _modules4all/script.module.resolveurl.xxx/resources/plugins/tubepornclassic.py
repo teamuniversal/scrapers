@@ -36,9 +36,9 @@ class TubePornClassicResolver(ResolveUrl):
             html = self.net.http_GET(web_url, headers=headers).content
             
             if html:
-                sources = re.findall('''['"]file['"]:\s*['"](?P<label>[^'"]+)['"],\s*['"]type['"]:\s*['"](?P<url>[^'"]+)["']''', html, re.DOTALL)
-                sources = [(i[1], i[0]) for i in sorted(sources)]
-                return self.net.http_GET(helpers.pick_source(sources), headers=headers).get_url() + helpers.append_headers(headers)
+                source = re.search('''video_url=['"]([^'"]+)['"]''', html, re.DOTALL)
+                if source:
+                    return self.net.http_GET(source.group(1), headers=headers).get_url() + helpers.append_headers(headers)
 
             raise ResolverError('File not found')
         except:

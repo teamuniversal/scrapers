@@ -23,7 +23,7 @@ from resolveurl.resolver import ResolveUrl, ResolverError
 class Porn00Resolver(ResolveUrl):
     name = 'porn00'
     domains = ['porn00.org', 'porn00.com']
-    pattern = '(?://|\.)(porn00\.org)/(?:video|plays)/\?v=(\d+)'
+    pattern = '(?://|\.)(porn00\.org)/(?:video|plays|player)/\?v=(\d+)'
     pattern2 = '(?://|\.)(porn00\.(?:org|com))/([\w\-]+)'
     
     def __init__(self):
@@ -36,7 +36,7 @@ class Porn00Resolver(ResolveUrl):
             html = self.net.http_GET(web_url, headers=headers).content
             
             if html:
-                video_ids = re.findall("""<iframe.+?src=["'].*?\?v=(\d+)["']""", html, re.I)
+                video_ids = re.findall("""<iframe.+?src=["'].*?\?v=(\d+)["'&]""", html, re.I)
                 if video_ids:
                     video_id = video_ids[-1]
                     return helpers.get_media_url('http://www.porn00.org/video/?v=%s' % video_id).replace(' ', '%20')
