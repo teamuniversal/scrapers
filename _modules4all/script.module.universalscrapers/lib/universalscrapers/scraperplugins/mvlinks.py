@@ -14,7 +14,7 @@ class mvlinks(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://new.myvideolinks.net/'
+        self.base_link = 'http://be.newmyvideolink.xyz'
         if dev_log=='true':
             self.start_time = time.time()        
 
@@ -85,6 +85,7 @@ class mvlinks(Scraper):
             match = re.compile('iframe src="(.+?)"').findall(OPEN)
             count = 0
             for link in match:
+                print link 
                 if not urlresolver.HostedMediaFile(link).valid_url(): 
                     continue                
                 label = link.split('//')[1].replace('www.','')

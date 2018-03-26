@@ -4,12 +4,12 @@ from ..common import clean_title,clean_search,random_agent,send_log,error_log
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")           
 
 class bobmovies(Scraper):
-    domains = ['bobmovies.com']
+    domains = ['https://bobmovies.online']
     name = "Bobmovies"
     sources = []
 
     def __init__(self):
-        self.base_link = 'https://bobmovies.net'
+        self.base_link = 'https://bobmovies.online'
         self.sources = []
         self.start_time = ''
 
@@ -20,19 +20,19 @@ class bobmovies(Scraper):
             scrape = clean_search(title.lower())
             
             headers = {'User-Agent':random_agent(),'referrer':self.base_link}
-
+            
             data = {'do':'search','subaction':'search','story':scrape}
-        
+        	
             html = requests.post(self.base_link,headers=headers,data=data,verify=False,timeout=5).content
             
             results = re.compile('class="nnoo short_story".+?href="(.+?)".+?class="genre short_story_genre">(.+?)</span>.+?<p>(.+?)</p>',re.DOTALL).findall(html)
             for url,date,item_title in results:
-
+            	#print item_title+'>>>>>>>'+date+'.....'+url
                 if not clean_title(title).lower() == clean_title(item_title).lower():
                     continue
                 if not year in date: 
                     continue
-                #error_log(self.name + ' passed_bobURL',start_url)
+                error_log(self.name + ' passed_bobURL',url)
                 self.get_source(url)
                         
             return self.sources

@@ -1,23 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="repository.universalscrapers" name="universalscrapers-repository" version="1.0.0" provider-name="universalscrapers">
+<addon id="plugin.video.f4mTester" name="f4mTester" version="2.7.2" provider-name="Shani">
     <requires>
-        <import addon="xbmc.addon" version="12.0.0"/>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.video.F4mProxy" version="2.7.1"/>
     </requires>
-    <extension point="xbmc.addon.repository" name="universalscrapers">
-        <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
-        <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
-        <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
-        <hashes>false</hashes>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary>Scrape common video host for URL's to be playable in XBMC/Kodi.</summary>
-        <description>carrying on the dream</description>
+        <summary>f4mTester</summary>
+        <description></description>
         <platform>all</platform>
     </extension>
 </addon>
-<addon id="script.module.metahandler" 
-     name="metahandler" 
-     version="3.0.3" 
+
+    <addon id="repository.universalscrapers" name="universalscrapers-repository" version="1.0.0" provider-name="universalscrapers">
+        <requires>
+            <import addon="xbmc.addon" version="12.0.0"/>
+        </requires>
+        <extension point="xbmc.addon.repository" name="universalscrapers">
+            <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
+            <hashes>false</hashes>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>Scrape common video host for URL's to be playable in XBMC/Kodi.</summary>
+            <description>carrying on the dream</description>
+            <platform>all</platform>
+        </extension>
+    </addon>
+
+<addon id="script.module.metahandler"
+     name="metahandler"
+     version="3.0.3"
      provider-name="Eldorado, jsergio">
   <requires>
     <import addon="xbmc.python" version="2.1.0" />
@@ -88,38 +105,37 @@
 </addon>
 
 <addon id="script.module.resolveurl" name="ResolveURL" version="5.0.09" provider-name="jsergio">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0" />
-    <import addon="plugin.video.youtube" optional="true" />
-    <import addon="script.module.python.twitch" optional="true" />
-    <import addon="script.module.cryptopy" version="1.2.6" optional="true" />
-    <import addon="plugin.video.gdrive" optional="true" />
-  </requires>
-  <extension point="xbmc.python.module" library="lib" />
-  <extension point="xbmc.python.pluginsource" library="lib/default.py" />
-  <extension point="xbmc.addon.metadata">
-    <platform>all</platform>
-    <summary lang="en">Resolve common video host URL's to be playable in XBMC/Kodi.</summary>
-    <summary lang="es">Resolver enlaces a videos de sitios populares para poder reproducirlos en XBMC/Kodi.</summary>
-    <summary lang="hr">Prilagodi najčešće URL-ove video izvora kako bi radili u XBMC/Kodiju.</summary>
-    <description lang="en">Resolve common video host URL's to be playable in XBMC/Kodi, simplify addon development of video plugins requiring multi video hosts.</description>
-    <description lang="hr">Prilagodi najčešće URL-ove video izvora kako bi radili u XBMC/Kodiju, pojednostavnjuje razvoj priključaka za video dodatke koji zahtjevaju višestruke video izvore.</description>
-  </extension>
+	<requires>
+		<import addon="xbmc.python" version="2.1.0" />
+		<import addon="plugin.video.youtube" optional="true" />
+		<import addon="script.module.python.twitch" optional="true" />
+		<import addon="script.module.cryptopy" version="1.2.6" optional="true" />
+		<import addon="plugin.video.gdrive" optional="true" />
+	</requires>
+	<extension point="xbmc.python.module" library="lib" />
+	<extension point="xbmc.python.pluginsource" library="lib/default.py" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Resolve common video host URL's to be playable in XBMC/Kodi.</summary>
+		<summary lang="es">Resolver enlaces a videos de sitios populares para poder reproducirlos en XBMC/Kodi.</summary>
+		<summary lang="hr">Prilagodi najčešće URL-ove video izvora kako bi radili u XBMC/Kodiju.</summary>
+		<description lang="en">Resolve common video host URL's to be playable in XBMC/Kodi, simplify addon development of video plugins requiring multi video hosts.</description>
+		<description lang="hr">Prilagodi najčešće URL-ove video izvora kako bi radili u XBMC/Kodiju, pojednostavnjuje razvoj priključaka za video dodatke koji zahtjevaju višestruke video izvore.</description>
+	</extension>
 </addon>
 
 <addon id="script.module.resolveurl.xxx" version="2.0.02" name="Adult Resolver SMR Extension" provider-name="jsergio, Echo Coder">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
+	<requires>
+		<import addon="xbmc.python" version="2.1.0"/>
         <import addon="script.module.resolveurl" version="5.0.00" />
-  </requires>
-  <extension point="xbmc.python.module" library="lib" />
-  <extension point="xbmc.addon.metadata">
-    <summary lang="en">Resolve adult video host URL's to be playable in XBMC/Kodi.</summary>
-    <description lang="en">Resolve adult video host URL's to be playable in XBMC/Kodi.</description>
-    <platform>all</platform>
-  </extension>
+	</requires>
+	<extension point="xbmc.python.module" library="lib" />
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Resolve adult video host URL's to be playable in XBMC/Kodi.</summary>
+		<description lang="en">Resolve adult video host URL's to be playable in XBMC/Kodi.</description>
+		<platform>all</platform>
+	</extension>
 </addon>
-
 
 <addon id="script.module.tulip" name="Tulip Routine Libraries" version="1.0.8" provider-name="Twilight0">
 	<requires>
@@ -135,27 +151,29 @@
 	</extension>
 </addon>
 
-<addon id="script.module.universalscrapers" name="Universal Scrapers" version="1.0.2" provider-name="Team Universal">
-        <requires>
-                <import addon="xbmc.python" version="2.1.0"/>
-                <import addon="script.module.beautifulsoup" version="3.2.1"/>
-                <import addon="script.module.futures" version="2.2.0"/>
-                <import addon="script.module.requests"/>
-                <import addon="script.module.six"/>
-		    <import addon="script.module.resolveurl" version="5.0.00" optional="true"/>
+<addon id="script.module.universalscrapers" name="Universal Scrapers" version="1.0.3" provider-name="Team Universal">
+    <requires>
+        <import addon="xbmc.python" version="2.1.0"/>
+        <import addon="script.module.beautifulsoup" version="3.2.1"/>
+        <import addon="script.module.futures" version="2.2.0"/>
+        <import addon="script.module.requests"/>
+        <import addon="script.module.six"/>
+        <import addon="repository.universalscrapers"/>
+	<import addon="script.module.resolveurl" version="5.0.00" optional="true"/>
+
                 <!--<import addon="script.mrknow.urlresolver" version="2016.10.30.2" optional="true"/>-->
-        </requires>
-        <extension point="xbmc.python.module" library="lib"/>
-        <extension point="xbmc.python.pluginsource" library="lib/default.py">
-                <provides>executable</provides>
-        </extension>
+    </requires>
+    <extension point="xbmc.python.module" library="lib"/>
+    <extension point="xbmc.python.pluginsource" library="lib/default.py">
+        <provides>executable</provides>
+    </extension>
         <extension point="xbmc.addon.metadata">
-                <platform>all</platform>
-                <summary lang="en">Scrape common video host for URL's to be playable in XBMC/Kodi.</summary>
-                <description lang="en">Scrape common video host for URL's to be playable in XBMC/Kodi, simplifying addon development of video plugins requiring multi video hosts.
-                </description>
-                <license>GPL v3</license>
-                <source>https://</source>
+            <platform>all</platform>
+            <summary lang="en">Scrape common video host for URL's to be playable in XBMC/Kodi.</summary>
+            <description lang="en">Scrape common video host for URL's to be playable in XBMC/Kodi, simplifying addon development of video plugins requiring multi video hosts.
+            </description>
+            <license>GPL v3</license>
+            <source>https://</source>
         </extension>
 </addon>
 
@@ -186,20 +204,5 @@
 		<summary lang="en">Proxy for f4m</summary>
 		<description lang="en">Use this addon to play F4m v1 and v2 streams</description>
 	</extension>
-</addon>
-
-<addon id="plugin.video.f4mTester" name="f4mTester" version="2.7.2" provider-name="Shani">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.video.F4mProxy" version="2.7.1"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary>f4mTester</summary>
-        <description></description>
-        <platform>all</platform>
-    </extension>
 </addon>
 </addons>
