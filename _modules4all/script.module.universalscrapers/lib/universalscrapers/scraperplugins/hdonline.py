@@ -1,6 +1,6 @@
 import requests
 import re,time
-import xbmc
+import xbmcaddon
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
