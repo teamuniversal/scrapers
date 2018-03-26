@@ -1,9 +1,9 @@
 import requests
 import re,time
-import xbmcaddon
+import xbmc
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log 
-dev_log = xbmcaddon.Addon('script.module.nanscrapers').getSetting("dev_log")
+dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
   
 class hdonline(Scraper):
     domains = ['https://hdonline.is']
