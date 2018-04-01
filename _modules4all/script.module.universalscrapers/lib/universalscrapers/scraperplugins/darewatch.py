@@ -97,8 +97,8 @@ class darewatch(Scraper):
                         elif '720' in rez:
                             qual='720p'
                         else:
-                            qual='DVD'
-                    except:qual='DVD'
+                            qual='SD'
+                    except:qual='SD'
                     count +=1
                     self.sources.append({'source': 'Openload','quality': qual,'scraper': self.name,'url': link,'direct': False})
                 else: 

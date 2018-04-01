@@ -38,7 +38,7 @@ class bnw(Scraper):
                     playlink = Link
                     count +=1
                     self.sources.append(
-                    {'source': 'bnw', 'quality': 'unknown',
+                    {'source': 'bnw', 'quality': 'SD',
                      'scraper': self.name, 'url': playlink,
                      'direct': True})
             if dev_log=='true':

@@ -48,7 +48,7 @@ class extramovies(Scraper):
                         print link
                         print host
                         count +=1    
-                    self.sources.append({'source': host, 'quality': 'UnKnown', 'scraper': self.name, 'url': link,'direct': True}) #this line will depend what sent     
+                    self.sources.append({'source': host, 'quality': 'SD', 'scraper': self.name, 'url': link,'direct': True}) #this line will depend what sent     
                 if dev_log=='true':
                         end_time = time.time() - self.start_time
                         send_log(self.name,end_time,count)

@@ -14,7 +14,7 @@ class primealt(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://www.primewire.io'
+        self.base_link = 'http://www1.primewire.io'
         self.sources = []
         if dev_log=='true':
             self.start_time = time.time()
@@ -36,7 +36,7 @@ class primealt(Scraper):
                     continue
                 if not year in date:
                     continue
-                self.get_source(show_url)   
+                self.get_source(show_url)  
                         
             return self.sources
         except Exception, argument:        
@@ -56,7 +56,7 @@ class primealt(Scraper):
             OPEN = requests.get(start_url,headers=headers,timeout=5).content
             content = re.compile('<div class="item".+?href="(.+?)"',re.DOTALL).findall(OPEN)
             for show_url in content:
-
+               # print show_url
                 if clean_title(title).lower() in clean_title(show_url).lower():
                     #if year in show_url:   ##year not passed in bob
 
@@ -70,7 +70,8 @@ class primealt(Scraper):
                             ep_chk = '-season-%s-episode-%s.html' %(season,episode)
                             if not episode_url.endswith(ep_chk):
                                 continue
-                            self.get_source(episode_url)                        
+                            #print episode_url
+                            self.get_source(episode_url)                      
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
@@ -91,19 +92,31 @@ class primealt(Scraper):
             links = re.compile('data-height="460">(.+?)<',re.DOTALL).findall(content)
             count = 0
             for host_url in links:
+                #print host_url
+                host_url = host_url+'<'
                 if self.base_link in host_url:
                     host = re.compile('movie=(.+?)&',re.DOTALL).findall(host_url)[0]
                     final_url = base64.b64decode(host)
-
+                    #print final_url
+                    if 'http' in final_url:
+                        final_url = final_url
+                    else:
+                        pass
+                        
                 else:
-                    final_url = host_url
-                host = final_url.split('//')[1].replace('www.','')
-                host = host.split('/')[0].lower()
-                if not filter_host(host):
-                    continue
-                host = host.split('.')[0].title()
-                count +=1
-                self.sources.append({'source': host,'quality': 'SD','scraper': self.name,'url': final_url,'direct': False})
+                    host = re.compile('http://www.putlockers.uno/embed/(.+?)<',re.DOTALL).findall(host_url)[0]
+                    final_url = base64.b64decode(host)
+                    #print final_url
+                    
+                    final_url = final_url+'<'
+                    final_url = final_url.replace('/<','').replace('<','')    
+                    host = final_url.split('//')[1].replace('www.','')
+                    host = host.split('/')[0].lower()
+                    if not filter_host(host):
+                        continue
+                    host = host.split('.')[0].title()
+                    count +=1
+                    self.sources.append({'source': host,'quality': 'SD','scraper': self.name,'url': final_url,'direct': False})
             if dev_log=='true':
                 end_time = time.time() - self.start_time
                 send_log(self.name,end_time,count)                

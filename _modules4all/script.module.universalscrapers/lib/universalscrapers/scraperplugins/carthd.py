@@ -91,8 +91,11 @@ class carthd(Scraper):
                                 count +=1
                                 self.sources.append({'source': 'GoogleLink','quality': '720P','scraper': self.name,'url': link,'direct': True})
                             elif 'streamango.com' in link:
-                                get_res=requests.get(link,headers=headers,timeout=5).content
-                                qual = re.compile('{type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(get_res)[0]
+                                try:
+                                    get_res=requests.get(link,headers=headers,timeout=5).content
+                                    qual = re.compile('{type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(get_res)[0]
+                                except:
+                                    qual = 'SD'
                                 if '1080' in qual:
                                     rez='1080p'
                                 elif '720' in qual:
@@ -208,8 +211,11 @@ class carthd(Scraper):
                             count +=1
                             self.sources.append({'source': 'GoogleLink','quality': '720P','scraper': self.name,'url': link,'direct': True})                        
                         elif 'streamango.com' in link:
-                            get_res=requests.get(link,headers=headers,timeout=5).content
-                            qual = re.compile('{type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(get_res)[0]
+                            try:
+                                get_res=requests.get(link,headers=headers,timeout=5).content
+                                qual = re.compile('{type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(get_res)[0]
+                            except:
+                                qual = 'SD'
                             if '1080' in qual:
                                 rez='1080p'
                             elif '720' in qual:
