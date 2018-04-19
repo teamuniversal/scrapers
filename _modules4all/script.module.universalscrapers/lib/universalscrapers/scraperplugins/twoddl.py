@@ -7,29 +7,31 @@ dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log
 # kept movies off
 # multiple logs
 class twoddl(Scraper):
-    domains = ['http://2ddl.download']
+    domains = ['http://2ddl.io/']
     name = "TwoDDL"
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://2ddl.download'
+        self.base_link = 'http://2ddl.io/'
         self.sources = []
         if dev_log=='true':
             self.start_time = time.time() 
 
-    # def scrape_movie(self, title, year, imdb, debrid=False):
-        # try:            
-            # start_url = "%s/search/%s+%s/" % (self.base_link, title.replace(' ','+').lower(),year)
+    def scrape_movie(self, title, year, imdb, debrid=False):
+        try:           
+            start_url = "%s/?s=%s" % (self.base_link, title.replace(' ','+').lower())
+            search_id = clean_search(title.lower()) 
+            headers = {'User_Agent':User_Agent}
+            OPEN = requests.get(start_url,headers=headers,timeout=5).content
             
-            # headers = {'User_Agent':User_Agent}
-            # OPEN = open_url(start_url,headers=headers,timeout=5).content
-            
-            # content = re.compile('<h2><a href="([^"]+)"',re.DOTALL).findall(OPEN)
-            # for url in content:
-                # self.get_source(url)                        
-            # return self.sources
-        # except Exception, argument:
-            # return self.sources           
+            content = re.compile('<h2><a href="(.+?)"',re.DOTALL).findall(OPEN)
+            for url in content:
+                self.get_source(url)                        
+            return self.sources
+        except Exception, argument:
+            if dev_log == 'true':
+                error_log(self.name,'Check Search'+argument)
+            return self.sources           
             
 
     def scrape_episode(self,title, show_year, year, season, episode, imdb, tvdb, debrid = False):

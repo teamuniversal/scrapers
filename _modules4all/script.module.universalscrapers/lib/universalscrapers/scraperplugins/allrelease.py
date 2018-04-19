@@ -7,12 +7,12 @@ from ..modules import cfscrape
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 class allrelease(Scraper):
-    domains = ['http://allrls.co']
+    domains = ['http://allrls.pw']
     name = "allreleases"
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://allrls.co'
+        self.base_link = 'http://allrls.pw'
         self.scraper = cfscrape.create_scraper()
         if dev_log=='true':
             self.start_time = time.time()

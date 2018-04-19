@@ -172,6 +172,7 @@ def _update_settings_xml():
         '\t\t<setting id="dev_log" ''type="bool" label="Enable Scrapper Log [DEV]" default="false"/>',
         '\t\t<setting label="Disable All" type="action" option="close" action="RunPlugin(plugin://script.module.universalscrapers/?mode=DisableAll)"/>',
         '\t\t<setting label="Enable All" type="action" option="close" action="RunPlugin(plugin://script.module.universalscrapers/?mode=EnableAll)"/>',
+        '\t\t<setting label="Deletelog" type="action" option="close" action="RunPlugin(plugin://script.module.universalscrapers/?mode=Deletelog)"/>',
         '\t</category>', '\t<category label="Scrapers 1">'
     ]
 

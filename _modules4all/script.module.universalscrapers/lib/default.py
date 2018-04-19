@@ -1,6 +1,6 @@
 import universalscrapers
 import xbmcgui
-import os
+import os,re
 import xbmc
 import xbmcaddon
 import random
@@ -9,6 +9,8 @@ import urlparse
 import xbmcvfs
 from universalscrapers.common import clean_title
 from BeautifulSoup import BeautifulStoneSoup
+
+scraper_results_path = xbmc.translatePath('special://home/userdata/addon_data/script.module.universalscrapers/Log.txt')
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?', '')))
 mode = params.get('mode')
@@ -26,7 +28,10 @@ elif mode == "EnableAll":
         key = "%s_enabled" % scraper.name
         xbmcaddon.Addon('script.module.universalscrapers').setSetting(key, "true")
     sys.exit()
-
+elif mode == "Deletelog":
+    from universalscrapers.common import Del_LOG
+    Del_LOG()
+    sys.exit()
 
 try:
     from sqlite3 import dbapi2 as database
@@ -163,7 +168,7 @@ shows = [
 
 
 def main():
-    test_type = xbmcgui.Dialog().select("Choose type of test", ["Test List", "Profile List", "Profile Scrapers"])
+    test_type = xbmcgui.Dialog().select("Choose type of test", ["Test List", "Profile List", "Profile Scrapers","Check Scraper Results","Wipe Scraper Results"])
     basepath = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo("profile"))
     if test_type == 0:
         test()
@@ -177,8 +182,24 @@ def main():
                      os.path.join(basepath, 'profile_scrapers_movies.profile'))
         cProfile.run('profile_scrapers("episode")',
                      os.path.join(basepath, 'profile_scrapers_episodes.profile'))
+    elif test_type == 3:
+        if os.path.exists(scraper_results_path):
+            get_scraper_results()
+        else:
+            xbmcgui.Dialog().notification("Oopsie Daisy", "File not found")
+    elif test_type == 4:
+		if os.path.exists(scraper_results_path):
+			Open = open(scraper_results_path,'w+')
+		else:
+			xbmcgui.Dialog().notification("Oopsie Daisy", "File not found")
 
-
+def get_scraper_results():
+    dialog = xbmcgui.Dialog()
+    Open = open(scraper_results_path).read()
+    get_line = re.findall('(.+?)\n',Open,re.DOTALL)
+    dialog.textviewer("universalscrapers Testing Mode", '\n'.join(str(p) for p in get_line) )
+			
+			
 def test():
     global movies, shows
     try:

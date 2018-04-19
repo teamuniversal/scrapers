@@ -35,7 +35,7 @@ class Releasebb(Scraper):
         self.base_link = 'http://rlsbb.ru'
         self.search_base_link = 'http://search.rlsbb.ru'
         self.search_header_link = {'X-Requested-With': 'XMLHttpRequest', 'Cookie': 'serach_mode=light'}
-        self.search_link = '/lib/search5052604944.php?phrase=%s&pindex=1&content=true'
+        self.search_link = '/lib/search33526049118.php?phrase=%s&pindex=1&content=true'
         self.search_link2 = '/search/%s'
         if dev_log=='true':
             self.start_time = time.time() 

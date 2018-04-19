@@ -26,7 +26,7 @@ class joymovies(Scraper):
             start_url = '%s/?s=%s+%s' %(self.base_link,search_id.replace(' ','+'),year)
             #print 'STARTURL:::::::::::::::: '+start_url
             headers={'User-Agent':User_Agent}
-            html = self.scraper.get(start_url,headers=headers,timeout=5).content
+            html = requests.get(start_url,headers=headers,timeout=5).content
             
             results = re.compile('class="entry-title".+?href="(.+?)" rel="bookmark">(.+?)</a>',re.DOTALL).findall(html)
             for item_url,name in results:
@@ -43,7 +43,7 @@ class joymovies(Scraper):
         try:
             #print '%s %s %s' %(item_url,title,year)
             headers={'User-Agent':User_Agent}
-            html = self.scraper.get(item_url,headers=headers,timeout=5).content
+            html = requests.get(item_url,headers=headers,timeout=5).content
 
             chkdetails = re.compile('File Detail</h2>.+?Movie Name :(.+?)<br.+?Movie Quality :(.+?)<br',re.DOTALL).findall(html)
             for name_check,quality in chkdetails:
@@ -63,7 +63,7 @@ class joymovies(Scraper):
                             for param1, param2,param3 in params:
                                 request_url = self.base_link + '/thanks-for-downloading/'
                                 form_data = {'FName':param1,'FSize':param2,'FSID':param3}
-                                link = self.scraper.post(request_url, data=form_data, headers=headers).content
+                                link = requests.post(request_url, data=form_data, headers=headers).content
                                 stream_url = re.compile('"refresh".+?url=(.+?)"',re.DOTALL).findall(link)[0]
                         except:
                             pass
