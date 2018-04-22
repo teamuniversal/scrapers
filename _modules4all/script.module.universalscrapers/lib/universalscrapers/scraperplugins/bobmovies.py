@@ -11,12 +11,10 @@ class bobmovies(Scraper):
     def __init__(self):
         self.base_link = 'https://bobmovies.online'
         self.sources = []
-        self.start_time = ''
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
-            if dev_log=='true':
-                self.start_time = time.time()
+            start_time = time.time()
             scrape = clean_search(title.lower())
             
             headers = {'User-Agent':random_agent(),'referrer':self.base_link}
@@ -32,16 +30,15 @@ class bobmovies(Scraper):
                     continue
                 if not year in date: 
                     continue
-                error_log(self.name + ' passed_bobURL',url)
-                self.get_source(url)
+                self.get_source(url,title,year,'','',start_time)
                         
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
-    def get_source(self,url):
+    def get_source(self,url,title,year,season,episode,start_time):
         try:
             headers={'User-Agent':random_agent()}
             html = requests.get(url,headers=headers,timeout=5).content
@@ -55,6 +52,6 @@ class bobmovies(Scraper):
                     self.sources.append({'source': 'DirectLink','quality': '720p','scraper': self.name,'url': link,'direct': False})
             if dev_log=='true':
                 end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)                          
+                send_log(self.name,end_time,count,title,year, season='',episode='')                          
         except:
             pass

@@ -18,13 +18,11 @@ class ddown(Scraper):
     def __init__(self):
         self.base_link = 'https://directdownload.tv/'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time()
-           
             
 
     def scrape_episode(self,title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:            
+            start_time = time.time()
             if not debrid:
                 return [] 
             season_url = "0%s"%season if len(season)<2 else season
@@ -54,12 +52,12 @@ class ddown(Scraper):
                         count +=1
                         self.sources.append({'source': host,'quality': res,'scraper': self.name,'url': url,'direct': False, 'debridonly': True})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)            
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)            
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources  
 
     # def resolve(self, url):

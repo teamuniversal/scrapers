@@ -12,12 +12,11 @@ class hdonline(Scraper):
 
     def __init__(self):
         self.base_link = 'https://hdonline.is'
-        if dev_log=='true':
-            self.start_time = time.time() 
 
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time() 
             search_id = clean_search(title.lower())                                     # use 'clean_search' to get clean title 
             start_url = '%s/search/%s' %(self.base_link,search_id.replace(' ','+'))         # construct search url attributes using site url
             headers={'User-Agent':random_agent()}
@@ -48,14 +47,15 @@ class hdonline(Scraper):
                                     ep =  ep.replace('\\"','').strip()
                                     url = 'https://hdonline.is/ajax/movie/token?eid='+ep+'&mid='+end
                                     #print url                              # confirm in log correct url(s) sent to get_source
-                                    self.get_source(url,ep,qual)                                       # send url to next stage
+                                    self.get_source(url,ep,qual,title,year,'','',start_time)                                       # send url to next stage
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
+            start_time = time.time() 
             SS = "0%s"%season if len(season)<2 else season
             EE = "0%s"%episode if len(episode)<2 else episode
             search_term = clean_search(title.lower())+' '+'season'+SS
@@ -91,13 +91,13 @@ class hdonline(Scraper):
                                         episode = '0'+episode
                                     if episode == eps:
                                         url = 'https://hdonline.is/ajax/movie/token?eid='+ID+'&mid='+end
-                                        self.get_source(url,ID,qual)                                       
+                                        self.get_source(url,ID,qual,title,year,season,episode,start_time)                                       
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')  
+                error_log(self.name,argument)  
 
-    def get_source(self,url,ep,qual):
+    def get_source(self,url,ep,qual,title,year,season,episode,start_time):
         try:
             headers={'User-Agent':random_agent()}
             html3 = requests.get(url,headers=headers,timeout=5).content
@@ -128,8 +128,8 @@ class hdonline(Scraper):
                 hostname = host.split('/')[0].title()
                 self.sources.append({'source': hostname, 'quality': qual, 'scraper': self.name, 'url': link,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
           
         except:
             pass

@@ -12,11 +12,10 @@ class wmz(Scraper):
 
     def __init__(self):
         self.base_link = 'http://www.watchmovieszone.com'
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time()
             search_id = clean_search(title.lower())
             start_url = '%s/Movie/searchMovieName/?movie=%s' %(self.base_link,search_id)
 
@@ -32,7 +31,7 @@ class wmz(Scraper):
                             url = '%s/Movie/Index/%s/%s' %(self.base_link,ID,item_name)
                             #print 'wmz Movie pass '+url
                             #print 'wmz ID ' +ID
-                            self.get_source(url,ID)
+                            self.get_source(url,ID,title,year,'','',start_time)
             
             return self.sources
         except Exception, argument:        
@@ -40,7 +39,7 @@ class wmz(Scraper):
                 error_log(self.name,'Check Search')
             return self.sources
 
-    def get_source(self,url,ID):
+    def get_source(self,url,ID, title, year, season, episode, start_time):
         try:
             # url not needed
             new_url = '%s/Movie/getmyLinks/?movID=%s' %(self.base_link,ID) 
@@ -83,7 +82,7 @@ class wmz(Scraper):
                         count +=1
                         self.sources.append({'source': host, 'quality': 'DVD', 'scraper': self.name, 'url': link,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)                    
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)                    
         except:
             pass

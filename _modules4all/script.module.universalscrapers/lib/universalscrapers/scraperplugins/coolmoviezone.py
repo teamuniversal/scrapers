@@ -12,13 +12,12 @@ class coolmoviezone(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://coolmoviezone.info'
-        if dev_log=='true':
-            self.start_time = time.time()                                                    
+        self.base_link = 'http://coolmoviezone.fun'
 
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time()                                                    
             search_id = clean_search(title.lower())                                                                                                                           #(movie name keeping spaces removing excess characters)
 
             start_url = '%s/index.php?s=%s' %(self.base_link,search_id.replace(' ','+'))  
@@ -31,15 +30,15 @@ class coolmoviezone(Scraper):
             for item_url, name in match:
                 if year in name:                                                        
                     if clean_title(search_id).lower() == clean_title(name).lower():  
-                        self.get_source(item_url)  
+                        self.get_source(item_url,title,year,'','',start_time)  
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
             
-    def get_source(self,item_url):
+    def get_source(self,item_url,title,year,season,episode,start_time):
         try:
             #print 'coolmovies pass ' + item_url
             headers={'User-Agent':random_agent()}
@@ -88,7 +87,7 @@ class coolmoviezone(Scraper):
                         count +=1
                         self.sources.append({'source': host,'quality': 'DVD','scraper': self.name,'url': link,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)       
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season='',episode='')       
         except:
             pass 

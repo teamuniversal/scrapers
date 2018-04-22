@@ -3,7 +3,7 @@ import requests
 import resolveurl as urlresolver
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log
-
+from universalscrapers.modules import cfscrape
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 User_Agent = 'Mozilla/5.0 (iPhone; CPU iPhone OS 8_4 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12H143 Safari/600.1.4'
@@ -17,15 +17,15 @@ class movie4k(Scraper):
     def __init__(self):
         self.base_link = 'https://movie4k.is'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time()
+        self.scraper = cfscrape.create_scraper()
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
+            start_time = time.time()
             search_id = clean_search(title.lower())
             start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             headers = {'User_Agent':random_agent()}
-            html = requests.get(start_url,headers=headers,timeout=5).content
+            html = self.scraper.get(start_url,headers=headers,timeout=5).content
             #print html
             
             Regex = re.compile('<div class="boxinfo".+?href="(.+?)".+?class="tt">(.+?)</span>.+?class="year">(.+?)<',re.DOTALL).findall(html)
@@ -36,18 +36,18 @@ class movie4k(Scraper):
                     continue
                 movie_link = item_url
                 #print movie_link,name,rel
-                self.get_source(movie_link,year)
+                self.get_source(movie_link,year,title,'','',start_time)
             
                 
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
-    def get_source(self,movie_link,year):
+    def get_source(self,movie_link,year,title,season,episode,start_time):
         try:
-            html = requests.get(movie_link).content
+            html = self.scraper.get(movie_link).content
             qual = re.compile('<span class="calidad2">(.+?)</span>',re.DOTALL).findall(html)[0]
             links = re.compile('class="movieplay".+?src="(.+?)/"',re.DOTALL).findall(html)
             count = 0
@@ -58,8 +58,8 @@ class movie4k(Scraper):
                     count +=1
                     self.sources.append({'source': host,'quality': qual,'scraper': self.name,'url': link,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)            
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)            
         except:
             pass
 

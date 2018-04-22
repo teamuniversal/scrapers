@@ -7,7 +7,7 @@ from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
-  
+#for older movies/ comedies youtube (green street, g.i. joe retaliation)
 class moviesfoundonline(Scraper):
     domains = ['http://moviesfoundonline.com']
     name = "MoviesFoundOnline"
@@ -15,12 +15,11 @@ class moviesfoundonline(Scraper):
 
     def __init__(self):
         self.base_link = 'http://moviesfoundonline.com'
-        if dev_log=='true':
-            self.start_time = time.time()                                                   
 
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time()                                                   
             search_id = clean_search(title.lower())                                      
                                                                                         
 
@@ -41,16 +40,15 @@ class moviesfoundonline(Scraper):
                     if clean_title(search_id).lower() == clean_title(name).lower():     
                                                                                         
                         #print 'moviesfoundonline - scrape_movie - Send this URL: ' + item_url                             
-                        self.get_source(item_url)                                      
+                        self.get_source(item_url,title,year,start_time)                                      
             return self.sources
         except Exception, argument:
             if dev_log=='true':
-                error_log(self.name,'Check Search')
-            pass
+                error_log(self.name,argument)
             return[]
 
             
-    def get_source(self,item_url):
+    def get_source(self,item_url,title,year,start_time):
         try:
             headers={'User-Agent':random_agent()}
             OPEN = requests.get(item_url,headers=headers,timeout=5).content             # open page passed
@@ -72,8 +70,10 @@ class moviesfoundonline(Scraper):
                             qual = 'DVD'
                     except: qual = 'DVD'
                     self.sources.append({'source':'Youtube', 'quality':qual, 'scraper':self.name, 'url':link, 'direct':True})
-                if dev_log=='true':
-                    end_time = time.time() - self.start_time
-                    send_log(self.name,end_time,count)         
-        except:
-            pass 
+            if dev_log=='true':
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year)
+        except Exception, argument:
+            if dev_log=='true':
+                error_log(self.name,argument)
+            return[]

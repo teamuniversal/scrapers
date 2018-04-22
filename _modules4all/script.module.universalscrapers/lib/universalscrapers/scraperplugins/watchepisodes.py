@@ -17,11 +17,10 @@ class Watchepisodes(Scraper):
     def __init__(self):
         self.base_link = 'http://www.watchepisodes4.com/'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid=False):
         try:
+            start_time = time.time()
             scrape = clean_search(title.lower())
             start_url = '%ssearch/ajax_search?q=%s' %(self.base_link,scrape)
             #print 'SEARCH  > '+start_url
@@ -43,15 +42,15 @@ class Watchepisodes(Scraper):
                     if not format_grab in episode_url:
                         continue
 #                    print 'PASS ME >>>>>>>> '+episode_url
-                    self.get_sources(episode_url)
+                    self.get_sources(episode_url,title,year,season,episode,start_time)
  
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
-    def get_sources(self, episode_url):
+    def get_sources(self, episode_url, title, year, season, episode, start_time):
         #print '::::::::::::::'+episode_url
         try:
             headers = {'User_Agent':User_Agent}
@@ -66,10 +65,14 @@ class Watchepisodes(Scraper):
                     continue
                 host = host.split('.')[0].title()
                 count +=1
-                self.sources.append({'source': host,'quality': 'DVD','scraper': self.name,'url': final_url,'direct': False})
+                if count<25:
+                    self.sources.append({'source': host,'quality': 'DVD','scraper': self.name,'url': final_url,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
     
 
-        except:pass
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources

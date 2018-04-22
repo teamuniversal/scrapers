@@ -18,10 +18,9 @@ class Animetoon(Scraper):
     def __init__(self):
         self.base_link_cartoons = 'http://www.animetoon.org/cartoon'
         self.dubbed_link_cartoons = 'http://www.animetoon.org/dubbed-anime'
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
+        start_time = time.time()
         if season == "19":
             season = "1"
         try:
@@ -53,7 +52,7 @@ class Animetoon(Scraper):
                                 if link not in uniques:
                                     uniques.append(link)
                                     #print 'title 1 routePass this episode_url aniema>> ' + link
-                                    self.check_for_play(link)
+                                    self.check_for_play(link,title,year,season,episode,start_time)
                     else:
                         #print clean_title(bollox).lower()
                         #print clean_title(name).lower()
@@ -74,16 +73,16 @@ class Animetoon(Scraper):
                                     if link not in uniques:
                                         uniques.append(link)
                                         #print 'tit2 Pass this episode_url watchcartoon>> ' + link
-                                        self.check_for_play(link)
+                                        self.check_for_play(link,title,year,season,episode,start_time)
 
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
 
-    def check_for_play(self, link):
+    def check_for_play(self, link,title,year,season,episode,start_time):
         try:
             #print 'Pass url '+ link   
             frame_page = requests.get(link).content
@@ -99,8 +98,8 @@ class Animetoon(Scraper):
                 self.sources.append({'source': host, 'quality': 'SD', 'scraper': self.name, 'url': url, 'direct': True})
                 #print 'PASSED for PLAY '+url
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year,season,episode)
 
         except:
             pass

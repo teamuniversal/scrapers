@@ -18,13 +18,12 @@ class carthd(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'https://cartoonhd.biz'
+        self.base_link = 'https://cartoonhd.pw'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
+            start_time = time.time()
             scrape_me = urllib.quote_plus(title.lower())
             start_url = '%s/full-movie/%s' %(self.base_link,scrape_me.replace('+','-'))
             #print 'search url> '+start_url
@@ -130,16 +129,17 @@ class carthd(Scraper):
                                 count +=1
                                 self.sources.append({'source': source_base,'quality': 'DVD','scraper': self.name,'url': link,'direct': False})
                         if dev_log=='true':
-                            end_time = time.time() - self.start_time
-                            send_log(self.name,end_time,count)                                            
+                            end_time = time.time() - start_time
+                            send_log(self.name,end_time,count,title,year, season='',episode='')                                            
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
     def scrape_episode(self,title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
+            start_time = time.time()
             scrape_me = urllib.quote_plus(title.lower())
             start_url = '%s/show/%s' %(self.base_link,scrape_me.replace('+','-'))
             #print 'start_url> '+start_url
@@ -253,10 +253,10 @@ class carthd(Scraper):
                             count +=1
                             self.sources.append({'source': source_base,'quality': 'DVD','scraper': self.name,'url': link,'direct': False})
                     if dev_log=='true':
-                        end_time = time.time() - self.start_time
-                        send_log(self.name,end_time,count)                                          
+                        end_time = time.time() - start_time
+                        send_log(self.name,end_time,count,title,year, season=season,episode=episode)                                          
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources

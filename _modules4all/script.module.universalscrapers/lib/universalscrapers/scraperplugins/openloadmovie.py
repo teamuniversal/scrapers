@@ -15,13 +15,12 @@ class OpenLoadMovie(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'https://openloadmovie.me'
+        self.base_link = 'https://openloadmovie.ws'
         self.scraper = cfscrape.create_scraper()
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
+            start_time = time.time()
             search_id = clean_search(title.lower())
             # start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             # headers = {'User_Agent':User_Agent}
@@ -37,7 +36,7 @@ class OpenLoadMovie(Scraper):
                 # #print 'Grabbed movie url to pass > ' + movie_link   
             movie_link = '%s/movies/%s-%s/' %(self.base_link,search_id.replace(' ','-'),year)
             print 'Grabbed movie url to pass > ' + movie_link 
-            self.get_source(movie_link)
+            self.get_source(movie_link,title,year,'','',start_time)
                 
             return self.sources
         except Exception, argument:        
@@ -67,7 +66,7 @@ class OpenLoadMovie(Scraper):
                 # error_log(self.name,'Check Search')
             # return self.sources
 
-    def get_source(self,movie_link):
+    def get_source(self,movie_link, title, year, season, episode, start_time):
         try:
             #print 'passed show '+movie_link
             html = self.scraper.get(movie_link).content
@@ -87,8 +86,8 @@ class OpenLoadMovie(Scraper):
                     count +=1
                     self.sources.append({'source': host,'quality': qual,'scraper': self.name,'url': link,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
         except:
             pass
 

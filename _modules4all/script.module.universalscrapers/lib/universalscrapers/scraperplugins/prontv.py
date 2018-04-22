@@ -40,8 +40,6 @@ class pron(Scraper):
             self.api_link = 'https://pron.tv/api/search/download/?user=%s&password=%s&query=%s'
         else:
             self.api_link = 'https://pron.tv/api/search/stream/?user=%s&password=%s&query=%s'
-        if dev_log=='true':
-            self.start_time = time.time() 
         self.alluc_user = xbmcaddon.Addon('script.module.universalscrapers').getSetting("%s_user" % (self.name))
         self.alluc_pw = xbmcaddon.Addon('script.module.universalscrapers').getSetting("%s_pw" % (self.name))
         self.max_items = int(xbmcaddon.Addon('script.module.universalscrapers').getSetting("%s_max" % (self.name)))
@@ -50,17 +48,20 @@ class pron(Scraper):
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time()
             if debrid:
                 global alluc_debrid
                 alluc_debrid = "true"
                 self.api_link = 'https://pron.tv/api/search/download/?user=%s&password=%s&query=%s'
             url = self.movie(imdb, title, year)
-            sources = self.sources(url, [], [])
+            sources = self.sources(url, [], [],title,year,'','',start_time)
             for source in sources:
                 source["scraper"] = source["provider"]
             return sources
-        except:
-            return []
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
     def movie(self, imdb, title, year):
         self.zen_url = []
@@ -95,31 +96,38 @@ class pron(Scraper):
                     self.zen_url.append([stream_url, stream_title])
                     print ("ALLUC r3", self.zen_url)
             return self.zen_url
-        except:
-            return
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
+            start_time = time.time()
             if debrid:
                 global alluc_debrid
                 alluc_debrid = "true"
                 self.api_link = 'https://pron.tv/api/search/download/?user=%s&password=%s&query=%s'
             show_url = self.tvshow(imdb, tvdb, title, show_year)
             url = self.episode(show_url, imdb, tvdb, title, year, season, episode)
-            sources = self.sources(url, [], [])
+            sources = self.sources(url, [], [],title,year,season,episode,start_time)
             for source in sources:
                 source["scraper"] = source["provider"]
             return sources
-        except:
-            return []
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
     def tvshow(self, imdb, tvdb, tvshowtitle, year):
         try:
             url = {'tvshowtitle': tvshowtitle, 'year': year}
             url = urllib.urlencode(url)
             return url
-        except:
-            return
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
         self.zen_url = []
@@ -158,10 +166,12 @@ class pron(Scraper):
                     self.zen_url.append([stream_url, stream_title])
                     #print ("ALLUC r3", self.zen_url)
             return self.zen_url
-        except:
-            return
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
-    def sources(self, url, hostDict, hostprDict):
+    def sources(self, url, hostDict, hostprDict, title, year, season, episode, start_time):
         try:
             count = 0
             sources = []
@@ -198,11 +208,13 @@ class pron(Scraper):
                         {'source': host, 'quality': quality, 'provider': 'Pron.tv', 'url': url, 'direct': False,
                          'debridonly': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)    
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
             return sources
-        except:
-            return sources
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
     def resolve(self, url):
         return url

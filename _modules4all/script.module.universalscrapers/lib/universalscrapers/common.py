@@ -30,21 +30,26 @@ def clean_search(title):
     return title
 
 
-def send_log(name,Txt,count):
+def send_log(name,Time,count,title,year,season = '', episode = ''):
     if not os.path.exists(full_file):
         full_write = open(full_file,"w")
     elif os.path.exists(full_file):
         full_write = open(full_file,'a')
     if count ==0:
-        count = 'Check Scrapper/NoLinks'
-    Print = ':######################################################\n'+'#        universalscraper: %s' %(str(name)) + str(time.time())+'\n#        Links returned: %s' %(str(count))+'\n#        Time to Complete: %s' %(str(round(Txt,2)))+'\n#######################################################' 
+        count = 'Check Scraper/NoLinks'
+    if episode != '':
+        title = title + '('+year+') : S'+season+' E'+episode
+    else:
+        title = title + '('+year+')'
+    Print = '<######################################################\n#        universalscraper: %s' %(str(name))+'\n#        Tested with: '+str(title)+'\n#        Links returned: %s' %(str(count))+'\n#        Time to Complete: %s' %(str(round(Time,2)))+'\n#######################################################>' 
     full_write.write(Print+'\n')
 '''
-    print ':######################################################'
+    print '<######################################################'
+    print '#        Tested with: %s' %(str(title))
     print '#        universalscraper: %s' %(str(name))
     print '#        Links returned: %s' %(str(count))
-    print '#        Time to Complete: %s' %(str(round(Txt,2)))
-    print '#######################################################'  
+    print '#        Time to Complete: %s' %(str(round(Time,2)))
+    print '#######################################################>'  
     return
 ''' 
 def Del_LOG():

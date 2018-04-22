@@ -19,13 +19,10 @@ class bnw(Scraper):
     def __init__(self):
         self.base_link = 'http://www.bnwmovies.com'
         self.search_link = "/?s="
-        self.start_time = ''
-        
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
-            if dev_log=='true':
-                self.start_time = time.time()             
+            start_time = time.time()             
             good_title = clean_search(title.lower())
             start_url= 'http://www.bnwmovies.com/%s.html' % (good_title.replace(" ", "-"))
             headers={'User-Agent':random_agent(),'Referer':start_url}
@@ -42,12 +39,12 @@ class bnw(Scraper):
                      'scraper': self.name, 'url': playlink,
                      'direct': True})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)        
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year)        
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
 # Movie (Trail Riders) 1942             

@@ -14,11 +14,10 @@ class projectfreetv(Scraper):
     def __init__(self):
         self.base_link = 'http://projectfreetv.bz/'
         
-        if dev_log=='true':
-            self.start_time = time.time()
                           
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
+            start_time = time.time()
             headers = {'User-Agent':random_agent()}
             search_id = clean_search(title.lower())
             start_url= '%s?s=%s' %(self.base_link,search_id.replace(' ','%20'))
@@ -46,7 +45,7 @@ class projectfreetv(Scraper):
                                 for episod in episodes:
                                     #print episod
                                     if episode == episod:
-                                        self.get_source(url2)
+                                        self.get_source(url2,title,year,season,episode,start_time)
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
@@ -70,7 +69,7 @@ class projectfreetv(Scraper):
     #         print scraper_name + ' : '+ str(e)
     #         return []     
 
-    def get_source(self,url2):
+    def get_source(self,url2, title, year, season, episode, start_time):
         try:
             headers={'User-Agent':random_agent()}
             OPEN = requests.get(url2,headers=headers,timeout=5).content
@@ -95,8 +94,8 @@ class projectfreetv(Scraper):
                 self.sources.append({'source': host,'quality': qual,'scraper': self.name,'url': link,'direct': False})
 
             if dev_log=='true':
-                    end_time = time.time() - self.start_time
-                    send_log(self.name,end_time,count)                                  
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
             return []
         except:
             pass

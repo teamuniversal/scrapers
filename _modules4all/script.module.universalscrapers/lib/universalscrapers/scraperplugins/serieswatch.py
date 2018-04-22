@@ -17,10 +17,10 @@ class serieswatch(Scraper):
         self.base_link = 'https://watch-series.co'
         self.search_link = '/search.html?keyword='
         self.scraper = cfscrape.create_scraper()
-        if dev_log=='true':
-            self.start_time = time.time()
+
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
+            start_time = time.time()
             start_url = self.base_link+self.search_link+title.replace(' ','%20')+'%20season%20'+season
             #print start_url
             html = self.scraper.get(start_url,timeout=10).content
@@ -38,16 +38,17 @@ class serieswatch(Scraper):
                         ep_no = ep_no.replace('Episode ','').replace(':','')
                         if ep_no == episode:
                             #print url2
-                            self.get_sources(url2)
+                            self.get_sources(url2,title,year,season,episode,start_time)
             return self.sources
                                             
         except Exception as argument:
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return []                           
 
     def scrape_movie(self, title, year, debrid = False):
         try:
+            start_time = time.time()
             start_url = self.base_link+self.search_link+title.replace(' ','%20')
             html = self.scraper.get(start_url,timeout=10).content
             match = re.compile('<div class="video-thumbimg">.+?href="(.+?)".+?title="(.+?)"',re.DOTALL).findall(html)
@@ -64,14 +65,14 @@ class serieswatch(Scraper):
                         release_year = release_year.replace(' ','')
                         fin_url = self.base_link+'/series/'+fin_url
                         if release_year == year:
-                            self.get_sources(fin_url)
+                            self.get_sources(fin_url,title,year,'','',start_time)
             return self.sources
         except Exception as argument:
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return[]
 
-    def get_sources(self,url2):
+    def get_sources(self,url2,title,year,season,episode,start_time):
         try:
             #print url2
             quality = 'SD'
@@ -122,10 +123,7 @@ class serieswatch(Scraper):
                     count +=1
                     self.sources.append({'source': source_name, 'quality': quality, 'scraper': self.name, 'url': url,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
         except:
             pass
-
-#projectfreetvmovies().scrape_episode('the blacklist','2013','2017','5','16', '', '')
-#projectfreetvmovies().scrape_movie('baywatch','2017','')

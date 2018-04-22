@@ -17,11 +17,10 @@ class hdpopcorn(Scraper):
     def __init__(self):
         self.base_link = 'http://hdpopcorns.com'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time() 
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time() 
             search_id = clean_search(title.lower())
             start_url ='%s/search/%s' %(self.base_link,search_id.replace(' ','+'))
             #print 'starturl > '+start_url
@@ -37,14 +36,14 @@ class hdpopcorn(Scraper):
                     continue
                 url = m_url
                 #error_log(self.name + ' Pass',url)
-                self.get_source(url)
+                self.get_source(url, title, year, '', '', start_time)
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
-    def get_source(self,url):
+    def get_source(self,url, title, year, season, episode, start_time):
         try:
             headers={'User-Agent':User_Agent}
             OPEN = requests.get(url,headers=headers,timeout=5).content
@@ -77,8 +76,8 @@ class hdpopcorn(Scraper):
   
             except:pass 
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)              
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)              
         except:
             pass
 

@@ -22,11 +22,10 @@ class movie25org(Scraper):
         self.base_link = 'http://www.movies25.org'
         self.scraper = cfscrape.create_scraper()
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
+            start_time = time.time()
             search_id = clean_search(title.lower())
             start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             #print 'search>>>'+start_url
@@ -41,16 +40,16 @@ class movie25org(Scraper):
                 if not year in item_name:
                     continue
                 #print item_url
-                self.get_source(item_url)
+                self.get_source(item_url,title,year,'','',start_time)
             
                 
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
             
-    def get_source(self,item_url):
+    def get_source(self,item_url,title,year,season,episode,start_time):
         try:
             html = self.scraper.get(item_url).content
             frame_holder = re.compile('<iframe src="(.+?)"',re.DOTALL).findall(html)[0]
@@ -93,7 +92,7 @@ class movie25org(Scraper):
                         count +=1
                         self.sources.append({'source': 'GoogleLink','quality': 'HD','scraper': self.name,'url': final_url,'direct': True})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year)
         except:
             pass

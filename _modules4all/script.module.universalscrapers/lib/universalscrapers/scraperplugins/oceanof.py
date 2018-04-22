@@ -16,12 +16,11 @@ class joymovies(Scraper):
     def __init__(self):
         self.base_link = 'http://oceanofmovies.de'
         self.scraper = cfscrape.create_scraper()
-        if dev_log=='true':
-            self.start_time = time.time() 
                       
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time() 
             search_id = clean_search(title.lower())
             start_url = '%s/?s=%s+%s' %(self.base_link,search_id.replace(' ','+'),year)
             #print 'STARTURL:::::::::::::::: '+start_url
@@ -31,15 +30,15 @@ class joymovies(Scraper):
             results = re.compile('class="entry-title".+?href="(.+?)" rel="bookmark">(.+?)</a>',re.DOTALL).findall(html)
             for item_url,name in results:
                 if clean_title(title).lower() in clean_title(name).lower():
-                    self.get_source(item_url,title,year)
+                    self.get_source(item_url,title,year,'','',start_time)
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
             
 
-    def get_source(self,item_url,title,year):
+    def get_source(self,item_url,title,year,season,episode,start_time):
         try:
             #print '%s %s %s' %(item_url,title,year)
             headers={'User-Agent':User_Agent}
@@ -71,7 +70,7 @@ class joymovies(Scraper):
                         count +=1
                         self.sources.append({'source': 'DirectLink','quality': qual,'scraper': self.name,'url': stream_url,'direct': True})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)                               
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)                               
         except:
             pass

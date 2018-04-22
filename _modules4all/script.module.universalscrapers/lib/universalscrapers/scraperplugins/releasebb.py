@@ -37,15 +37,14 @@ class Releasebb(Scraper):
         self.search_header_link = {'X-Requested-With': 'XMLHttpRequest', 'Cookie': 'serach_mode=light'}
         self.search_link = '/lib/search33526049118.php?phrase=%s&pindex=1&content=true'
         self.search_link2 = '/search/%s'
-        if dev_log=='true':
-            self.start_time = time.time() 
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
+            start_time = time.time()
             if not debrid:
                 return []
             url = self.movie(imdb, title, year)
-            sources = self.sources(url, [], [])
+            sources = self.sources(url, [], [],title,year,'','',start_time)
             for source in sources:
                 source["scraper"] = source["provider"]
             return sources
@@ -55,12 +54,13 @@ class Releasebb(Scraper):
     def scrape_episode(self, title, show_year, year, season, episode,
                        imdb, tvdb, debrid=False):
         try:
+            start_time = time.time()
             if not debrid:
                 return []
             show_url = self.tvshow(imdb, tvdb, title, show_year)
             url = self.episode(show_url, imdb, tvdb, title,
                                year, season, episode)
-            sources = self.sources(url, [], [])
+            sources = self.sources(url, [], [],title,year,season,episode,start_time)
             for source in sources:
                 source["scraper"] = source["provider"]
             return sources
@@ -182,7 +182,7 @@ class Releasebb(Scraper):
         except:
             return
 
-    def sources(self, url, hostDict, hostprDict):
+    def sources(self, url, hostDict, hostprDict,title,year,season,episode,start_time):
         try:
             count = 0 
             sources = []
@@ -213,8 +213,8 @@ class Releasebb(Scraper):
                     except:
                         pass
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
             return sources
         except:
             return sources

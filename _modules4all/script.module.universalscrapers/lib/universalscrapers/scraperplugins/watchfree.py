@@ -18,7 +18,6 @@ class Watchfree(Scraper):
         self.base_link = self.base_link = xbmcaddon.Addon('script.module.universalscrapers').getSetting("%s_baseurl" % (self.name))
         self.moviesearch_link = '/?keyword=%s&search_section=1'
         self.tvsearch_link = '/?keyword=%s&search_section=2'
-        self.start_time = time.time()
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:

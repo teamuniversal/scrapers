@@ -12,12 +12,11 @@ class moviewatcher(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://moviewatcher.is'
-        if dev_log=='true':
-            self.start_time = time.time()
+        self.base_link = 'https://moviewatcher.is'
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
+            start_time = time.time()
             search_id = clean_search(title.lower())
             start_url = '%s/search?query=%s' %(self.base_link,search_id.replace(' ','+'))
             #print start_url
@@ -32,11 +31,11 @@ class moviewatcher(Scraper):
                     continue
                 url = self.base_link + url
                 #print 'Pass '+url
-                self.get_source(url)            
+                self.get_source(url,title,year,'','',start_time)            
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
+                error_log(self.name,argument)
             return self.sources
 
     # def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
@@ -65,10 +64,10 @@ class moviewatcher(Scraper):
                 # self.get_source(page,'unknown')
         # except Exception, argument:        
             # if dev_log == 'true':
-                # error_log(self.name,'Check Search')
+                # error_log(self.name,argument)
             # return self.sources
             
-    def get_source(self,url):
+    def get_source(self,url,title,year,season,episode,start_time):
         try:
             OPEN = requests.get(url).content
             Regex = re.compile(">Play:.+?window.open.+?'(/redirect/.+?)'",re.DOTALL).findall(OPEN)
@@ -86,7 +85,7 @@ class moviewatcher(Scraper):
                 count +=1
                 self.sources.append({'source': host, 'quality': 'SD', 'scraper': self.name, 'url': stream_url,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)               
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)               
         except:
             pass

@@ -16,11 +16,10 @@ class primealt(Scraper):
     def __init__(self):
         self.base_link = 'http://www1.primewire.io'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time()
 
     def scrape_movie(self, title, year, imdb, debrid=False):        
         try:                       
+            start_time = time.time()
             movie_id  = clean_search(title.lower().replace(' ','%20'))
 
             headers={'User-Agent':random_agent()}
@@ -36,7 +35,7 @@ class primealt(Scraper):
                     continue
                 if not year in date:
                     continue
-                self.get_source(show_url)  
+                self.get_source(show_url,title,year,'','',start_time)  
                         
             return self.sources
         except Exception, argument:        
@@ -46,6 +45,7 @@ class primealt(Scraper):
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:           
+            start_time = time.time()
             show_id  = clean_search(title.lower().replace(' ','%20'))
 
             headers={'User-Agent':random_agent()}
@@ -71,7 +71,7 @@ class primealt(Scraper):
                             if not episode_url.endswith(ep_chk):
                                 continue
                             #print episode_url
-                            self.get_source(episode_url)                      
+                            self.get_source(episode_url,title,year,season,episode,start_time)                      
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
@@ -83,7 +83,7 @@ class primealt(Scraper):
 
 
 
-    def get_source(self,episode_url):
+    def get_source(self,episode_url, title, year, season, episode, start_time):
         try: 
             #print 'xPassedPrimewire URL >'+episode_url       
             headers = {'User_Agent':random_agent()}
@@ -118,8 +118,8 @@ class primealt(Scraper):
                     count +=1
                     self.sources.append({'source': host,'quality': 'SD','scraper': self.name,'url': final_url,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)                
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)
 
         except:pass
 

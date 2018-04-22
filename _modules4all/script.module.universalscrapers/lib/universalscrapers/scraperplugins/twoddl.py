@@ -12,13 +12,14 @@ class twoddl(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://2ddl.io/'
+        self.base_link = 'http://2ddl.io'
         self.sources = []
-        if dev_log=='true':
-            self.start_time = time.time() 
 
     def scrape_movie(self, title, year, imdb, debrid=False):
-        try:           
+        try:
+            start_time = time.time()
+            if not debrid:
+                return []           
             start_url = "%s/?s=%s" % (self.base_link, title.replace(' ','+').lower())
             search_id = clean_search(title.lower()) 
             headers = {'User_Agent':User_Agent}
@@ -26,16 +27,17 @@ class twoddl(Scraper):
             
             content = re.compile('<h2><a href="(.+?)"',re.DOTALL).findall(OPEN)
             for url in content:
-                self.get_source(url)                        
+                self.get_source(url,title,year,'','',start_time)                        
             return self.sources
-        except Exception, argument:
+        except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search'+argument)
-            return self.sources           
+                error_log(self.name,argument)
+            return self.sources
             
 
     def scrape_episode(self,title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
+            start_time = time.time()
             if not debrid:
                 return []
             season_url = "0%s"%season if len(season)<2 else season
@@ -49,15 +51,15 @@ class twoddl(Scraper):
             for url in content:
                 if not clean_title(title).lower() in clean_title(url).lower():
                     continue
-                self.get_source(url)                        
+                self.get_source(url,title,year,season,episode,start_time)                        
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
-                error_log(self.name,'Check Search')
-            return self.sources 
+                error_log(self.name,argument)
+            return self.sources
 
             
-    def get_source(self,url):
+    def get_source(self,url, title, year, season, episode, start_time):
         try:        
             headers = {'User_Agent':User_Agent}
             links = requests.get(url,headers=headers,timeout=3).content   
@@ -73,7 +75,7 @@ class twoddl(Scraper):
                         elif 'HDTV' in url:
                             res = 'HD'
                         else:
-                            pass
+                            res = "SD"
 
                         host = url.split('//')[1].replace('www.','')
                         host = host.split('/')[0].lower()
@@ -86,8 +88,11 @@ class twoddl(Scraper):
                             count +=1
                             self.sources.append({'source': host,'quality': res,'scraper': self.name,'url': url,'direct': False, 'debridonly': True})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
-                send_log(self.name,end_time,count)             
+                end_time = time.time() - start_time
+                send_log(self.name,end_time,count,title,year, season=season,episode=episode)             
 
-        except:pass
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
 
