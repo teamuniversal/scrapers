@@ -1,4 +1,5 @@
-import re,xbmcaddon,time,requests
+import re,time,requests
+import xbmcaddon
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log    
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")           
@@ -32,7 +33,7 @@ class bobmovies(Scraper):
                     continue
                 self.get_source(url,title,year,'','',start_time)
                         
-            return self.sources
+            print self.sources
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)
@@ -50,8 +51,20 @@ class bobmovies(Scraper):
                     link = self.base_link + link
                     count +=1
                     self.sources.append({'source': 'DirectLink','quality': '720p','scraper': self.name,'url': link,'direct': False})
+            other_links = re.findall('data-url="(.+?)"',html)
+            for link in other_links:
+                print link
+                if link.startswith('//'):
+                    link = 'http:'+link
+                count +=1
+                self.sources.append({'source': 'DirectLink','quality': 'unknown','scraper': self.name,'url': link,'direct': False})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
+                end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year, season='',episode='')                          
-        except:
-            pass
+        except Exception, argument:        
+            if dev_log == 'true':
+                error_log(self.name,argument)
+            return self.sources
+
+#bobmovies().scrape_movie('Jumanji: Welcome to the jungle', '2017','')
+

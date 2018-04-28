@@ -1,4 +1,5 @@
-import re,requests,base64,time,xbmcaddon
+import re,requests,base64,time
+import xbmcaddon
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,filter_host,send_log,error_log 
 

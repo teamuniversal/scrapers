@@ -169,7 +169,8 @@ def _update_settings_xml():
         '<settings>', '\t <category label = "General">',
         '\t\t<setting id="cache_enabled" '
         'type="bool" label="Enable Caching" default="true"/>',
-        '\t\t<setting id="dev_log" ''type="bool" label="Enable Scraper Log [DEV]" default="false"/>',
+        '\t\t<setting id="tmdb_test" type="text" label="TMDB list url (just last 5 digits)" default=""/>',
+        '\t\t<setting id="dev_log" type="bool" label="Enable Scraper Log [DEV]" default="false"/>',
         '\t\t<setting label="Disable All" type="action" option="close" action="RunPlugin(plugin://script.module.universalscrapers/?mode=DisableAll)"/>',
         '\t\t<setting label="Enable All" type="action" option="close" action="RunPlugin(plugin://script.module.universalscrapers/?mode=EnableAll)"/>',
         '\t\t<setting label="Deletelog" type="action" option="close" action="RunPlugin(plugin://script.module.universalscrapers/?mode=Deletelog)"/>',

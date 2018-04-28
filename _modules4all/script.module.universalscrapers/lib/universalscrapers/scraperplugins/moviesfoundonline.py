@@ -50,6 +50,7 @@ class moviesfoundonline(Scraper):
             
     def get_source(self,item_url,title,year,start_time):
         try:
+            count = 0
             headers={'User-Agent':random_agent()}
             OPEN = requests.get(item_url,headers=headers,timeout=5).content             # open page passed
             #print 'moviesfoundonline - scrape_movie - OPEN: '+OPEN
@@ -69,6 +70,7 @@ class moviesfoundonline(Scraper):
                         else:
                             qual = 'DVD'
                     except: qual = 'DVD'
+                    count+=1
                     self.sources.append({'source':'Youtube', 'quality':qual, 'scraper':self.name, 'url':link, 'direct':True})
             if dev_log=='true':
                 end_time = time.time() - start_time

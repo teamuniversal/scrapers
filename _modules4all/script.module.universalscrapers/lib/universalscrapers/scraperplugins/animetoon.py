@@ -1,8 +1,9 @@
 import re
 import requests
 from ..scraper import Scraper
-import xbmc,xbmcaddon,time
-from ..common import clean_title,send_log,error_log
+import xbmc,xbmcaddon
+import time
+from ..common import clean_search,clean_title,send_log,error_log
 import urlparse
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
@@ -33,17 +34,17 @@ class Animetoon(Scraper):
                 #print 'if season in title > ' + bollox
                 
                 for item_url, name in match:
-                    #print 'grabbed %s %s '%(item_url, name)
+#                    print 'grabbed %s %s '%(item_url, name)
                     if clean_title(title).lower() == clean_title(name).lower():
-                        #print 'title 1> ' + item_url
+                        print 'title 1> ' + item_url
                         headers = {'User-Agent':User_Agent}
                         show_page = requests.get(item_url,headers=headers,allow_redirects=False).content
-                        #print show_page
+#                        print show_page
                         Regex = re.compile('<div id="videos">(.+?)</ul>',re.DOTALL).findall(show_page)
                         get_episodes = re.compile('<li>.+?href="(.+?)"',re.DOTALL).findall(str(Regex))
                         for link in get_episodes:
                             spoof = link + '#'
-                            #print 'spoofed url '+spoof
+                            print 'spoofed url '+spoof
                             if not '-season-' in link:
                                 episode_format = '-episode-%s#' %(episode)
                             else:
@@ -51,13 +52,13 @@ class Animetoon(Scraper):
                             if episode_format in spoof:
                                 if link not in uniques:
                                     uniques.append(link)
-                                    #print 'title 1 routePass this episode_url aniema>> ' + link
+                                    print 'title 1 routePass this episode_url aniema>> ' + link
                                     self.check_for_play(link,title,year,season,episode,start_time)
                     else:
-                        #print clean_title(bollox).lower()
-                        #print clean_title(name).lower()
-                        if clean_title(bollox).lower() == clean_title(name).lower():
-                            #print 'title 2> ' + item_url
+#                        print clean_title(bollox).lower()
+ #                       print clean_title(name).lower()
+                        if clean_title(bollox).lower().replace('!','') == clean_title(name).lower().replace('!','') or clean_title(bollox).lower().replace('!','') + 'season'+str(season) == clean_title(name).lower().replace('!',''):
+#                            print 'title 2> ' + item_url
                             headers = {'User-Agent':User_Agent}
                             show_page = requests.get(item_url,headers=headers,allow_redirects=False).content
 
@@ -76,7 +77,8 @@ class Animetoon(Scraper):
                                         self.check_for_play(link,title,year,season,episode,start_time)
 
             return self.sources
-        except Exception, argument:        
+        except Exception, argument:
+            print argument
             if dev_log == 'true':
                 error_log(self.name,argument)
             return self.sources
@@ -119,13 +121,4 @@ class Animetoon(Scraper):
         except:pass
         return url
         
-            # if 'videozoo'in url:
-                # url = re.compile('"link":"(.+?)"',re.DOTALL).findall(open)[0]
-            # elif 'play44'in url:
-                # url = re.compile('"link":"(.+?)"',re.DOTALL).findall(open)[0]
-            # elif 'playpanda' in url:
-                # url = re.compile("url: '(.+?)'",re.DOTALL).findall(open)[0]
-            # elif 'playbb'in url:
-                # url = re.compile('"link":"(.+?)"',re.DOTALL).findall(open)[0]
-            # elif 'easyvideo'in url:
-                # url = re.compile('"link":"(.+?)"',re.DOTALL).findall(open)[0]
+#Animetoon().scrape_episode('American Dad', '', '2017', '15', '1', '', '')

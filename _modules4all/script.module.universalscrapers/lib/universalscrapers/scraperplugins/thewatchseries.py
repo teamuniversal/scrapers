@@ -3,13 +3,13 @@ import re,xbmcaddon,time
 import urllib
 from ..scraper import Scraper
 from ..common import random_agent, clean_title, filter_host, clean_search,send_log,error_log
-#requests.packages.urllib3.disable_warnings()
+requests.packages.urllib3.disable_warnings()
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
 from universalscrapers.modules import cfscrape
 
 class thewatchseries(Scraper):
-    domains = ['http://watchseriesmovie.net']
+    domains = ['gowatchseries.co/']
     name = "TheWatchSeries"
     sources = []
 
@@ -89,7 +89,7 @@ class thewatchseries(Scraper):
             links = re.compile('data-video="(.+?)"',re.DOTALL).findall(html)
             count = 0 
             for link in links:
-                #print '::::::::::::::::::::::final link> ' + link
+                print '::::::::::::::::::::::final link> ' + link
                 if 'vidnode.net' in link:
                     if not 'load.php' in link:
                         continue
@@ -102,10 +102,10 @@ class thewatchseries(Scraper):
                                 res = '1080p'
                             elif '720' in rez:
                                 res= '720p'
-                            else: res = 'SD'
+                            else: res = 'unknown'
 
                             count +=1
-                            self.sources.append({'source': 'GoogleLink','quality': res,'scraper': self.name,'url': end_link,'direct': True})
+                            self.sources.append({'source': 'Vidnode','quality': res,'scraper': self.name,'url': end_link,'direct': True})
                     except:pass
                         # vid_url = re.compile("sources.+?file: '(.+?)'",re.DOTALL).findall(page)[0]
                         # vid_url = 'http:'+vid_url
@@ -126,9 +126,12 @@ class thewatchseries(Scraper):
                     self.sources.append({'source': 'Openload', 'quality': res, 'scraper': self.name, 'url': link,'direct': False})
                 elif 'streamango.com' in link:
                     get_res=requests.get(link).content
-                    res = re.compile('{type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(get_res)[0]
-                    count +=1
-                    self.sources.append({'source': 'Streamango', 'quality': res, 'scraper': self.name, 'url': link,'direct': False})
+                    try:
+                        res = re.compile('{type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(get_res)[0]
+                        count +=1
+                        self.sources.append({'source': 'Streamango', 'quality': res, 'scraper': self.name, 'url': link,'direct': False})
+                    except:
+                        pass
                 else:
                     host = link.split('//')[1].replace('www.','')
                     host = host.split('/')[0].split('.')[0].title()

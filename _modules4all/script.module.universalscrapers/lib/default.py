@@ -12,6 +12,7 @@ import urllib
 import xbmc
 import xbmcgui
 import xbmcplugin
+import requests
 from universalscrapers.common import clean_title
 from BeautifulSoup import BeautifulStoneSoup
 dialog = xbmcgui.Dialog()
@@ -19,11 +20,17 @@ pDialog = xbmcgui.DialogProgress()
 No_of_scrapers = []
 scraper_paths = []
 
+tmdb_test = str(xbmcaddon.Addon('script.module.universalscrapers').getSetting("tmdb_test"))
+
 ADDON_PATH = xbmc.translatePath('special://home/addons/script.module.universalscrapers/')
 ICON = ADDON_PATH + 'icon.png'
 FANART = ADDON_PATH + 'fanart.jpg'
 
-scraper_results_path = xbmc.translatePath('special://home/userdata/addon_data/script.module.universalscrapers/Log.txt')
+USERDATA_PATH = xbmc.translatePath('special://home/userdata/addon_data')
+ADDON_DATA = os.path.join(USERDATA_PATH,'script.module.universalscrapers')
+full_file = os.path.join(ADDON_DATA,'Log.txt')
+
+scraper_results_path = xbmc.translatePath(full_file)
 if not os.path.exists(scraper_results_path):
 	Open = open(scraper_results_path,'w+')
 	
@@ -67,14 +74,14 @@ movies = [
         'imdb': 'tt1431045'
     },
     {
-        'title': 'Silence',
-        'year': '2016',
-        'imdb': 'tt0490215'
+        'title': 'Topper Returns',
+        'year': '1941',
+        'imdb': 'tt0034303'
     },
     {
         'title': 'Logan',
         'year': '2017',
-        'imdb': ''
+        'imdb': 'tt3315342'
     },
     {
         'title': 'The Great Wall',
@@ -117,9 +124,14 @@ movies = [
         'imdb': 'tt0389074'
     },
     {
-        'title': 'Izzies Way Home',
+        'title': 'Train to Busan',
         'year': '2016',
-        'imdb': 'tt5667482'
+        'imdb': 'tt5700672'
+    },    
+    {
+        'title': 'Green Street',
+        'year': '2005',
+        'imdb': 'tt0385002'
     },
     {
         'title': 'A Turtle\'s Tale: Sammy\'s Adventures',
@@ -130,12 +142,12 @@ movies = [
 
 shows = [
     {
-        'title': "The Flash",
-        'show_year': "2014",
-        'year': "2014",
-        'season': '1',
+        'title': "American Dad",
+        'show_year': "2005",
+        'year': "2017",
+        'season': '15',
         'episode': '1',
-        'imdb': 'tt3107288',
+        'imdb': 'tt0397306',
     },
     {
         'title': "The Flash",
@@ -225,9 +237,10 @@ def get_scraper_results():
 			Open = open(scraper_results_path,'w+')
 		else:
 			Open = open(scraper_results_path).read()
-			get_info = re.findall('<.+?universalscraper: (.+?)\n.+?Tested with: (.+?)\n.+?Links returned: (.+?)\n.+?Time to Complete:(.+?)\n',str(Open),re.DOTALL)
+			get_info = re.findall('<.+?Universalscraper: (.+?)\n.+?Tested with: (.+?)\n.+?Links returned: (.+?)\n.+?Time to Complete:(.+?)\n',str(Open),re.DOTALL)
 			for scraper_name, info_tested, no_of_links, time_taken in get_info:
-				scraper_results_check_name.append(scraper_name)
+				if not 'NoLinks' in no_of_links:				 
+					scraper_results_check_name.append(scraper_name)
 				dict_string = {'scraper_name':scraper_name, 'info_tested':info_tested,'no_of_links':no_of_links,'time_taken':time_taken}
 				if round(float(time_taken)) > 10:
 					slow_scraper_list.append(dict_string)				
@@ -237,7 +250,7 @@ def get_scraper_results():
 		if results_type == 0:
 			Open = open(scraper_results_path).read()
 			get_line = re.findall('(.+?)\n',Open,re.DOTALL)
-			dialog.textviewer("universalscrapers Testing Mode", '\n'.join(str(p) for p in get_line) )
+			dialog.textviewer("Universalscrapers Testing Mode", '\n'.join(str(p) for p in get_line) )
 		elif results_type == 1:
 			if len(slow_scraper_list)==0:
 				dialog.textviewer("Scrapers with slow times",'No Scrapers took over 10 seconds')
@@ -266,16 +279,58 @@ def disable_working(scraper_id):
 			
 def test():
 	pDialog = xbmcgui.DialogProgress()
-	if dialog.yesno("universalscrapers Testing Mode", 'Clear Scraper Log?'):
+	if dialog.yesno("Universalscrapers Testing Mode", 'Clear Scraper Log?'):
 		clear_scraper_log()
-	if dialog.yesno("universalscrapers Testing Mode", 'Clear cache?'):
+	if dialog.yesno("Universalscrapers Testing Mode", 'Clear cache?'):
 		universalscrapers.clear_cache()
-	test_type = xbmcgui.Dialog().select("Choose type of test", ["Single Scraper" , "Full Test" ])
+	if tmdb_test == '':
+		test_type = xbmcgui.Dialog().select("Choose type of test", ["Single Scraper" , "Full Test" ])
+	else:
+		test_type = xbmcgui.Dialog().select("Choose type of test", ["Single Scraper" , "Full Test", "TMDB Test" ])
 	if test_type == 0:
 		single_test(0,0)
 	elif test_type == 1:
 		full_test()
+	if tmdb_test != '':
+		if test_type == 2:
+			tmdb_test_menu()
 		
+def tmdb_test_menu():
+	tmdb_list_url = 'https://www.themoviedb.org/list/' + tmdb_test
+	html = requests.get(tmdb_list_url).content
+	tmdb_movies(html)
+#	test_type = xbmcgui.Dialog().select("Choose type of test", ["Movies" , "Tv Shows"]) #### Add these back in to allow choice of movie/tv show
+#	if test_type == 0:
+#		tmdb_movies(html)
+#	if test_type == 1:
+#		tmdb_tv_shows(html)
+	
+		
+def tmdb_movies(html):
+	count = 0
+	pDialog.create('Universalscrapers Testing mode active', 'please wait')
+	match = re.findall('<div class="info_wrapper">.+?href="(.+?)".+?alt="(.+?)"',html,re.DOTALL)
+	index = len(match)
+	for url, name in match:
+		Scrapers_Run = 0
+		count+= 1
+		if pDialog.iscanceled():
+			break
+		html2 = requests.get('https://www.themoviedb.org'+url).content
+		match2 = re.findall('<title>(.+?)\((.+?)\)',html2)
+		for title,year in match2:
+			title = title[:-1]
+			movie_links_scraper = universalscrapers.scrape_movie(title, year, '')
+			movie_links_scraper = movie_links_scraper()
+			pDialog.update((index / count) * 100, "Scraping Movie {} of {}".format(count, index), title)
+			for links in movie_links_scraper:
+				Scrapers_Run += 1
+				pDialog.update((index / count) * 100, "Scraping Movie {} of {}".format(count, index), title + ' | '+str(int(Scrapers_Run))+'/'+str(len(No_of_scrapers)))	
+	get_scraper_results()
+		
+def tmdb_tv_shows(html):		
+	match = re.findall('<div class="info_wrapper">.+?href="(.+?)".+?alt="(.+?)"',html,re.DOTALL)
+	
 def single_test(count, index):
 	if count==5:
 		pass
@@ -283,8 +338,8 @@ def single_test(count, index):
 		Scrapers_Run = 0
 		Movies = movies[count]
 		tv_shows = shows[count]
-		pDialog.create('universalscrapers Testing mode active', 'please wait')
-		if dialog.yesno("universalscrapers Testing Mode", 'Run next Movie?',Movies['title']+' ('+Movies['year']+')'):
+		pDialog.create('Universalscrapers Testing mode active', 'please wait')
+		if dialog.yesno("Universalscrapers Testing Mode", 'Run next Movie?',Movies['title']+' ('+Movies['year']+')'):
 			movie_links_scraper = universalscrapers.scrape_movie(Movies['title'], Movies['year'], Movies['imdb'])
 			movie_links_scraper = movie_links_scraper()
 			pDialog.update((index / num_shows) * 100, "Scraping Movie {} of {}".format(index, num_shows), Movies['title'])
@@ -293,7 +348,7 @@ def single_test(count, index):
 				Scrapers_Run += 1
 				pDialog.update((index / num_shows) * 100, "Scraping Movie {} of {}".format(index, num_shows), Movies['title'] + ' | '+str(int(Scrapers_Run))+'/'+str(len(No_of_scrapers)))	
 		Scrapers_Run = 0
-		if dialog.yesno("universalscrapers Testing Mode", 'Would you like to run a tv show?',
+		if dialog.yesno("Universalscrapers Testing Mode", 'Would you like to run a tv show?',
 		tv_shows['title']+' ('+tv_shows['year']+') S'+tv_shows['season']+'E'+tv_shows['episode']):
 			episode_links_scraper = universalscrapers.scrape_episode(tv_shows['title'], tv_shows['show_year'], tv_shows['year'], tv_shows['season'], tv_shows['episode'], tv_shows['imdb'],'')
 			episode_links_scraper = episode_links_scraper()
@@ -310,7 +365,7 @@ def single_test(count, index):
 				
 def full_test():
 	index = 0
-	pDialog.create('universalscrapers Testing mode active', 'please wait')
+	pDialog.create('Universalscrapers Testing mode active', 'please wait')
 	for item in movies:
 		Scrapers_Run = 0
 		if pDialog.iscanceled():

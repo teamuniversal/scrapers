@@ -1,6 +1,7 @@
 import re
 import requests
-import xbmc,xbmcaddon,time
+import xbmc,xbmcaddon
+import time
 import urllib
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log
@@ -66,7 +67,7 @@ class cooltv(Scraper):
                     
                     frame = re.compile('<iframe.+?src="(.+?)"',re.DOTALL).findall(link)
                     for frame_link in frame:
-                        self.sources.append({'source':'Openload','quality': 'DVD','scraper': self.name,'url': frame_link,'direct': False})
+                        self.sources.append({'source':'Openload','quality': 'Unknown','scraper': self.name,'url': frame_link,'direct': False})
                     
 
                     cool_links = re.compile('"dwn-box".+?ref="(.+?)" rel="nofollow">(.+?)<span',re.DOTALL).findall(link)
@@ -82,7 +83,10 @@ class cooltv(Scraper):
                         count +=1    
                         self.sources.append({'source':'Direct','quality': res,'scraper': self.name,'url': vid_url,'direct': True})
             if dev_log=='true':
-                end_time = time.time() - self.start_time
+                end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year, season='',episode='')    
         except:
             pass
+
+#cooltv().scrape_episode('the flash','2014','','1','1','','')
+
