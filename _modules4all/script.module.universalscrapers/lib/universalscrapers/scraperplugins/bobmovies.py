@@ -33,7 +33,7 @@ class bobmovies(Scraper):
                     continue
                 self.get_source(url,title,year,'','',start_time)
                         
-            print self.sources
+            return self.sources
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)

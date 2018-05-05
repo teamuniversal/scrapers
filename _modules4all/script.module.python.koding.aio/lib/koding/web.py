@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-# 
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -22,6 +19,7 @@ import time
 import urllib
 import xbmc
 import xbmcgui
+import xbmcvfs
 from systemtools import Python_Version
 #----------------------------------------------------------------    
 # TUTORIAL #
@@ -31,9 +29,9 @@ Clean a url, removes whitespaces and common buggy formatting when pulling from w
 
 CODE: Cleanup_URL(url)
 
-    AVAILABLE PARAMS:
+AVAILABLE PARAMS:
         
-        (*) url   -  This is the main url you want cleaned up.
+    (*) url   -  This is the main url you want cleaned up.
 
 EXAMPLE CODE:
 raw_url = '" http://test.com/video/"/'
@@ -74,13 +72,11 @@ koding.Delete_Cookies(filename='google')
 ~"""
     from addons     import Addon_Info
     Addon_Version = Addon_Info(id='version')
-    Addon_Profile = xbmc.translatePath(Addon_Info(id='profile'))
+    Addon_Profile = Addon_Info(id='profile')
     Cookie_File   = os.path.join(Addon_Profile,'cookies',filename)
-    try:
-        if os.path.exists(Cookie_File):
-            os.remove(Cookie_File)
+    if xbmcvfs.delete(Cookie_File):
         return True
-    except:
+    else:
         return False
 #----------------------------------------------------------------    
 # TUTORIAL #
@@ -104,12 +100,16 @@ AVAILABLE PARAMS:
 
 EXAMPLE CODE:
 src = 'http://noobsandnerds.com/portal/Bits%20and%20bobs/Documents/user%20guide%20of%20the%20gyro%20remote.pdf'
-dst = xbmc.translatePath('special://home/remote.pdf')
+dst = 'special://home/remote.pdf'
 dp = xbmcgui.DialogProgress()
 dp.create('Downloading File','Please Wait')
 koding.Download(src,dst,dp)
-dialog.ok('[COLOR gold]DOWNLOAD COMPLETE[/COLOR]','Your download is complete, please check your home Kodi folder. There should be a new file called remote.pdf - you can delete this if you want.')
+dialog.ok('DOWNLOAD COMPLETE','Your download is complete, please check your home Kodi folder. There should be a new file called remote.pdf.')
+dialog.ok('DELETE FILE','Click OK to delete the downloaded file.')
+xbmcvfs.delete(dst)
 ~"""
+    from filetools import Physical_Path
+    dest = Physical_Path(dest)
     status = Validate_Link(url,timeout)
     if status >= 200 and status < 400:
         if Python_Version() < 2.7 and url.startswith('https'):
@@ -161,6 +161,7 @@ AVAILABLE PARAMS:
     (*) url  -  This is the url you want to grab the extension from
 
 EXAMPLE CODE:
+dialog.ok('ONLINE FILE','We will now try and get the extension of the file found at this URL:','','[COLOR=dodgerblue]http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4[/COLOR]')
 url_extension = koding.Get_Extension('http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4')
 dialog.ok('FILE EXTENSION','The file extension of this Big Buck Bunny sample is:','','[COLOR=dodgerblue]%s[/COLOR]'%url_extension)
 ~"""
@@ -218,7 +219,7 @@ AVAILABLE PARAMS:
     proxies = {"http":"http://10.10.1.10:3128","htts":"https://10.10.1.10:3128"}
 
 EXAMPLE CODE:
-dialog.ok('[COLOR gold]OPEN FORUM PAGE[/COLOR]','We will attempt to open the noobsandnerds forum page and return the contents. You will now be asked for your forum credentials.')
+dialog.ok('OPEN FORUM PAGE','We will attempt to open the noobsandnerds forum page and return the contents. You will now be asked for your forum credentials.')
 myurl = 'http://noobsandnerds.com/support/index.php'
 username = koding.Keyboard('ENTER USERNAME')
 password = koding.Keyboard('ENTER PASSWORD')
@@ -234,15 +235,16 @@ koding.Text_Box('CONTENTS OF WEB PAGE',url_contents)
     import xbmc
     import xbmcaddon
 
-    from __init__   import converthex, dolog, Encryption, ADDON_ID, LOGIN, FORUM, USERNAME, PASSWORD, KODI_VER
+    from __init__   import converthex, dolog, ADDON_ID, KODI_VER
     from addons     import Addon_Info
     from filetools  import Text_File
 
     Addon_Version = Addon_Info(id='version')
-    Addon_Profile = xbmc.translatePath(Addon_Info(id='profile'))
+    Addon_Profile = Addon_Info(id='profile')
     Cookie_Folder = os.path.join(Addon_Profile,'cookies')
-    if not os.path.exists(Cookie_Folder):
-        os.makedirs(Cookie_Folder)
+    xbmc.log(Cookie_Folder,2)
+    if not xbmcvfs.exists(Cookie_Folder):
+        xbmcvfs.mkdirs(Cookie_Folder)
 
     if cookiejar == None:
         Cookie_Jar = os.path.join(Cookie_Folder,'cookiejar')
@@ -251,33 +253,24 @@ koding.Text_Box('CONTENTS OF WEB PAGE',url_contents)
     
     my_cookies = None
     if cookies:
-        if os.path.exists(Cookie_Jar):
+        if xbmcvfs.exists(Cookie_Jar):
             try:
-                with open(Cookie_Jar, 'rb') as f:
-                    my_cookies = pickle.load(f)
+                openfile = xbmcvfs.File(Cookie_Jar)
+                f = openfile.read()
+                openfile.close()
+                my_cookies = pickle.load(f)
             except:
                 my_cookies = None
 
 # If the payload is empty we split the params
     if len(payload) == 0:
 
-# If the url sent through is not http then we presume it's hitting the NaN page
-        if not url.startswith(converthex('68747470')):
-            NaN_URL = True
-            args = url
-            post_type = 'post'
-            url = converthex('687474703a2f2f6e6f6f6273616e646e657264732e636f6d2f43505f53747566662f6c6f67696e5f74657374696e672e7068703f753d257326703d257326663d257326613d257326763d2573266b3d257326653d2573') % (USERNAME, PASSWORD, FORUM, ADDON_ID, Addon_Version, KODI_VER, args)
-        else:
-            NaN_URL = False
         if '?' in url:
             url, args = url.split('?')
             args = args.split('&')
             for item in args:
                 var, data = item.split('=')
-                if NaN_URL:
-                    payload[var] = Encryption('e', data)
-                else:
-                    payload[var] = data
+                payload[var] = data
 
     dolog('PAYLOAD: %s'%payload)
 
@@ -297,8 +290,9 @@ koding.Text_Box('CONTENTS OF WEB PAGE',url_contents)
         content = r.text.encode('utf-8')
         dolog('content: %s'%content)
         if cookies:
-            with open(Cookie_Jar, 'wb') as f:
-                pickle.dump(r.cookies, f)
+            openfile = xbmcvfs.File(Cookie_Jar,'wb')
+            pickle.dump(r.cookies, openfile)
+            openfile.close()
         return content
     else:
         dolog('Failed to pull content for %s'%url)

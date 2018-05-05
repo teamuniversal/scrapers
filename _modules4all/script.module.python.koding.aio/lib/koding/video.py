@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-#
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -181,9 +178,9 @@ if koding.Play_Video('http://totalrevolution.tv/videos/python_koding/Browse_To_F
     xbmc.sleep(3000)
     xbmc.Player().stop()
     last_vid = Last_Played()
-    dialog.ok('[COLOR gold]VIDEO LINK[/COLOR]','The link we just played is:\n\n%s'%last_vid)
+    dialog.ok('VIDEO LINK','The link we just played is:\n\n%s'%last_vid)
 else:
-    dialog.ok('[COLOR gold]PLAYBACK FAILED[/COLOR]','Sorry this video is no longer available, please try using a different video link.')
+    dialog.ok('PLAYBACK FAILED','Sorry this video is no longer available, please try using a different video link.')
 ~"""
     from database  import DB_Query
     from filetools import DB_Path_Check
@@ -200,7 +197,7 @@ else:
         return False
 #----------------------------------------------------------------
 # TUTORIAL #
-def Link_Tester(video='', local_check=True, proxy_list=None, proxy_url='https://hidemy.name/en/proxy-list/', ip_col=0, port_col=1, table=0):
+def Link_Tester(video='', local_check=True, proxy_list=None, proxy_url='https://free-proxy-list.net/', ip_col=0, port_col=1, table=0):
     """
 Send through a link and test whether or not it's playable on other devices.
 Many links include items in the query string which lock the content down to your
@@ -251,7 +248,7 @@ AVAILABLE PARAMS:
     working one has been found you can set the url here. If using this then
     proxy_list can be left as the default (None). If you open this Link_Tester
     function with no params the defaults are setup to grab from:
-    https://hidemy.name/en/proxy-list but there is no guarantee this will always
+    free-proxy-list.net but there is no guarantee this will always
     work, the website may well change it's layout/security over time.
 
     ip_col  -  If you've sent through a proxy_url then you'll need to set a column number
@@ -268,13 +265,13 @@ AVAILABLE PARAMS:
 EXAMPLE CODE:
 vid_test = Link_Tester(video='http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
 if vid_test['status'] == 'bad_link':
-    dialog.ok('[COLOR gold]BAD LINK[/COLOR]','The link you sent through cannot even be played on this device let alone another one!')
+    dialog.ok('BAD LINK','The link you sent through cannot even be played on this device let alone another one!')
 elif vid_test['status'] == 'proxy_fail':
-    dialog.ok('[COLOR gold]PROXIES EXHAUSTED[/COLOR]','We were unable to get any working proxies, this means it\'s not possible to fully test whether this link will work on other devices.')
+    dialog.ok('PROXIES EXHAUSTED','It was not possible to get any working proxies as a result it\'s not possible to fully test whether this link will work on other devices.')
 elif vid_test['status'] == 'locked':
-    dialog.ok('[COLOR gold]NOT PLAYABLE[/COLOR]','Although you can play this link locally the tester was unable to play it when using a proxy so this is no good.')
+    dialog.ok('NOT PLAYABLE','Although you can play this link locally the tester was unable to play it when using a proxy so this is no good.')
     if vid_test['plugin_path']:
-        dialog.ok('[COLOR gold]THERE IS SOME GOOD NEWS![/COLOR]','Although the direct link for this video won\'t work on other IPs it "should" be possible to open this using the following path:\n[COLOR dodgerblue]%s[/COLOR]'%vid_test['plugin_path'])
+        dialog.ok('THERE IS SOME GOOD NEWS!','Although the direct link for this video won\'t work on other IPs it "should" be possible to open this using the following path:\n[COLOR dodgerblue]%s[/COLOR]'%vid_test['plugin_path'])
 else:
     dialog.ok('WORKING!!!','Congratulations this link can be resolved and added to your playlist.')
 ~"""
@@ -402,8 +399,11 @@ AVAILABLE PARAMS:
     selection window, by default it's set to "Stream Selection"
 
 EXAMPLE CODE:
+dialog.ok('M3U SELECTOR','We will now call this function using the following url:','','[COLOR dodgerblue]http://totalrevolution.tv/videos/playlists/youtube.m3u[/COLOR]')
+
 # This example uses YouTube plugin paths but any playable paths will work
 vid = koding.M3U_Selector(url='http://totalrevolution.tv/videos/playlists/youtube.m3u')
+
 
 # Make sure there is a valid link returned
 if vid:
@@ -503,7 +503,7 @@ if vid:
         return False
 #----------------------------------------------------------------
 # TUTORIAL #
-def Play_Video(video,showbusy=True,content='video',ignore_dp=False,timeout=10, item=None, player=xbmc.Player()):
+def Play_Video(video,showbusy=True,content='video',ignore_dp=False,timeout=10, item=None, player=xbmc.Player(), resolver=None):
     """
 This will attempt to play a video and return True or False on
 whether or not playback was successful. This function is similar
@@ -553,7 +553,13 @@ AVAILABLE PARAMS:
     the auto-generation. If anything else sent through no metadata will be set,
     you would use this option if you've already set metadata in a previous function.
 
+    player  -  By default this is set to xbmc.Player() but you can send through
+    a different class/function if required.
 
+    resolver  -  By default this is set to urlresolver but if you prefer to use
+    your own custom resolver then just send through that class when calling this
+    function and the link sent through will be resolved by your custom resolver.
+    
 EXAMPLE CODE:
 isplaying = koding.Play_Video('http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
 if isplaying:
@@ -564,7 +570,9 @@ else:
 ~"""
 
     xbmc.log('### ORIGINAL VIDEO: %s'%video)
-    import urlresolver
+    if not resolver:
+        import urlresolver
+        resolver = urlresolver
     try:    import simplejson as json
     except: import json
 
@@ -631,7 +639,7 @@ else:
             try:
                 xbmc.log('Attempting to resolve via urlresolver module')
                 xbmc.log('video = %s'%video)
-                hmf = urlresolver.HostedMediaFile(url=video, include_disabled=False, include_universal=True)
+                hmf = resolver.HostedMediaFile(url=video, include_disabled=False, include_universal=True)
                 if hmf.valid_url() == True:
                     video = hmf.resolve()
                     xbmc.log('### VALID URL, RESOLVED: %s'%video)
@@ -652,7 +660,7 @@ else:
         try:
             xbmc.log('Attempting to resolve via urlresolver module')
             xbmc.log('video = %s'%video)
-            hmf = urlresolver.HostedMediaFile(url=video, include_disabled=False, include_universal=True)
+            hmf = resolver.HostedMediaFile(url=video, include_disabled=False, include_universal=True)
             if hmf.valid_url() == True:
                 video = hmf.resolve()
                 xbmc.log('### VALID URL, RESOLVED: %s'%video)

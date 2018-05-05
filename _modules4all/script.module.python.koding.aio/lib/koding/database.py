@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-# 
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -27,6 +24,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcvfs
 from __init__ import Caller
+from filetools import Physical_Path
 
 # Put this in a try statement, when called from a service it will throw an error otherwise
 try:
@@ -36,8 +34,8 @@ try:
         ADDON_ID = Caller()
 
     AddonVersion     = xbmcaddon.Addon(id=ADDON_ID).getAddonInfo('version')
-    profile_path     = xbmc.translatePath(xbmcaddon.Addon(id=ADDON_ID).getAddonInfo('profile'))
-    addon_db_path    = os.path.join(profile_path,'database.db')
+    profile_path     = xbmcaddon.Addon(id=ADDON_ID).getAddonInfo('profile')
+    addon_db_path    = Physical_Path(os.path.join(profile_path,'database.db'))
 except:
     pass
 
@@ -52,8 +50,9 @@ def _connect_to_db():
             d[col[0]] = row[idx]
         return d
 
-    xbmcvfs.mkdir(profile_path)
+    xbmcvfs.mkdirs(profile_path)
     db_location = os.path.join(profile_path.decode('utf-8'),'database.db')
+    db_location = Physical_Path(db_location)
     dbcon = database.connect(db_location)
     dbcon.row_factory = dict_factory
     dbcur = dbcon.cursor()
@@ -100,7 +99,7 @@ final_results = ''
 for item in results:
     final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
 koding.Text_Box('DB RESULTS', final_results)
-os.remove(addon_db_path)
+koding.Remove_Table('test_table')
 ~"""
     global dbcon
     sql_string = "INSERT INTO %s (" % table
@@ -158,7 +157,7 @@ final_results = ''
 for item in results:
     final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
 koding.Text_Box('DB RESULTS', 'Below are details of the items pulled from our db:\n\n%s'%final_results)
-os.remove(addon_db_path)
+koding.Remove_Table('test_table')
 ~"""
     dbcur, dbcon = _connect_to_db()
     sql_string = "INSERT INTO %s (" % table
@@ -207,7 +206,7 @@ final_results = ''
 for item in results:
     final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
 koding.Text_Box('DB RESULTS', final_results)
-os.remove(addon_db_path)
+koding.Remove_Table('test_table')
 ~"""
     sql_string = "CREATE TABLE IF NOT EXISTS %s (" % table
     columns = spec.get("columns", {})
@@ -253,6 +252,7 @@ db_query = koding.DB_Query(db_path=dbpath, query='SELECT * FROM %s WHERE addonID
 koding.Text_Box('DB SEARCH RESULTS',str(db_query))
 ~"""
     db_dict = []
+    db_path = Physical_Path(db_path)
     con = database.connect(db_path)
     cur = con.cursor()
     
@@ -318,7 +318,7 @@ final_results = ''
 for item in results:
     final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
 koding.Text_Box('DB RESULTS', final_results)
-os.remove(addon_db_path)
+koding.Remove_Table('test_table')
 ~"""
     try:
         return _execute_db_string("SELECT * FROM %s" % table)
@@ -354,7 +354,7 @@ final_results = ''
 for item in results:
     final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
 koding.Text_Box('DB CONTENTS', final_results)
-os.remove(addon_db_path)
+koding.Remove_Table('test_table')
 ~"""
     if spec == None:
         return Get_All_From_Table()
@@ -408,7 +408,7 @@ final_results = ''
 for item in results:
     final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
 koding.Text_Box('NEW DB CONTENTS', final_results)
-os.remove(addon_db_path)
+koding.Remove_Table('test_table')
 ~"""
     global dbcon
     sql_string = "DELETE FROM %s WHERE " % table
@@ -447,8 +447,8 @@ AVAILABLE PARAMS:
     (*) table  -  This is the name of the table you want to permanently delete.
 
 EXAMPLE CODE:
-dialog.ok('[COLOR gold]REMOVE TABLE[/COLOR]','It\'s a bit pointless doing this as you can\'t physically see what\'s happening so you\'ll just have to take our word it works!')
-koding.Remove_Table('my_test_table')
+dialog.ok('REMOVE TABLE','It\'s a bit pointless doing this as you can\'t physically see what\'s happening so you\'ll just have to take our word it works!')
+koding.Remove_Table('test_table')
 ~"""
     sql_string = "DROP TABLE IF EXISTS %s;" % table
     _execute_db_string(sql_string)

@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-# 
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -21,28 +18,31 @@ import os
 import sys
 import xbmc
 import xbmcgui
+import xbmcvfs
 from systemtools import Last_Error
-
+from filetools import Physical_Path
 dialog      = xbmcgui.Dialog()
-koding_path = xbmc.translatePath("special://home/addons/script.module.python.koding.aio")
+koding_path = Physical_Path("special://home/addons/script.module.python.koding.aio")
 #----------------------------------------------------------------    
 # TUTORIAL #
 def Browse_To_Folder(header='Select the folder you want to use', path = 'special://home'):
     """
-Browse to a folder and return the path
+As the title suggests this will bring up a dialog that allows the user to browse to a folder
+and the path is then returned.
 
-CODE: koding.Browse_To_Folder([header, path])
+IMPORTANT: Do not confuse this with the Browse_To_File function
+
+CODE: Browse_To_Folder(header, path)
 
 AVAILABLE PARAMS:
+header  -  As the name suggests this is a string to be used for the header/title
+of the window. The default is "Select the folder you want to use".
 
-    header  -  As the name suggests this is a string to be used for the header/title
-    of the window. The default is "Select the folder you want to use".
-
-    path    -  Optionally you can add a default path for the browse start folder.
-    The default start position is the Kodi HOME folder.
+path    -  Optionally you can add a default path for the browse start folder.
+The default start position is the Kodi HOME folder.
 
 EXAMPLE CODE:
-folder = koding.Browse_To_Folder('Choose a folder you want to use')
+folder = koding.Browse_To_Folder(header='Choose a folder you want to use', path='special://home/userdata')
 dialog.ok('FOLDER DETAILS','Folder path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
 ~"""    
     text = dialog.browse(type=3, heading=header, shares='files', useThumbs=False, treatAsFolder=False, defaultt=path)
@@ -72,10 +72,10 @@ AVAILABLE PARAMS:
     other archive files. By default this is set to False.
 
 EXAMPLE CODE:
-dialog.ok('[COLOR gold]BROWSE TO FILE 1[/COLOR]','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]False[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
+dialog.ok('BROWSE TO FILE 1','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]False[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
 folder = koding.Browse_To_File(header='Choose a file you want to use', path='special://home/addons')
 dialog.ok('FOLDER DETAILS','File path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
-dialog.ok('[COLOR gold]BROWSE TO FILE 2[/COLOR]','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]True[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
+dialog.ok('BROWSE TO FILE 2','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]True[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
 folder = koding.Browse_To_File(header='Choose a file you want to use', path='special://home/addons', browse_in_archives=True)
 dialog.ok('FOLDER DETAILS','File path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
 ~"""
@@ -163,7 +163,7 @@ else:
         return True        
 #----------------------------------------------------------------    
 # TUTORIAL #
-def Custom_Dialog(pos='center', dialog='Text', size='700x500', button_width=200,\
+def Custom_Dialog(pos='center', dialog='Text', size='700x500', button_width=200, icon='', fanart='',\
     header='Disclaimer', main_content='Add some text here', buttons=['Decline','Agree'],\
     header_color='gold', text_color='white', background='000000', transparency=100,\
     highlight_color='gold', button_color_focused='4e91cf', button_trans_focused=100,\
@@ -198,6 +198,14 @@ AVAILABLE PARAMS:
     button_width  -  This is sent through as an integer and is the width you
     want your buttons to be. By default this is set to 200 which is quite large
     but looks quite nice if using only 2 or 3 buttons.
+
+    icon  -  If sent through this will be shown in the top right corner of your dialog,
+    make sure your first few lines of text aren't too long or they will overlap on top
+    of the image which is 150x150 pixels.
+    
+    fanart  -  If sent through this will be the background image of your custom dialog.
+    Ideal if you want to only show an image, any text sent through will be overlayed
+    on top of this fanart.
 
     header  -  Sent through as a string this is the header shown in the dialog.
     The default is 'Disclaimer'.
@@ -248,7 +256,7 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
 ~"""
     skin_path   = os.path.join(koding_path,"resources","skins","Default","720p")
     ACTION      = -1
-# Convert the transparency percentage to hex
+    # Convert the transparency percentage to hex
     transparency = float(transparency) / 100 * 255
     transparency = hex(int(transparency)).split('x')[1]
     button_trans_focused = float(button_trans_focused) / 100 * 255
@@ -256,22 +264,29 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
     button_trans_nonfocused = float(button_trans_nonfocused) / 100 * 255
     button_trans_nonfocused = hex(int(button_trans_nonfocused)).split('x')[1]
 
-# Work out the dialog dimensions
+    # Work out the dialog dimensions
     if size == 'fullscreen':
         dialog_width = '1280'
         dialog_height = '720'
     else:
         dialog_width, dialog_height = size.split('x')  
 
+    # Set the background to black image if not set otherwise remove background/transparency
+    if fanart != '' and xbmcvfs.exists(fanart):
+        background = ''
+        transparency = ''
+    else:
+        fanart = 'DialogBack.png'
+
     button_count    = len(buttons)
     buttons_per_row = (int(dialog_width)-25) / (button_width+25)
     if buttons_per_row > button_count:
         buttons_per_row = button_count
 
-# work out the number of rows, round up if a float
+    # work out the number of rows, round up if a float
     button_rows     = int(button_count/buttons_per_row) + (button_count % buttons_per_row > 0)
 
-# Work out the positioning of the dialog
+    # Work out the positioning of the dialog
     if pos == 'center':
         posx = str( (1280 - int(dialog_width)) / 2)
         posy = str( (720 - int(dialog_height)) / 2)
@@ -283,19 +298,20 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
     text_height = str( (int(dialog_height)-(50*(button_rows+1)))-70 )
     scroll_pos  = str( int(text_width)+32 )
     button_max  = int(dialog_height)-30
+    iconx       = str(int(text_width)-150)
 
-# Work out the button positions
+    # Work out the button positions
     if dialog == 'Text':
         button_spacing  = ( int(dialog_width)-(buttons_per_row*button_width) ) / (buttons_per_row+1)
         buttons_dict    = {}
         counter         = 1
         row             = 1
-    # Create a dictionary of button positioning
+        # Create a dictionary of button positioning
         for button in buttons:
             if counter > buttons_per_row:
                 counter = 1
                 row += 1
-        # If starting a new line reset the values
+            # If starting a new line reset the values
             if counter > buttons_per_row or counter == 1:
                 current_pos = button_spacing
                 counter += 1
@@ -305,7 +321,7 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
 
             buttons_dict[button] = [str(current_pos),row]
 
-# Set the dialog template name and new temporary "live" XML
+    # Set the dialog template name and new temporary "live" XML
     dialog_type = dialog.capitalize()+'.xml'
     dialog_new  = 'temp.xml'
     dialog_path = os.path.join(skin_path,dialog_type)
@@ -320,14 +336,14 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
         else:
             onup = button_num-buttons_per_row
 
-    # If button is on the last row we set down to scrollbar
+        # If button is on the last row we set down to scrollbar
         if buttons_dict[button][1] == button_rows:
             ondown = 99
-    # Otherwise set down to the item on row below
+        # Otherwise set down to the item on row below
         elif buttons_dict[button][1] != button_rows:
             ondown = button_num+buttons_per_row
 
-    # Set the vertical position (y) of the buttons
+        # Set the vertical position (y) of the buttons
         button_y = str( int(text_height)+(buttons_dict[button][1]*50)+40 )
         if ( int(text_height) < 200 ) or ( int(button_y) > button_max ):
             if size != 'fullscreen':
@@ -361,7 +377,7 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
         button_num += 1
         counter    += 1
 
-# Grab contents of the template and replace with our new values
+    # Grab contents of the template and replace with our new values
     with open(dialog_path, 'r') as content_file:
         content = content_file.read()
         content = content.replace('dialog_width',dialog_width)\
@@ -370,12 +386,15 @@ dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of thi
             .replace('text_height',text_height)\
             .replace('pos_x',posx)\
             .replace('pos_y',posy)\
+            .replace('PK_Icon',icon)\
+            .replace('PK_I_X',iconx)\
+            .replace('PK_Fanart',fanart)\
             .replace('PK_Transparency',transparency)\
             .replace('PK_Color',background)\
             .replace('PK_Text_Color',text_color)\
             .replace('PK_Header_Color',header_color)\
             .replace('<!-- buttons -->',buttons_code)
-# Create the new temp "live" XML
+    # Create the new temp "live" XML
     myfile = open(temp_path,'w')
     myfile.write(content)
     myfile.close()

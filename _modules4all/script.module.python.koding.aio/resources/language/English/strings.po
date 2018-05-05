@@ -1,6 +1,6 @@
 # Addon Name: Python Koding AIO
 # Addon id: script.module.python.koding.aio
-# Addon Provider: whufclee
+# Addon Provider: TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 msgid ""
 msgstr ""
 "Project-Id-Version: script.module.python.koding.aio\n"

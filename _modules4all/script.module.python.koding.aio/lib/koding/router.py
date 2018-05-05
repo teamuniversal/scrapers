@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 
-"""
-    router.py --- functions implementing a routing function
-    Copyright (C) 2017, Midraal
+# script.module.python.koding.aio
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+# Python Koding AIO is licensed under a
+# Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+# You should have received a copy of the license along with this
+# work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
+# Please make sure you've read and understood the license, this code can NOT be used commercially
+# and it can NOT be modified and redistributed. If you're found to be in breach of this license
+# then any affected add-ons will be blacklisted and will not be able to work on the same system
+# as any other add-ons which use this code. Thank you for your cooperation.
+
 import directory
 import tutorials
 import video
@@ -27,7 +24,6 @@ dialog       = xbmcgui.Dialog()
 HOME         = xbmc.translatePath('special://home')
 master_modes = {
 # Required for certain koding functions to work
-    "populate_list":    {'function': directory.Populate_List, 'args': ["url","start_point","end_point","separator","skip"]},
     "play_video":       {'function': video.Play_Video, 'args': ["url"]},
     "show_tutorial":    {'function': tutorials.Show_Tutorial, 'args': ["url"]},
     "tutorials":        {'function': tutorials.Grab_Tutorials, 'args': []},

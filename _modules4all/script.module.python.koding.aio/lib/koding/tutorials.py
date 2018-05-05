@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-# 
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -25,8 +22,9 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
+import xbmcvfs
 
-from directory      import Add_Dir, Grab_Params
+from directory      import Add_Dir
 from filetools      import Text_File
 from vartools       import Find_In_Text
 from guitools       import Text_Box, Show_Busy, Keyboard
@@ -35,18 +33,19 @@ from video          import Play_Video
 from web            import Open_URL
 
 dialog     = xbmcgui.Dialog()
-py_path    = xbmc.translatePath('special://home/addons/script.module.python.koding.aio/lib/koding')
+py_path    = 'special://home/addons/script.module.python.koding.aio/lib/koding'
 video_base = 'http://totalrevolution.tv/videos/python_koding/'
 #----------------------------------------------------------------
 def Grab_Tutorials():
     """ internal command ~"""
     import re
     full_array = []
+    dirs,files = xbmcvfs.listdir(py_path)
 # Check all the modules for functions with tutorial info
-    for file in os.listdir(py_path):
+    for file in files:
         file_path = os.path.join(py_path,file)
-        if not os.path.isdir(file_path) and file.endswith('.py'):
-            content = Text_File(file_path,'r')
+        if file.endswith('.py') and file != 'tutorials.py':
+            content = Text_File(file_path,'r').replace('\r','')
             # content_array = re.compile('# TUTORIAL #\ndef (.+?)\(').findall(content)
             content_array = Find_In_Text(content=content, start='# TUTORIAL #\ndef ', end='\(', show_errors=False)
             if content_array:
@@ -71,7 +70,7 @@ def Show_Tutorial(url):
     """ internal command ~"""
     name, filepath = url.split('~')
     filepath = urllib.unquote(filepath)
-    readfile = Text_File(filepath,'r')
+    readfile = Text_File(filepath,'r').replace('\r','')
     try:
         raw_find = Find_In_Text(content=readfile, start='# TUTORIAL #\ndef %s' % name,end='~"""')[0]
     except:

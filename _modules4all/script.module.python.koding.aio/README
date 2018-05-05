@@ -10,11 +10,7 @@ addon.xml - just import as you would any other module, the following code would 
     
     <import addon="script.module.python.koding.aio" version="0.1"/>
 
-default.py (or whatever your initial opening py document is called) - all you need is to import koding.py
-
-IF you're using the special features which hook into the noobsandnerds framework then you will also need to add the following line in your default.py file. Please note this is not for the majority of users, it is only required for developers who wish to use NaN as for their support and would like access to their own framework which has some excellent features.
-
-	koding.User_Info() - This will create a cookie file containing cached details. It's important you do this somewhere at the start of your code as it will initialise your variables on first run.
+default.py (or whatever your initial opening py document is called) - all you need is to import koding.
 
 ------------------------------------------------------------------------------------------
 
@@ -38,21 +34,25 @@ Return a dictionary of add-ons which match a specific genre.
 	    of genres you can enter it here and use that rather than rely on NaN categorisation.
 
 	EXAMPLE CODE:
-		dialog.ok('[COLOR gold]ADD-ON GENRES[/COLOR]','We will now list all known comedy based add-ons. If you have add-ons installed which you feel should be categorised as supplying comedy but they aren\'t then you can help tag them up correctly via the Add-on Portal at NaN.')
-		comedy_addons = koding.Addon_Genre(genre='comedy')
-		if comedy_addons:
-		    my_return = 'LIST OF AVAILABLE COMEDY BASED ADD-ONS:\n\n'
+	-------------
+	dialog.ok('ADD-ON GENRES','We will now list all known comedy based add-ons. If you have add-ons installed which you feel should be categorised as supplying comedy but they aren\'t then you can help tag them up correctly via the Add-on Portal at NaN.')
+	comedy_addons = koding.Addon_Genre(genre='comedy')
+	if comedy_addons:
+	    my_return = 'LIST OF AVAILABLE COMEDY BASED ADD-ONS:\n\n'
 
-		# Convert the dictionary into a list:
-		    comedy_addons = comedy_addons.items()
-		    for item in comedy_addons:
-		        my_return += '[COLOR=gold]Name:[/COLOR] %s   |   [COLOR=dodgerblue]ID:[/COLOR] %s\n' % (item[0],item[1])
-		    koding.Text_Box('[COLOR gold]COMEDY ADD-ONS[/COLOR]',my_return)
+	# Convert the dictionary into a list:
+	    comedy_addons = comedy_addons.items()
+	    for item in comedy_addons:
+	        my_return += '[COLOR=gold]Name:[/COLOR] %s   |   [COLOR=dodgerblue]ID:[/COLOR] %s\n' % (item[0],item[1])
+	    koding.Text_Box('[COLOR gold]COMEDY ADD-ONS[/COLOR]',my_return)
 
 ------------------------------------------------------------------------------------------
 
 ADD-ON ID FROM PATH:
-If you know the folder name of an add-on but want to find out the addon id (it may not necessarily be the same as folder name) then you can use this function. Even if the add-on isn't enabled on the system this will regex out the add-on id.
+If you know the folder name of an add-on but want to find out the
+addon id (it may not necessarily be the same as folder name) then
+you can use this function. Even if the add-on isn't enabled on the
+system this will regex out the add-on id.
 
 	CODE:  Get_Addon_ID(folder)
 
@@ -61,8 +61,10 @@ If you know the folder name of an add-on but want to find out the addon id (it m
 	    folder  -  This is folder name of the add-on. Just the name not the path.
 
 	EXAMPLE CODE:
-		my_id = koding.Get_Addon_ID(folder='script.module.python.koding.aio')
-		dialog.ok('ADDON ID','The add-on id found is:','[COLOR=dodgerblue]%s[/COLOR]'%my_id)
+	-------------
+	dialog.ok('ABOUT','This function allows us to pass through a folder name found in the addons folder and it will return the real id. The vast majority of add-ons use the same folder name as id but there are exceptions. Let\'s check Python Koding...')
+	my_id = koding.Get_Addon_ID(folder='script.module.python.koding.aio')
+	dialog.ok('PYTHON KODING ID','The add-on id found for this folder folder is:','[COLOR=dodgerblue]%s[/COLOR]'%my_id)
 
 ------------------------------------------------------------------------------------------
 
@@ -76,24 +78,18 @@ such as path, version, name etc.
 	            
 	    (*) id  -  This is the name of the id you want to retrieve.
 	    The list of built in id's you can use (current as of 15th April 2017)
-	    are: author, changelog, description, disclaimer, fanart. icon, id, name,
+	    are: author, changelog, description, disclaimer, fanart, icon, id, name,
 	    path, profile, stars, summary, type, version
 
 	    addon_id  -  By default this will use your current add-on id but you
 	    can access any add-on you want by entering an id in here.
 	    
 	EXAMPLE CODE:
-		dialog.ok('ADD-ON INFO','We will now try and pull name and version details for our current running add-on.')
-		version = koding.Addon_Info(id='version')
-		name = koding.Addon_Info(id='name')
-		dialog.ok('NAME AND VERSION','[COLOR=dodgerblue]Add-on Name:[/COLOR] %s' % name,'[COLOR=dodgerblue]Version:[/COLOR] %s' % version)
-
-------------------------------------------------------------------------------------------
-
-ADD-ON INSTALL:
-Sorry due to large amounts of traffic to the NaN site this function has now been removed.
-It is currently unclear on whether or not it will return. If you've used this in previous
-code please remove, although it will just silently fail and print to the log.
+	-------------
+	dialog.ok('ADD-ON INFO','We will now try and pull name and version details for our current running add-on.')
+	version = koding.Addon_Info(id='version')
+	name = koding.Addon_Info(id='name')
+	dialog.ok('NAME AND VERSION','[COLOR=dodgerblue]Add-on Name:[/COLOR] %s' % name,'[COLOR=dodgerblue]Version:[/COLOR] %s' % version)
 
 ------------------------------------------------------------------------------------------
 
@@ -102,28 +98,29 @@ Return a list of enabled or disabled add-ons found in the database.
 
 	CODE: Addon_List([enabled, inc_new])
 
-    AVAILABLE PARAMS:
-        
-        enabled  -  By default this is set to True which means you'll
-        get a list of all the enabled add-ons found in addons*.db but
-        if you want a list of all the disabled ones just set this to
-        False.
+	AVAILABLE PARAMS:
+	    
+	    enabled  -  By default this is set to True which means you'll
+	    get a list of all the enabled add-ons found in addons*.db but
+	    if you want a list of all the disabled ones just set this to
+	    False.
 
-        inc_new  -  This will also add any new add-on folders found on
-        your system that aren't yet in the database (ie ones that have
-        been recently been manually extracted but not scanned in). By
-        default this is set to False.
+	    inc_new  -  This will also add any new add-on folders found on
+	    your system that aren't yet in the database (ie ones that have
+	    been recently been manually extracted but not scanned in). By
+	    default this is set to False.
 	        
 	EXAMPLE CODE:
-		enabled_list = Addon_List(enabled=True)
-		disabled_list = Addon_List(enabled=False)
-		my_return = ''
+	-------------
+	enabled_list = Addon_List(enabled=True)
+	disabled_list = Addon_List(enabled=False)
+	my_return = ''
 
-		for item in enabled_list:
-		    my_return += '[COLOR=lime]ENABLED:[/COLOR] %s\n' % item
-		for item in disabled_list:
-		    my_return += '[COLOR=red]DISABLED:[/COLOR] %s\n' % item
-		Text_Box('ADDON STATUS',my_return)
+	for item in enabled_list:
+	    my_return += '[COLOR=lime]ENABLED:[/COLOR] %s\n' % item
+	for item in disabled_list:
+	    my_return += '[COLOR=red]DISABLED:[/COLOR] %s\n' % item
+	koding.Text_Box('ADDON STATUS',my_return)
 
 ------------------------------------------------------------------------------------------
 
@@ -136,7 +133,7 @@ service or start a service. This is designed more for if you've manually extract
 add-on into your system and it isn't yet enabled. Occasionally if the add-ons have dependencies
 which are run as services then trying to enable them can cause Kodi to freeze.
 
-	CODE: Addon_Service([addon, disable, skip_service])
+	CODE: Addon_Service([addon,disable])
 
 	AVAILABLE PARAMS:
 	    
@@ -149,20 +146,23 @@ which are run as services then trying to enable them can cause Kodi to freeze.
 	    "enable" and that will uncomment out the service item. Please note that by uncommenting
 	    the service will not automatically start - you'll need to reload the profile for that.
 
-	    skip_service  -  This function can fail if certain dependencies are
-	    run as a service, if they are causing problems you can send through
-	    the id or a list of id's which you want to disable the service for.
-	    This will comment out the service part in the addon.xml before attempting
-	    to enable the add-on. Don't forget to re-enable this if you want the service
-	    running.
+	    skip_service  -  When running the enable or disable mode you can choose to add a list of
+	    add-ons you'd like to skip the process for. Of course you may be thinking why would I send
+	    through a list of addons I want the service enabled/disabled for but then I also add them
+	    to the skip_service list to say DON'T enable/disable - it makes no sense?! Well you'd be
+	    correct that doesn't make any sense as presumably you've already filtered out the add-ons
+	    you don't want affected, this command is designed more for those who don't send through a
+	    list of add-ons and instead use the default "all" value for the addons paramater. This
+	    then makes it very easy to just skip a handful of add-on services and enable all others.
 
 	EXAMPLE CODE:
-		dialog.ok('[COLOR gold]CHECKING FOR SERVICES[/COLOR]','We will now check for all add-ons installed which contain services')
-		service_addons = Addon_Service(mode='list')
-		my_text = 'List of add-ons running as a service:\n\n'
-		for item in service_addons:
-		    my_text += item+'\n'
-		koding.Text_Box('[COLOR gold]SERVICE ADDONS[/COLOR]',my_text)
+	-------------
+	dialog.ok('CHECKING FOR SERVICES','We will now check for all add-ons installed which contain services')
+	service_addons = Addon_Service(mode='list')
+	my_text = 'List of add-ons running as a service:\n\n'
+	for item in service_addons:
+	    my_text += item+'\n'
+	koding.Text_Box('[COLOR gold]SERVICE ADDONS[/COLOR]',my_text)
 
 ------------------------------------------------------------------------------------------
 
@@ -184,12 +184,13 @@ Change or retrieve an add-on setting.
 	    can access any add-on you want by entering an id in here.
 	    
 	EXAMPLE CODE:
-		dialog.ok('ADDON SETTING','We will now try and pull the language settings for the YouTube add-on')
-		if os.path.exists(xbmc.translatePath('special://home/addons/plugin.video.youtube')):
-		    my_setting = koding.Addon_Setting(setting='youtube.language',addon_id='plugin.video.youtube')
-		    dialog.ok('YOUTUBE SETTING','[COLOR=dodgerblue]Setting name:[/COLOR] youtube.language','[COLOR=dodgerblue]Value:[/COLOR] %s' % my_setting)
-		else:
-		    dialog.ok('YOUTUBE NOT INSTALLED','Sorry we cannot run this example as you don\'t have YouTube installed.')
+	-------------
+	dialog.ok('ADDON SETTING','We will now try and pull the language settings for the YouTube add-on')
+	if os.path.exists(xbmc.translatePath('special://home/addons/plugin.video.youtube')):
+	    my_setting = koding.Addon_Setting(setting='youtube.language',addon_id='plugin.video.youtube')
+	    dialog.ok('YOUTUBE SETTING','[COLOR=dodgerblue]Setting name:[/COLOR] youtube.language','[COLOR=dodgerblue]Value:[/COLOR] %s' % my_setting)
+	else:
+	    dialog.ok('YOUTUBE NOT INSTALLED','Sorry we cannot run this example as you don\'t have YouTube installed.')
 
 ------------------------------------------------------------------------------------------
 
@@ -216,12 +217,13 @@ By default this will open the current add-on settings but if you pass through an
 	    see's it as another window being opened.
 
 	EXAMPLE CODE:
-		youtube_path = xbmc.translatePath('special://home/addons/plugin.video.youtube')
-		if os.path.exists(youtube_path):
-		    dialog.ok('YOUTUBE SETTINGS','We will now open the YouTube settings.','We will focus on category 2, setting 3 AND send a click.')
-		    koding.Open_Settings(addon_id='plugin.video.youtube',focus='2.3',click=True,stop_script=True)
-		else:
-		    dialog.ok('YOUTUBE NOT INSTALLED','We cannot run this example as it uses the YouTube add-on which has not been found on your system.')
+	-------------
+	youtube_path = xbmc.translatePath('special://home/addons/plugin.video.youtube')
+	if os.path.exists(youtube_path):
+	    dialog.ok('YOUTUBE SETTINGS','We will now open the YouTube settings.','We will focus on category 2, setting 3 AND send a click.')
+	    koding.Open_Settings(addon_id='plugin.video.youtube',focus='2.3',click=True,stop_script=True)
+	else:
+	    dialog.ok('YOUTUBE NOT INSTALLED','We cannot run this example as it uses the YouTube add-on which has not been found on your system.')
 
 ------------------------------------------------------------------------------------------
 
@@ -236,7 +238,7 @@ the db is a lot quicker there is no guarantee it won't cause
 severe problems in later versions of Kodi (this was created for v17).
 DO NOT set safe_mode to False unless you 100% understand the consequences!
 
-	CODE:  Toggle_Addons([addon, enable, safe_mode, exclude_list, new_only, refresh, update_status])
+	CODE:  Toggle_Addons([addon, enable, safe_mode, exclude_list, new_only, refresh])
 
 	AVAILABLE PARAMS:
 	    (*) addon  -  This can be a list of addon ids, one single id or
@@ -272,16 +274,16 @@ DO NOT set safe_mode to False unless you 100% understand the consequences!
 	    (disable auto updates).
 
 	EXAMPLE CODE:
-		from systemtools import Refresh
-		xbmc.executebuiltin('ActivateWindow(Videos, addons://sources/video/)')
-		xbmc.sleep(2000)
-		dialog.ok('DISABLE YOUTUBE','We will now disable YouTube (if installed)')
-		koding.Toggle_Addons(addon='plugin.video.youtube', enable=False, safe_mode=True, exclude_list=[], new_only=False)
-		koding.Refresh('container')
-		xbmc.sleep(2000)
-		dialog.ok('ENABLE YOUTUBE','When you click OK we will enable YouTube (if installed)')
-		koding.Toggle_Addons(addon='plugin.video.youtube', enable=True, safe_mode=True, exclude_list=[], new_only=False)
-		koding.Refresh('container')
+	-------------
+	xbmc.executebuiltin('ActivateWindow(Videos, addons://sources/video/)')
+	xbmc.sleep(2000)
+	dialog.ok('DISABLE YOUTUBE','We will now disable YouTube (if installed)')
+	koding.Toggle_Addons(addon='plugin.video.youtube', enable=False, safe_mode=True, exclude_list=[], new_only=False)
+	koding.Refresh('container')
+	xbmc.sleep(2000)
+	dialog.ok('ENABLE YOUTUBE','When you click OK we will enable YouTube (if installed)')
+	koding.Toggle_Addons(addon='plugin.video.youtube', enable=True, safe_mode=True, exclude_list=[], new_only=False)
+	koding.Refresh('container')
 
 ------------------------------------------------------------------------------------------
 
@@ -307,8 +309,9 @@ AVAILABLE PARAMS:
 ------------------------------------------------------------------------------------------
 
 CALLER(S) OF FUNCTION:
-Return the add-on id or path of the script which originally called your function. If it's been called through
-a number of add-ons/scripts you can grab a list of paths that have been called.
+Return the add-on id or path of the script which originally called
+your function. If it's been called through a number of add-ons/scripts
+you can grab a list of paths that have been called.
 
 	CODE: Caller(my_return)
 
@@ -320,29 +323,30 @@ a number of add-ons/scripts you can grab a list of paths that have been called.
 	        
 	        'addons': Return a list of all add-on id's called to get to this function.
 	        
-	        'path'  : Return the full path to the script which called this funciton.
+	        'path'  : Return the full path to the script which called this function.
 	        
 	        'paths' : Return a list of paths which have been called to get to this
 	        final function.
 	        
 	EXAMPLE CODE:
-		my_addon = koding.Caller(my_return='addon')
-		my_addons = koding.Caller(my_return='addons')
-		my_path = koding.Caller(my_return='path')
-		my_paths = koding.Caller(my_return='paths')
+	-------------
+	my_addon = koding.Caller(my_return='addon')
+	my_addons = koding.Caller(my_return='addons')
+	my_path = koding.Caller(my_return='path')
+	my_paths = koding.Caller(my_return='paths')
 
-		dialog.ok('ADD-ON ID', 'Addon id you called this function from:','[COLOR=dodgerblue]%s[/COLOR]' % my_addon)
-		dialog.ok('SCRIPT PATH', 'Script which called this function:','[COLOR=dodgerblue]%s[/COLOR]' % my_path)
+	dialog.ok('ADD-ON ID', 'Addon id you called this function from:','[COLOR=dodgerblue]%s[/COLOR]' % my_addon)
+	dialog.ok('SCRIPT PATH', 'Script which called this function:','[COLOR=dodgerblue]%s[/COLOR]' % my_path)
 
-		addon_list = 'Below is a list of add-on id\'s which have been called to get to this final piece of code:\n\n'
-		for item in my_addons:
-		    addon_list += item+'\n'
-		koding.Text_Box('ADD-ON LIST', addon_list)
-		koding.Sleep_If_Window_Active(10147)
-		path_list = 'Below is a list of scripts which have been called to get to this final piece of code:\n\n'
-		for item in my_paths:
-		    path_list += item+'\n'
-		koding.Text_Box('ADD-ON LIST', path_list)
+	addon_list = 'Below is a list of add-on id\'s which have been called to get to this final piece of code:\n\n'
+	for item in my_addons:
+	    addon_list += item+'\n'
+	koding.Text_Box('ADD-ON LIST', addon_list)
+	koding.Sleep_If_Window_Active(10147)
+	path_list = 'Below is a list of scripts which have been called to get to this final piece of code:\n\n'
+	for item in my_paths:
+	    path_list += item+'\n'
+	koding.Text_Box('ADD-ON LIST', path_list)
 
 ------------------------------------------------------------------------------------------
 
@@ -371,11 +375,12 @@ will return the correct results.
 	    to the repo url will take before timing out and returning False.
 
 	EXAMPLE CODE:
-		repo_status = Check_Repo('repository.noobsandnerds',show_busy=True,timeout=10)
-		if repo_status:
-		    dialog.ok('REPO STATUS','The repository modules4all is: [COLOR=lime]ONLINE[/COLOR]')
-		else:
-		    dialog.ok('REPO STATUS','The repository modules4all is: [COLOR=red]OFFLINE[/COLOR]')
+	-------------
+	repo_status = Check_Repo('special://xbmc',show_busy=False,timeout=10)
+	if repo_status:
+	    dialog.ok('REPO STATUS','The repository modules4all is: [COLOR=lime]ONLINE[/COLOR]')
+	else:
+	    dialog.ok('REPO STATUS','The repository modules4all is: [COLOR=red]OFFLINE[/COLOR]')
 
 ------------------------------------------------------------------------------------------
 
@@ -397,12 +402,13 @@ the setting as blank it will return a dictionary of all default settings.
 	    reset the current value to the default.
 
 	EXAMPLE CODE:
-		youtube_path = xbmc.translatePath('special://home/addons/plugin.video.youtube')
-		if os.path.exists(youtube_path):
-		    my_value = koding.Default_Setting(setting='youtube.region', addon_id='plugin.video.youtube', reset=False)
-		    dialog.ok('YOUTUBE SETTING','Below is a default setting for plugin.video.youtube:','Setting: [COLOR=dodgerblue]youtube.region[/COLOR]','Value: [COLOR=dodgerblue]%s[/COLOR]' % my_value)
-		else:
-		    dialog.ok('YOUTUBE NOT INSTALLED','We cannot run this example as it uses the YouTube add-on which has not been found on your system.')
+	-------------
+	youtube_path = xbmc.translatePath('special://home/addons/plugin.video.youtube')
+	if os.path.exists(youtube_path):
+	    my_value = koding.Default_Setting(setting='youtube.region', addon_id='plugin.video.youtube', reset=False)
+	    dialog.ok('YOUTUBE SETTING','Below is a default setting for plugin.video.youtube:','Setting: [COLOR=dodgerblue]youtube.region[/COLOR]','Value: [COLOR=dodgerblue]%s[/COLOR]' % my_value)
+	else:
+	    dialog.ok('YOUTUBE NOT INSTALLED','We cannot run this example as it uses the YouTube add-on which has not been found on your system.')
 
 ------------------------------------------------------------------------------------------
 
@@ -419,19 +425,16 @@ This will delete your cookies file.
 	    return True or False on whether or not it's successfully been removed.
 
 	EXAMPLE CODE:
-		Open_URL(url='http://google.com',cookiejar='google')
-		dialog.ok('GOOGLE COOKIES CREATED','We have just opened a page to google.com, if you check your addon_data folder for your add-on you should see a cookies folder and in there should be a cookie called "google". When you press OK this will be removed.')
-
-	CLEARING COOKIES FROM ADD-ON SETTINGS:
-		If you want to offer the option to clear the cookie data direct from the add-on settings then you can add the following code. This will wipe the cookies folder for that add-on.
-
-        <setting id="clear_data"	label="Clear Cookies"	type="action"	action="RunScript(special://home/addons/script.module.python.koding.aio/lib/koding/__init__.py,clear_data,your.addon.id)"	option="close"	visible="true"/>
+	-------------
+	Open_URL(url='http://google.com',cookiejar='google')
+	dialog.ok('GOOGLE COOKIES CREATED','We have just opened a page to google.com, if you check your addon_data folder for your add-on you should see a cookies folder and in there should be a cookie called "google". When you press OK this will be removed.')
 
 ------------------------------------------------------------------------------------------
 
 DEPENDENCY CHECK:
 This will return a list of all dependencies required by an add-on.
-This information is grabbed directly from the currently installed addon.xml for that id.
+This information is grabbed directly from the currently installed addon.xml,
+an individual add-on id or a list of add-on id's.
 
 	CODE:  Dependency_Check([addon_id, recursive])
 
@@ -446,12 +449,13 @@ This information is grabbed directly from the currently installed addon.xml for 
 	    required for that addon id AND the dependencies of the dependencies.
 
 	EXAMPLE CODE:
-		current_id = xbmcaddon.Addon().getAddonInfo('id')
-		dependencies = koding.Dependency_Check(addon_id=current_id, recursive=True)
-		clean_text = ''
-		for item in dependencies:
-		    clean_text += item+'\n'
-		koding.Text_Box('Modules required for %s'%current_id,clean_text)
+	-------------
+	current_id = xbmcaddon.Addon().getAddonInfo('id')
+	dependencies = koding.Dependency_Check(addon_id=current_id, recursive=True)
+	clean_text = ''
+	for item in dependencies:
+	    clean_text += item+'\n'
+	koding.Text_Box('Modules required for %s'%current_id,clean_text)
 
 ------------------------------------------------------------------------------------------
 
@@ -485,11 +489,12 @@ installed add-ons. The dictionary will contain "addonid" and "type" e.g. 'xbmc.p
 
 
 	EXAMPLE CODE:
-		my_video_plugins = koding.Installed_Addons(types='xbmc.python.pluginsource', content='video', properties='name')
-		final_string = ''
-		for item in my_video_plugins:
-		    final_string += 'ID: %s | Name: %s\n'%(item["addonid"], item["name"])
-		koding.Text_Box('LIST OF VIDEO PLUGINS',final_string)
+	-------------
+	my_video_plugins = koding.Installed_Addons(types='xbmc.python.pluginsource', content='video', properties='name')
+	final_string = ''
+	for item in my_video_plugins:
+	    final_string += 'ID: %s | Name: %s\n'%(item["addonid"], item["name"])
+	koding.Text_Box('LIST OF VIDEO PLUGINS',final_string)
 
 ------------------------------------------------------------------------------------------
 
@@ -504,21 +509,22 @@ call it something other than settings.xml as that is already used by Kodi add-on
 
 	AVAILABLE CLASSES:
 
-	    ParseValue  -  This class will allow you to get the value of an item in these custom settings.
-	    
-	    SetValue  -  This class allows you to set a value to the custom settings. If the settings.xml doesn't exist it will be automatically created so long as the path given in XML is writeable.
+	ParseValue  -  This class will allow you to get the value of an item in these custom settings.
+
+	SetValue  -  This class allows you to set a value to the custom settings. If the settings.xml doesn't exist it will be automatically created so long as the path given in XML is writeable.
 
 
 	EXAMPLE CODE:
-		myXmlFile = "special://userdata/addon_data/script.module.python.koding.aio/timefile.xml"
-		timefile = koding.xml(myXmlFile)
-		getSetting = timefile.ParseValue
-		setSetting = timefile.SetValue
-		dialog.ok('[COLOR gold]CHECK SETTINGS[/COLOR]','If you take a look in the addon_data folder for python koding a new file called timefile.xml will be created when you click OK.')
-		setSetting("autorun", "true")
-		autoRun = getSetting("autorun")
-		dialog.ok('[COLOR gold]AUTORUN VALUE[/COLOR]','The value of autorun in these new settings is [COLOR dodgerblue]%s[/COLOR].[CR][CR]Press OK to delete this file.'%autoRun)
-		os.remove(xbmc.translatePath(myXmlFile))
+	-------------
+	myXmlFile = "special://userdata/addon_data/script.module.python.koding.aio/timefile.xml"
+	timefile = koding.xml(myXmlFile)
+	getSetting = timefile.ParseValue
+	setSetting = timefile.SetValue
+	dialog.ok('CHECK SETTINGS','If you take a look in the addon_data folder for python koding a new file called timefile.xml will be created when you click OK.')
+	setSetting("autorun", "true")
+	autoRun = getSetting("autorun")
+	dialog.ok('AUTORUN VALUE','The value of autorun in these new settings is [COLOR dodgerblue]%s[/COLOR].[CR][CR]Press OK to delete this file.'%autoRun)
+	os.remove(koding.Physical_Path(myXmlFile))
 
 ------------------------------------------------------------------------------------------
 
@@ -562,6 +568,7 @@ the consequences!
 	    current container and also force a local update on your add-ons db.
 
 	EXAMPLE CODE:
+	-------------
 		xbmc.executebuiltin('ActivateWindow(Videos, addons://sources/video/)')
 		xbmc.sleep(2000)
 		dialog.ok('DISABLE YOUTUBE','We will now disable YouTube (if installed)')
@@ -587,8 +594,10 @@ Open up the settings for an installed Android app.
 	    (*) apk_id  -  The id of the app you want to open the settings for.
 
 	EXAMPLE CODE:
-		dialog.ok('FACEBOOK SETTINGS','We will now open the settings for the Facebook app')
-		koding.App_Settings(apk_id='com.facebook.katana')
+	-------------
+	my_apps = koding.My_Apps()
+	choice = dialog.select('CHOOSE AN APK', my_apps)
+	koding.App_Settings(apk_id=my_apps[choice])
 
 ------------------------------------------------------------------------------------------
 
@@ -598,10 +607,11 @@ Return a list of apk id's installed on system
 	CODE: My_Apps()
 
 	EXAMPLE CODE:
-		my_apps = koding.My_Apps()
-		choice = dialog.select('CHOOSE AN APK', my_apps)
-		if choice >= 0:
-		    koding.App_Settings(apk_id=my_apps[choice])
+	-------------
+	my_apps = koding.My_Apps()
+	choice = dialog.select('CHOOSE AN APK', my_apps)
+	if choice >= 0:
+	    koding.App_Settings(apk_id=my_apps[choice])
 
 ------------------------------------------------------------------------------------------
 
@@ -615,8 +625,9 @@ Open an Android application
 	    (*) apk_id  -  The id of the app you want to open.
 
 	EXAMPLE CODE:
-		dialog.ok('OPEN FACEBOOK','Presuming you have Facebook installed and this is an Android system we will now open that apk')
-		koding.Start_App(apk_id='com.facebook.katana')
+	-------------
+	dialog.ok('OPEN FACEBOOK','Presuming you have Facebook installed and this is an Android system we will now open that apk')
+	koding.Start_App(apk_id='com.facebook.katana')
 
 ------------------------------------------------------------------------------------------
 
@@ -626,8 +637,9 @@ Uninstall and Android app
 	CODE: Uninstall_APK(apk_id)
 
 	EXAMPLE CODE:
-		if dialog.yesno('UNINSTALL FACEBOOK','Would you like to uninstall the Facebook app from your system?'):
-		    koding.Uninstall_APK(apk_id='com.facebook.katana')
+	-------------
+	if dialog.yesno('UNINSTALL FACEBOOK','Would you like to uninstall the Facebook app from your system?'):
+	    koding.Uninstall_APK(apk_id='com.facebook.katana')
 
 ------------------------------------------------------------------------------------------
 
@@ -636,21 +648,31 @@ D A T A B A S E S
 ------------------------------------------------------------------------------------------
 
 A GENERIC QUERY:
-Open a database and either return an array of results with the SELECT command or perform an action such as INSERT, UPDATE, CREATE.
+Open a database and either return an array of results with the SELECT SQL command or perform an action such as INSERT, UPDATE, CREATE.
 
 	CODE:  DB_Query(db_path, query, [values])
 
 	AVAILABLE PARAMS:
+
 	    (*) db_path -  the full path to the database file you want to access.
+	    
 	    (*) query   -  this is the actual db query you want to process, use question marks for values
 
 	    values  -  a list of values, even if there's only one value it must be sent through as a list item.
 
-	EXAMPLE CODE:
-		dbpath = koding.DB_Path_Check('addons')
-		db_query = koding.DB_Query(db_path=dbpath, query='SELECT * FROM addons WHERE addonID LIKE ? AND addonID NOT LIKE ?', values=['%youtube%',%script.module%])
-		koding.Text_Box('DB SEARCH RESULTS',str(db_query))
+	IMPORTANT: Directly accessing databases which are outside of your add-ons domain is very much frowned
+	upon. If you need to access a built-in kodi database (as shown in example below) you should always use
+	the JSON-RPC commands where possible. 
 
+	EXAMPLE CODE:
+	-------------
+	dbpath = filetools.DB_Path_Check('addons')
+	db_table = 'addon'
+	kodi_version = int(float(xbmc.getInfoLabel("System.BuildVersion")[:2]))
+	if kodi_version >= 17:
+	    db_table = 'addons'
+	db_query = koding.DB_Query(db_path=dbpath, query='SELECT * FROM %s WHERE addonID LIKE ? AND addonID NOT LIKE ?'%db_table, values=['%youtube%','%script.module%'])
+	koding.Text_Box('DB SEARCH RESULTS',str(db_query))
 ------------------------------------------------------------------------------------------
 
 ADD TO TABLE:
@@ -664,19 +686,23 @@ Add a row to the table in /userdata/addon_data/<your_addon_id>/database.db
 
 	    (*) spec   -  Sent through as a dictionary this is the colums and constraints.
 
+	    abort_on_error  -  Default is set to False but set to True if you want to abort
+	    the process when it hits an error.
+	    
 	EXAMPLE CODE:
-		create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
-		koding.Create_Table("test_table", create_specs)
-		add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
-		add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
-		koding.Add_To_Table("test_table", add_specs1)
-		koding.Add_To_Table("test_table", add_specs2)
-		results = koding.Get_All_From_Table("test_table")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('DB RESULTS', final_results)
-		os.remove(addon_db_path)
+	-------------
+	create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
+	koding.Create_Table("test_table", create_specs)
+	add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
+	add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
+	koding.Add_To_Table("test_table", add_specs1)
+	koding.Add_To_Table("test_table", add_specs2)
+	results = koding.Get_All_From_Table("test_table")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('DB RESULTS', final_results)
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
@@ -696,18 +722,19 @@ The db file is: /userdata/addon_data/<your_addon_id>/database.db
 	    a list of lists (see example below)
 
 	EXAMPLE CODE:
-		create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
-		koding.Create_Table("test_table", create_specs)
-		dialog.ok('ADD TO TABLE','Lets add the details of 3 add-ons to "test_table" in our database.')
-		mykeys = ["name","id"]
-		myvalues = [("YouTube","plugin.video.youtube"), ("vimeo","plugin.video.vimeo"), ("test2","plugin.video.test2")]
-		koding.Add_Multiple_To_Table(table="test_table", keys=mykeys, values=myvalues)
-		results = koding.Get_All_From_Table("test_table")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('DB RESULTS', 'Below are details of the items pulled from our db:\n\n%s'%final_results)
-		os.remove(addon_db_path)
+	-------------
+	create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
+	koding.Create_Table("test_table", create_specs)
+	dialog.ok('ADD TO TABLE','Lets add the details of 3 add-ons to "test_table" in our database.')
+	mykeys = ["name","id"]
+	myvalues = [("YouTube","plugin.video.youtube"), ("vimeo","plugin.video.vimeo"), ("test2","plugin.video.test2")]
+	koding.Add_Multiple_To_Table(table="test_table", keys=mykeys, values=myvalues)
+	results = koding.Get_All_From_Table("test_table")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('DB RESULTS', 'Below are details of the items pulled from our db:\n\n%s'%final_results)
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
@@ -723,21 +750,22 @@ Create a new table in the database at /userdata/addon_data/<your_addon_id>/datab
 	    (*) spec   -  Sent through as a dictionary this is the colums and constraints.
 
 	EXAMPLE CODE:
-		create_specs = { "columns":{"name":"TEXT", "id":"TEXT"}, "constraints":{"unique":"id"} }
-		koding.Create_Table("test_table", create_specs)
-		dialog.ok('TABLE CREATED','A new table has been created in your database and the id column has been set as UNIQUE.')
-		my_specs = {"name":"YouTube", "id":"plugin.video.youtube"}
-		try:
-		    koding.Add_To_Table("test_table", my_specs)
-		    koding.Add_To_Table("test_table", my_specs)
-		except:
-		    dialog.ok('FAILED TO ADD','Could not add duplicate items because the the column "id" is set to be UNIQUE')
-		results = koding.Get_All_From_Table("test_table")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('DB RESULTS', final_results)
-		os.remove(addon_db_path)
+	-------------
+	create_specs = { "columns":{"name":"TEXT", "id":"TEXT"}, "constraints":{"unique":"id"} }
+	koding.Create_Table("test_table", create_specs)
+	dialog.ok('TABLE CREATED','A new table has been created in your database and the id column has been set as UNIQUE.')
+	my_specs = {"name":"YouTube", "id":"plugin.video.youtube"}
+	try:
+	    koding.Add_To_Table("test_table", my_specs)
+	    koding.Add_To_Table("test_table", my_specs)
+	except:
+	    dialog.ok('FAILED TO ADD','Could not add duplicate items because the the column "id" is set to be UNIQUE')
+	results = koding.Get_All_From_Table("test_table")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('DB RESULTS', final_results)
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
@@ -751,18 +779,19 @@ Return a list of all entries from a specific table in /userdata/addon_data/<your
 	    (*) table  -  The table name you want to query
 
 	EXAMPLE CODE:
-		create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
-		koding.Create_Table("test_table", create_specs)
-		add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
-		add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
-		koding.Add_To_Table("test_table", add_specs1)
-		koding.Add_To_Table("test_table", add_specs2)
-		results = koding.Get_All_From_Table("test_table")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('DB RESULTS', final_results)
-		os.remove(addon_db_path)
+	-------------
+	create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
+	koding.Create_Table("test_table", create_specs)
+	add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
+	add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
+	koding.Add_To_Table("test_table", add_specs1)
+	koding.Add_To_Table("test_table", add_specs2)
+	results = koding.Get_All_From_Table("test_table")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('DB RESULTS', final_results)
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
@@ -778,22 +807,23 @@ database stored at: /userdata/addon_data/<your_addon_id>/database.db
 
 	    spec  -  This is the query value, sent through as a dictionary.
 
-	    compare_operator  -  By default this is set to '=' but could be any
+	    default_compare_operator  -  By default this is set to '=' but could be any
 	    other SQL query string such as 'LIKE', 'NOT LIKE', '!=' etc.
 
 	EXAMPLE CODE:
-		create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
-		koding.Create_Table("test_table", create_specs)
-		add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
-		add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
-		koding.Add_To_Table("test_table", add_specs1)
-		koding.Add_To_Table("test_table", add_specs2)
-		results = koding.Get_From_Table(table="test_table", spec={"name":"%vim%"}, compare_operator="LIKE")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('DB CONTENTS', final_results)
-		os.remove(addon_db_path)
+	-------------
+	create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
+	koding.Create_Table("test_table", create_specs)
+	add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
+	add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
+	koding.Add_To_Table("test_table", add_specs1)
+	koding.Add_To_Table("test_table", add_specs2)
+	results = koding.Get_From_Table(table="test_table", spec={"name":"%vim%"}, default_compare_operator="LIKE")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('DB CONTENTS', final_results)
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
@@ -806,38 +836,39 @@ Remove entries in the db table at /userdata/addon_data/<your_addon_id>/database.
 
 	    (*) table  -  The table name you want to query
 
-	    spec              -  This is the query value, sent through as a dictionary.
+	    spec  -  This is the query value, sent through as a dictionary.
 
-	    compare_operator  -  By default this is set to '=' but could be any
+	    default_compare_operator  -  By default this is set to '=' but could be any
 	    other SQL query string such as 'LIKE', 'NOT LIKE', '!=' etc.
 
 	EXAMPLE CODE:
-		create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
-		koding.Create_Table(table="test_table", spec=create_specs)
-		add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
-		add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
-		koding.Add_To_Table(table="test_table", spec=add_specs1)
-		koding.Add_To_Table(table="test_table", spec=add_specs2)
-		results = koding.Get_All_From_Table(table="test_table")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('DB CONTENTS', final_results)
-		dialog.ok('REMOVE ITEM','We will now remove vimeo from the table, lets see if it worked...')
-		koding.Remove_From_Table(table="test_table", spec={"name":"vimeo"})
-		results = koding.Get_All_From_Table(table="test_table")
-		final_results = ''
-		for item in results:
-		    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
-		koding.Text_Box('NEW DB CONTENTS', final_results)
-		os.remove(addon_db_path)
+	-------------
+	create_specs = {"columns":{"name":"TEXT", "id":"TEXT"}}
+	koding.Create_Table(table="test_table", spec=create_specs)
+	add_specs1 = {"name":"YouTube", "id":"plugin.video.youtube"}
+	add_specs2 = {"name":"vimeo","id":"plugin.video.vimeo"}
+	koding.Add_To_Table(table="test_table", spec=add_specs1)
+	koding.Add_To_Table(table="test_table", spec=add_specs2)
+	results = koding.Get_All_From_Table(table="test_table")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('DB CONTENTS', final_results)
+	dialog.ok('REMOVE ITEM','We will now remove vimeo from the table, lets see if it worked...')
+	koding.Remove_From_Table(table="test_table", spec={"name":"vimeo"})
+	results = koding.Get_All_From_Table(table="test_table")
+	final_results = ''
+	for item in results:
+	    final_results += 'ID: %s | Name: %s\n'%(item["id"], item["name"])
+	koding.Text_Box('NEW DB CONTENTS', final_results)
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
 REMOVE TABLE:
-Use with caution, this will completely remove a database table and all of it's contents. The only
-database you can access with this command is your add-ons own database at:
-/userdata/addon_data/<your_addon_id>/database.db
+Use with caution, this will completely remove a database table and
+all of it's contents. The only database you can access with this command
+is your add-ons own db file called database.db
 
 	CODE:  Remove_Table(table)
 
@@ -846,7 +877,9 @@ database you can access with this command is your add-ons own database at:
 	    (*) table  -  This is the name of the table you want to permanently delete.
 
 	EXAMPLE CODE:
-		koding.Remove_Table('my_test_table')
+	-------------
+	dialog.ok('REMOVE TABLE','It\'s a bit pointless doing this as you can\'t physically see what\'s happening so you\'ll just have to take our word it works!')
+	koding.Remove_Table('test_table')
 
 ------------------------------------------------------------------------------------------
 
@@ -876,12 +909,13 @@ IMPORTANT: Do not confuse this with the Browse_To_Folder function
 	    other archive files. By default this is set to False.
 
 	EXAMPLE CODE:
-		dialog.ok('[COLOR gold]BROWSE TO FILE 1[/COLOR]','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]False[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
-		folder = koding.Browse_To_File(header='Choose a file you want to use', path='special://home/addons')
-		dialog.ok('FOLDER DETAILS','File path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
-		dialog.ok('[COLOR gold]BROWSE TO FILE 2[/COLOR]','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]True[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
-		folder = koding.Browse_To_File(header='Choose a file you want to use', path='special://home/addons', browse_in_archives=True)
-		dialog.ok('FOLDER DETAILS','File path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
+	-------------
+	dialog.ok('[COLOR gold]BROWSE TO FILE 1[/COLOR]','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]False[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
+	folder = koding.Browse_To_File(header='Choose a file you want to use', path='special://home/addons')
+	dialog.ok('FOLDER DETAILS','File path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
+	dialog.ok('[COLOR gold]BROWSE TO FILE 2[/COLOR]','We will now browse to your addons folder with browse_in_archives set to [COLOR dodgerblue]True[/COLOR]. Try clicking on a zip file if you can find one (check packages folder).')
+	folder = koding.Browse_To_File(header='Choose a file you want to use', path='special://home/addons', browse_in_archives=True)
+	dialog.ok('FOLDER DETAILS','File path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
 
 ------------------------------------------------------------------------------------------
 
@@ -902,8 +936,9 @@ IMPORTANT: Do not confuse this with the Browse_To_File function
 
 	
 	EXAMPLE CODE:
-		folder = koding.Browse_To_Folder(header='Choose a folder you want to use', path='special://home/userdata')
-		dialog.ok('FOLDER DETAILS','Folder path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
+	-------------
+	folder = koding.Browse_To_Folder(header='Choose a folder you want to use', path='special://home/userdata')
+	dialog.ok('FOLDER DETAILS','Folder path: [COLOR=dodgerblue]%s[/COLOR]'%folder)
 
 ------------------------------------------------------------------------------------------
 
@@ -938,13 +973,14 @@ Bring up a countdown timer and return true if waited or false if cancelled.
 	    '[COLOR=gold]Sorry, this process cannot be cancelled[/COLOR]'
 
 	EXAMPLE CODE:
-		dialog.ok('COUNTDOWN EXAMPLE', 'Press OK to bring up a countdown timer', '', 'Try cancelling the process.')
-		my_return = koding.Countdown(title='COUNTDOWN EXAMPLE', message='Quick simple countdown message (cancel enabled).', update_msg='%s seconds remaining', wait_time=5)
-		if my_return:
-		    dialog.ok('SUCCESS!','Congratulations you actually waited through the countdown timer without cancelling!')
-		else:
-		    dialog.ok('BORED MUCH?','What happened, did you get bored waiting?', '', '[COLOR=dodgerblue]Let\'s set off another countdown you CANNOT cancel...[/COLOR]')
-		    koding.Countdown(title='COUNTDOWN EXAMPLE', message='Quick simple countdown message (cancel disabled).', update_msg='%s seconds remaining', wait_time=5, allow_cancel=False, cancel_msg='[COLOR=gold]Sorry, this process cannot be cancelled[/COLOR]')
+	-------------
+	dialog.ok('COUNTDOWN EXAMPLE', 'Press OK to bring up a countdown timer', '', 'Try cancelling the process.')
+	my_return = koding.Countdown(title='COUNTDOWN EXAMPLE', message='Quick simple countdown message (cancel enabled).', update_msg='%s seconds remaining', wait_time=5)
+	if my_return:
+	    dialog.ok('SUCCESS!','Congratulations you actually waited through the countdown timer without cancelling!')
+	else:
+	    dialog.ok('BORED MUCH?','What happened, did you get bored waiting?', '', '[COLOR=dodgerblue]Let\'s set off another countdown you CANNOT cancel...[/COLOR]')
+	    koding.Countdown(title='COUNTDOWN EXAMPLE', message='Quick simple countdown message (cancel disabled).', update_msg='%s seconds remaining', wait_time=5, allow_cancel=False, cancel_msg='[COLOR=gold]Sorry, this process cannot be cancelled[/COLOR]')
 
 ------------------------------------------------------------------------------------------
 
@@ -1001,7 +1037,7 @@ sizing and positioning.
 	    transparency  -  Set the percentage of transparency as an integer. By default
 	    it's set to 100 which is a solid colour.
 
-	    highlight_color  -  Set the highlighted text colour, by default it's 'blue'
+	    highlight_color  -  Set the highlighted text colour, by default it's 'gold'
 
 	    button_color_focused - Using the same format as background you can set the
 	    colour to use for a button when it's focused.
@@ -1016,15 +1052,16 @@ sizing and positioning.
 	    transparency amount to use on the buttons when not in focus.
 
 	EXAMPLE CODE:
-		main_text = 'This is my main text.\n\nYou can add anything you want in here and the slider will allow you to see all the contents.\n\nThis example shows using a blue background colour and a transparency of 90%.\n\nWe have also changed the highlighted_color to yellow.'
-		my_buttons = ['button 1', 'button 2', 'button 3']
-		my_choice = koding.Custom_Dialog(main_content=main_text,pos='center',buttons=my_buttons,background='213749',transparency=90,highlight_color='yellow')
-		dialog.ok('CUSTOM DIALOG 1','You selected option %s'%my_choice,'The value of this is: [COLOR=dodgerblue]%s[/COLOR]'%my_buttons[my_choice])
+	-------------
+	main_text = 'This is my main text.\n\nYou can add anything you want in here and the slider will allow you to see all the contents.\n\nThis example shows using a blue background colour and a transparency of 90%.\n\nWe have also changed the highlighted_color to yellow.'
+	my_buttons = ['button 1', 'button 2', 'button 3']
+	my_choice = koding.Custom_Dialog(main_content=main_text,pos='center',buttons=my_buttons,background='213749',transparency=90,highlight_color='yellow')
+	dialog.ok('CUSTOM DIALOG 1','You selected option %s'%my_choice,'The value of this is: [COLOR=dodgerblue]%s[/COLOR]'%my_buttons[my_choice])
 
-		main_text = 'This is example 2 with no fancy colours, just a fullscreen and a working scrollbar.\n\nYou\'ll notice there are also a few more buttons on this one.\n\nline 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\n\nYou get the idea we\'ll stop there!'
-		my_buttons = ['button 1', 'button 2', 'button 3','button 4', 'button 5', 'button 6','button 7', 'button 8', 'button 9','button 10', 'button 11', 'button 12', 'button 13','button 14', 'button 15', 'button 16','button 17', 'button 18', 'button 19','button 20']
-		my_choice = koding.Custom_Dialog(main_content=main_text,pos='center',size='fullscreen',buttons=my_buttons)
-		dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of this is: [COLOR=dodgerblue]%s[/COLOR]'%my_buttons[my_choice])
+	main_text = 'This is example 2 with no fancy colours, just a fullscreen and a working scrollbar.\n\nYou\'ll notice there are also a few more buttons on this one.\n\nline 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10\nline 11\nline 12\nline 13\nline 14\nline 15\nline 16\nline 17\nline 18\nline 19\nline 20\n\nYou get the idea we\'ll stop there!'
+	my_buttons = ['button 1', 'button 2', 'button 3','button 4', 'button 5', 'button 6','button 7', 'button 8', 'button 9','button 10', 'button 11', 'button 12', 'button 13','button 14', 'button 15', 'button 16','button 17', 'button 18', 'button 19','button 20']
+	my_choice = koding.Custom_Dialog(main_content=main_text,pos='center',size='fullscreen',buttons=my_buttons)
+	dialog.ok('CUSTOM DIALOG 2','You selected option %s'%my_choice,'The value of this is: [COLOR=dodgerblue]%s[/COLOR]'%my_buttons[my_choice])
 
 ------------------------------------------------------------------------------------------
 
@@ -1042,19 +1079,20 @@ This will show/hide a "working" symbol.
 	    milliseconds and then disappear.
 
 	EXAMPLE CODE:
-		dialog.ok('BUSY SYMBOL','Press OK to show a busy dialog which restricts any user interaction. We have added a sleep of 5 seconds at which point it will disable.')
-		koding.Show_Busy(sleep=5000)
-		dialog.ok('BUSY SYMBOL','We will now do the same but with slightly different code')
-		koding.Show_Busy(status=True)
-		xbmc.sleep(5000)
-		koding.Show_Busy(status=False)
+	-------------
+	dialog.ok('BUSY SYMBOL','Press OK to show a busy dialog which restricts any user interaction. We have added a sleep of 5 seconds at which point it will disable.')
+	koding.Show_Busy(sleep=5000)
+	dialog.ok('BUSY SYMBOL','We will now do the same but with slightly different code')
+	koding.Show_Busy(status=True)
+	xbmc.sleep(5000)
+	koding.Show_Busy(status=False)
 
 ------------------------------------------------------------------------------------------
 
 KEYBOARD:
 Show an on-screen keyboard and return the string
 
-	CODE: Keyboard([default, heading, hidden, return_false, autoclose, kb_type])
+	CODE: koding.Keyboard([default, heading, hidden, return_false, autoclose, kb_type])
 
 	AVAILABLE PARAMS:
 
@@ -1087,29 +1125,30 @@ Show an on-screen keyboard and return the string
 
 
 	EXAMPLE CODE:
-		mytext = koding.Keyboard(heading='Type in the text you want returned',default='test text')
-		dialog.ok('TEXT RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
-		dialog.ok('AUTOCLOSE ENABLED','This following example we\'ve set the autoclose to 3000. That\'s milliseconds which converts to 3 seconds.')
-		mytext = koding.Keyboard(heading='Type in the text you want returned',default='this will close in 3s',autoclose=3000)
-		dialog.ok('TEXT RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
-		mytext = koding.Keyboard(heading='Enter a number',kb_type='numeric')
-		dialog.ok('NUMBER RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
-		dialog.ok('RETURN FALSE ENABLED','All of the following examples have "return_false" enabled. This means if you escape out of the keyboard the return will be False.')
-		mytext = koding.Keyboard(heading='Enter a date',return_false=True,kb_type='date')
-		dialog.ok('DATE RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
-		mytext = koding.Keyboard(heading='Enter a time',return_false=True,kb_type='time')
-		dialog.ok('TIME RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
-		mytext = koding.Keyboard(heading='IP Address',return_false=True,kb_type='ipaddress',autoclose=5)
-		dialog.ok('IP RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
-		mytext = koding.Keyboard(heading='Password',kb_type='password')
-		dialog.ok('MD5 RETURN','The md5 for this password is:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	-------------
+	mytext = koding.Keyboard(heading='Type in the text you want returned',default='test text')
+	dialog.ok('TEXT RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	dialog.ok('AUTOCLOSE ENABLED','This following example we\'ve set the autoclose to 3000. That\'s milliseconds which converts to 3 seconds.')
+	mytext = koding.Keyboard(heading='Type in the text you want returned',default='this will close in 3s',autoclose=3000)
+	dialog.ok('TEXT RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	mytext = koding.Keyboard(heading='Enter a number',kb_type='numeric')
+	dialog.ok('NUMBER RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	dialog.ok('RETURN FALSE ENABLED','All of the following examples have "return_false" enabled. This means if you escape out of the keyboard the return will be False.')
+	mytext = koding.Keyboard(heading='Enter a date',return_false=True,kb_type='date')
+	dialog.ok('DATE RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	mytext = koding.Keyboard(heading='Enter a time',return_false=True,kb_type='time')
+	dialog.ok('TIME RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	mytext = koding.Keyboard(heading='IP Address',return_false=True,kb_type='ipaddress',autoclose=5)
+	dialog.ok('IP RETURNED','You typed in:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
+	mytext = koding.Keyboard(heading='Password',kb_type='password')
+	dialog.ok('MD5 RETURN','The md5 for this password is:', '', '[COLOR=dodgerblue]%s[/COLOR]'%mytext)
 
 ------------------------------------------------------------------------------------------
 
 NOTIFICATION POPUP:
 Show a short notification for x amount of seconds
 
-	CODE: Notify(title, message, [duration, icon])
+	CODE: koding.Notify(title, message, [duration, icon])
 
 	AVAILABLE PARAMS:
 
@@ -1122,7 +1161,8 @@ Show a short notification for x amount of seconds
 	    icon      -  The icon to show in notification bar, default is the update icon from this module. 
 
 	EXAMPLE CODE:
-		koding.Notify(title='TEST NOTIFICATION', message='This is a quick 5 second test', duration=5000)
+	-------------
+	koding.Notify(title='TEST NOTIFICATION', message='This is a quick 5 second test', duration=5000)
 
 ------------------------------------------------------------------------------------------
 
@@ -1138,7 +1178,27 @@ This will bring up a short text message in a dialog.ok window.
 	    (*) message  -  This is the main text you want to appear.
 
 	EXAMPLE CODE:
-		koding.OK_Dialog(title='TEST DIALOG',message='This is a test dialog ok box. Click OK to quit.')
+	-------------
+	koding.OK_Dialog(title='TEST DIALOG',message='This is a test dialog ok box. Click OK to quit.')
+
+------------------------------------------------------------------------------------------
+
+PERCENTAGE RESET (CUSTOM DIALOGS):
+If using the Update_Progress function for setting percentages in skinning then this
+will allow you to reset all the percent properties (1-100)
+
+	CODE: Reset_Percent([property,window_id])
+
+	AVAILABLE PARAMS:
+
+	    property  -  the property name you want reset, this will reset all properties starting
+	    with this string from 1-100. For example if you use the default 'update_percent_' this
+	    will loop through and reset update_percent_1, update_percent_2 etc. all the way through
+	    to update_percent_100.
+
+	    window_id -  By default this is set to 10000 but you can send any id through you want.
+
+	    kwargs  -  Send through any other params and the respective property will be set.colours etc.')
 
 ------------------------------------------------------------------------------------------
 
@@ -1160,27 +1220,30 @@ sent through as a list and only one can be selected - this is not a multi-select
 	    of the actual string associated with that key, in this example the return would be "option 2".
 
 	EXAMPLE CODE:
-		my_options = ['Option 1','Option 2','Option 3','Option 4','Option 5']
-		mychoice = koding.Select_Dialog(title='TEST DIALOG',options=my_options,key=False)
-		koding.OK_Dialog(title='SELECTED ITEM',message='You selected: [COLOR=dodgerblue]%s[/COLOR]\nNow let\'s try again - this time we will return a key...'%mychoice)
-		mychoice = koding.Select_Dialog(title='TEST DIALOG',options=my_options,key=True)
-		koding.OK_Dialog(title='SELECTED ITEM',message='The item you selected was position number [COLOR=dodgerblue]%s[/COLOR] in the list'%mychoice)
+	-------------
+	my_options = ['Option 1','Option 2','Option 3','Option 4','Option 5']
+	mychoice = koding.Select_Dialog(title='TEST DIALOG',options=my_options,key=False)
+	koding.OK_Dialog(title='SELECTED ITEM',message='You selected: [COLOR=dodgerblue]%s[/COLOR]\nNow let\'s try again - this time we will return a key...'%mychoice)
+	mychoice = koding.Select_Dialog(title='TEST DIALOG',options=my_options,key=True)
+	koding.OK_Dialog(title='SELECTED ITEM',message='The item you selected was position number [COLOR=dodgerblue]%s[/COLOR] in the list'%mychoice)
 
 ------------------------------------------------------------------------------------------
 
 TEXT BOX (LARGE WINDOW OF TEXT):
 This will allow you to open a blank window and fill it with some text.
 
-	CODE: Text_Box(header, message)
+	CODE: koding.Text_Box(header, message)
 
 	AVAILABLE PARAMS:
-		header 	-  As the name suggests this is a string to be used for the header/title of the window
 
-		message -  Yes you've probably already gussed it, this is the main message text
+	    (*) header  -  As the name suggests this is a string to be used for the header/title of the window
+
+	    (*) message -  Yes you've probably already gussed it, this is the main message text
 
 
 	EXAMPLE CODE:
-		koding.Text_Box('TEST HEADER','Just some random text[CR][CR]Use kodi tags for new lines, colours etc.')
+	-------------
+	koding.Text_Box('TEST HEADER','Just some random text... Use kodi tags for new lines, colours etc.')
 
 ------------------------------------------------------------------------------------------
 
@@ -1210,7 +1273,6 @@ UPDATE SCREEN:
 This will create a full screen overlay showing progress of updates. You'll need to
 use this in conjunction with the Update_Progress function.
 
-
 	CODE: Update_Screen([disable_quit, auto_close))
 
 	AVAILABLE PARAMS:
@@ -1226,6 +1288,7 @@ use this in conjunction with the Update_Progress function.
 	    you send through the kill command which is: xbmc.executebuiltin('Action(firstpage)')
 
 	EXAMPLE CODE:
+	-------------
 	mykwargs = {
 	    "update_header"    : "Downloading latest updates",\
 	    "update_main_text" : "Your device is now downloading all the latest updates.\nThis shouldn\'t take too long, "\
@@ -1256,7 +1319,8 @@ use this in conjunction with the Update_Progress function.
 ------------------------------------------------------------------------------------------
 
 YES/NO DIALOG:
-This will bring up a short text message in a dialog.yesno window. This will return True or False
+This will bring up a short text message in a dialog.yesno window. This will
+return True or False
 
 	CODE: YesNo_Dialog(title,message,[yeslabel,nolabel])
 
@@ -1271,6 +1335,7 @@ This will bring up a short text message in a dialog.yesno window. This will retu
 	    no  -  Optionally change the default "NO" to a custom string
 
 	EXAMPLE CODE:
+	-------------
 	mychoice = koding.YesNo_Dialog(title='TEST DIALOG',message='This is a yes/no dialog with custom labels.\nDo you want to see an example of a standard yes/no.',yes='Go on then',no='Nooooo!')
 	if mychoice:
 	    koding.YesNo_Dialog(title='STANDARD DIALOG',message='This is an example of a standard one without sending custom yes/no params through.')
@@ -1283,8 +1348,15 @@ D I R E C T O R Y   F U N C T I O N S
 
 ADD DIRECTORY ITEM:
 This allows you to create a list item/folder inside your add-on.
-For more information please take a look at your addon default.py comments in the standard add-on
-template (presuming you created one at http://totalrevolution.tv).
+Please take a look at your addon default.py comments for more information
+(presuming you created one at http://totalrevolution.tv)
+
+TOP TIP: If you want to send multiple variables through to a function just
+send through as a dictionary encapsulated in quotation marks. In the function
+you can then use the following code to access them:
+
+params = eval(url)
+^ That will then give you a dictionary where you can just pull each variable and value from.
 
 	CODE: Add_Dir(name, url, mode, [folder, icon, fanart, description, info_labels, content_type, context_items, context_override, playable])
 
@@ -1355,78 +1427,17 @@ template (presuming you created one at http://totalrevolution.tv).
 	    and play this item natively with no extra fancy functions.
 
 	EXAMPLE:
-		my_context = [('Music','xbmc.executebuiltin("ActivateWindow(music)")'),('Programs','xbmc.executebuiltin("ActivateWindow(programs)")')]
-		# ^ This is our two basic context menu items (music and programs)
+	--------
+	my_context = [('Music','xbmc.executebuiltin("ActivateWindow(music)")'),('Programs','xbmc.executebuiltin("ActivateWindow(programs)")')]
+	# ^ This is our two basic context menu items (music and programs)
 
-		Add_Dir(name='TEST DIRECTORY', url='', mode='test_directory', folder=True, context_items=my_context, context_override=True)
-		# ^ This will add a folder AND a context menu item for when bring up the menu (when focused on this directory).
-		# ^^ The context_override is set to True which means it will override the default Kodi context menu items.
+	Add_Dir(name='TEST DIRECTORY', url='', mode='test_directory', folder=True, context_items=my_context, context_override=True)
+	# ^ This will add a folder AND a context menu item for when bring up the menu (when focused on this directory).
+	# ^^ The context_override is set to True which means it will override the default Kodi context menu items.
 
-		Add_Dir(name='TEST ITEM', url='', mode='test_item', folder=False, context_items=my_context, context_override=False)
-		# ^ This will add an item to the list AND a context menu item for when bring up the menu (when focused on this item).
-		# ^^ The context_override is set to False which means the new items will appear alongside the default Kodi context menu items.
-------------------------------------------------------------------------------------------
-
-CONVERT A STRING (URL) INTO MULTIPLE VARIABLES:
-This will allow you to send multiple values through via the Add_Dir
-function just as one string (url). This is then split up into however
-many values you want.
-
-	CODE: Grab_Params(extras, keys, [separator]))
-
-	AVAILABLE PARAMS:
-	    (*) extras  -  This is the string you want to split into a list of values.
-	    Each value needs to be split by <~> (unless a different separator is sent through).
-	    A good example of sending through name, DOB and sex would be: 'Mark<~>01.02.1976<~>male'
-
-	    (*) keys    -  These are the keys (variable names) you want to assign the split
-	    extras to. They need to be comma separated so using the above extras example
-	    you could use something like this: key='name,DOB,sex'.
-
-	    separator  -  This is optional, if you want to change the default separator you can do
-	    so here. Make sure it's something unique not used anywhere else in the string.
-
-	EXAMPLE CODE:
-		raw_string = 'Mark<~>01.02.1976<~>male'
-		vars = 'name,DOB,sex'
-		params = koding.Grab_Params(extras=raw_string, keys=vars)
-		dialog.ok('GRAB PARAMS RESULTS','Name: %s'%params["name"], 'DOB: %s'%params["DOB"], 'Sex: %s'%params["sex"])
-
-------------------------------------------------------------------------------------------
-
-POPULATE A LIST FROM AN ONLINE SCRAPE:
-If you have a basic index web page or a webpage with a common
-format for displaying links (on all pages) then you can use this
-to populate an add-on. It's capable of cleverly working out what
-needs to be sent through as a directory and what's a playable item.
-Take a look at the example below for a working example which explains
-this a little better.
-
-	CODE: Populate_List(url, [start_point, end_point, separator, skip]):
-
-	AVAILABLE PARAMS:
-	    (*) url  -  The start page of where to pull the first links from
-
-	    start_point  -  Send through the code tags you want to search for in the
-	    webpage. By default it's setup for a standard indexed site so the start_point
-	    is '<li+.<a href="'. The code will then grab every instance of start_point to end_point.
-
-	    end_point    -  Send through the code tags you want to search for in the
-	    webpage. By default it's setup for a standard indexed site so the end_point
-	    is '</a+.</li>'. The code will then grab every instance of start_point to end_point.
-
-	    separator  -  This is the point in the grabbed links (from above) where you want
-	    to split the string into a url and a display name. The default is ">".
-
-	    skip       -  By default this is set to ['..', '.', 'Parent Directory']. This is
-	    a list of links you don't want to appear in your add-on listing.
-
-	EXAMPLE CODE:
-		link ='http://totalrevolution.tv/videos/'
-		sp   ='<a href="'
-		ep   ='</a>'
-		sep  = '">'
-		koding.Populate_List(url=link, start_point=sp, end_point=ep, separator=sep)
+	Add_Dir(name='TEST ITEM', url='', mode='test_item', folder=False, context_items=my_context, context_override=False)
+	# ^ This will add an item to the list AND a context menu item for when bring up the menu (when focused on this item).
+	# ^^ The context_override is set to False which means the new items will appear alongside the default Kodi context menu items.
 
 ------------------------------------------------------------------------------------------
 
@@ -1446,15 +1457,14 @@ This is to be used for Add_Dir() items, see the example below.
 	    requires extra paramaters you can add them in here. Just add them
 	    as a list of strings. Example: args=['name','artwork','description']
 
+	BELOW IS AN EXAMPLE OF HOW TO CALL THE CODE IN YOUR MAIN ADDON PY FILE:
+	-----------------------------------------------------------------------
+	@route(mode="test", args=["name","description"])
+	def Test_Function(name,description):
+	    dialog.ok('This is a test function', name, description')
 
-BELOW IS AN EXAMPLE OF HOW TO CALL THE CODE IN YOUR MAIN ADDON PY FILE:
-
-@route(mode="test", args=["name","desc"])
-def Test_Function(name,desc):
-    dialog.ok('This is a test function', name, desc')
-
-koding.Add_Dir(name='Test Dialog', url={"name":"My Test Function", "desc" : "Its ALIVE!!!"}, mode='test')
-koding.run()
+	koding.Add_Dir(name='Test Dialog', url={"name":"My Test Function", "description" : "Its ALIVE!!!"}, mode='test')
+	koding.run()
 
 ------------------------------------------------------------------------------------------
 
@@ -1489,18 +1499,19 @@ This will check for any cached artwork and wipe if it's not been accessed more t
 
 	CODE: Cleanup_Textures([frequency, use_count])
 
-	    AVAILABLE PARAMS:
-	        
-	        frequency  -  This is an optional integer, be default it checks for any
-	        images not accessed in 14 days but you can use any amount of days here.
+	AVAILABLE PARAMS:
+	    
+	    frequency  -  This is an optional integer, be default it checks for any
+	    images not accessed in 14 days but you can use any amount of days here.
 
-	        use_count   -  This is an optional integer, be default it checks for any
-	        images not accessed more than 10 times. If you want to be more ruthless
-	        and remove all images not accessed in the past x amount of days then set this very high.
+	    use_count   -  This is an optional integer, be default it checks for any
+	    images not accessed more than 10 times. If you want to be more ruthless
+	    and remove all images not accessed in the past x amount of days then set this very high.
 
 	EXAMPLE CODE:
-		dialog.ok('Clean Textures','We are going to clear any old cached images not accessed at least 10 times in the past 5 days')
-		koding.Cleanup_Textures(frequency=5)
+	-------------
+	dialog.ok('Clean Textures','We are going to clear any old cached images not accessed at least 10 times in the past 5 days')
+	koding.Cleanup_Textures(frequency=5)
 
 ------------------------------------------------------------------------------------------
 
@@ -1513,7 +1524,8 @@ IMPORTANT: There was a known bug where some certain compressed tar.gz files can 
 and a bad zipfile will continue to be made until it runs out of space on your storage device. In the unlikely
 event you encounter this issue just add the problematic file(s) to your exclude list. I think this has since
 been fixed since a complete re-code to this function, or at least I've been unable to recreate it. If you
-find this problem is still occuring please let me know (whufclee on noobsandnerds.com forum), thankyou.
+find this problem is still occuring please let me know on the forum at http://totalrevolution.tv/forum
+(user: trevdev), thankyou.
 
 	CODE: Compress(src,dst,[compression,parent])
 
@@ -1542,22 +1554,23 @@ find this problem is still occuring please let me know (whufclee on noobsandnerd
 	    'kodi.log','kodi.old.log','xbmc.log','xbmc.old.log','spmc.log','spmc.old.log'
 
 	EXAMPLE CODE:
-		koding_path = xbmc.translatePath('special://home/addons/script.module.python.koding.aio')
-		zip_dest = xbmc.translatePath('special://home/test_addon.zip')
-		zip_dest2 = xbmc.translatePath('special://home/test_addon2.zip')
-		tar_dest = xbmc.translatePath('special://home/test_addon.tar')
-		tar_dest2 = xbmc.translatePath('special://home/test_addon2.tar')
-		koding.Compress(src=koding_path,dst=zip_dest,compression='zip',parent=True)
-		koding.Compress(src=koding_path,dst=zip_dest2,compression='zip',parent=False)
-		koding.Compress(src=koding_path,dst=tar_dest,compression='tar',parent=True)
-		koding.Compress(src=koding_path,dst=tar_dest2,compression='tar',parent=False)
-		koding.Text_Box('CHECK HOME FOLDER','If you check your Kodi home folder you should now have 4 different compressed versions of the Python Koding add-on.\n\ntest_addon.zip: This has been zipped up with parent set to True\n\ntest_addon2.zip: This has been zipped up with parent set to False.\n\ntest_addon.tar: This has been compressed using tar format and parent set to True\n\ntest_addon2.tar: This has been compressed using tar format and parent set to False.\n\nFeel free to manually delete these.')
+	-------------
+	koding_path = koding.Physical_Path('special://home/addons/script.module.python.koding.aio')
+	zip_dest = koding.Physical_Path('special://home/test_addon.zip')
+	zip_dest2 = koding.Physical_Path('special://home/test_addon2.zip')
+	tar_dest = koding.Physical_Path('special://home/test_addon.tar')
+	tar_dest2 = koding.Physical_Path('special://home/test_addon2.tar')
+	koding.Compress(src=koding_path,dst=zip_dest,compression='zip',parent=True)
+	koding.Compress(src=koding_path,dst=zip_dest2,compression='zip',parent=False)
+	koding.Compress(src=koding_path,dst=tar_dest,compression='tar',parent=True)
+	koding.Compress(src=koding_path,dst=tar_dest2,compression='tar',parent=False)
+	koding.Text_Box('CHECK HOME FOLDER','If you check your Kodi home folder you should now have 4 different compressed versions of the Python Koding add-on.\n\ntest_addon.zip: This has been zipped up with parent set to True\n\ntest_addon2.zip: This has been zipped up with parent set to False.\n\ntest_addon.tar: This has been compressed using tar format and parent set to True\n\ntest_addon2.tar: This has been compressed using tar format and parent set to False.\n\nFeel free to manually delete these.')
 
 ------------------------------------------------------------------------------------------
 
 CONVERT PHYSICAL PATHS TO SPECIAL:
-Convert physcial paths stored in text files to their special:// equivalent or
-replace instances of physical paths to special in a string sent through.
+	Convert physcial paths stored in text files to their special:// equivalent or
+	replace instances of physical paths to special in a string sent through.
 
 	CODE: Convert_Special([filepath, string])
 
@@ -1565,18 +1578,24 @@ replace instances of physical paths to special in a string sent through.
 
 	    filepath  -  This is the path you want to scan, by default it's set to the Kodi HOME directory.
 	    
-	    string    -  By default this is set to False, if you set to True you will get the
-	                 string of your 'filepath' returned with any reference to physical
-	                 path replaced with special://
+	    string  -  By default this is set to False which means it will convert all instances found of
+	    the physical paths to their special equivalent. The scan will convert all instances in all filenames
+	    ending in ini, xml, hash, properties. If you set this value to True you will get a return of your
+	    'filepath' string and no files will be altered.
+
+	    quoted  -  By default this is set to true, this means the return you get will be converted
+	    with urllib.quote_plus(). This is ideal if you need to get a string you can send
+	    through as a path for routing.
 
 	EXAMPLE CODE:
-		path = xbmc.translatePath('special://profile')
-		dialog.ok('[COLOR gold]ORIGINAL PATH[/COLOR]','Let\'s convert this path to it\'s special equivalent:\n[COLOR dodgerblue]%s[/COLOR]'%path)
-		path = Convert_Special(filepath=path,string=True)
-		dialog.ok('[COLOR gold]CONVERTED PATH[/COLOR]','This is the converted path:\n[COLOR dodgerblue]%s[/COLOR]'%path)
-		if dialog.yesno('[COLOR gold]CONVERT PHYSICAL PATHS[/COLOR]','We will now run through your Kodi folder converting all physical paths to their special:// equivalent in xml/hash/properties/ini files.\nDo you want to continue?'):
-		    koding.Convert_Special()
-		    dialog.ok('[COLOR gold]SUCCESS[/COLOR]','Congratulations, all references to your physical paths have been converted to special:// paths.')
+	-------------
+	path = koding.Physical_Path('special://profile')
+	dialog.ok('ORIGINAL PATH','Let\'s convert this path to it\'s special equivalent:\n[COLOR dodgerblue]%s[/COLOR]'%path)
+	path = Convert_Special(filepath=path,string=True,quoted=False)
+	dialog.ok('CONVERTED PATH','This is the converted path:\n[COLOR dodgerblue]%s[/COLOR]'%path)
+	if dialog.yesno('CONVERT PHYSICAL PATHS','We will now run through your Kodi folder converting all physical paths to their special:// equivalent in xml/hash/properties/ini files.\nDo you want to continue?'):
+	    koding.Convert_Special()
+	    dialog.ok('SUCCESS','Congratulations, all references to your physical paths have been converted to special:// paths.')
 
 ------------------------------------------------------------------------------------------
 
@@ -1588,13 +1607,12 @@ few seconds. If using a cheap poor quality device (like many android units)
 then you could even end up killing the device as some of them are made
 with very poor components which are liable to irreversable corruption.
 
-	CODE: Dummy_File(dest, [size, size_format])
+	CODE: koding.Dummy_File(dest, [size, size_format])
 
 	AVAILABLE PARAMS:
 
-	    dst          - This is the destination folder, make sure it's a physical path and not
-	    "special://...". This needs to be a FULL path including the file extension. By default
-	    this is set to special://home/dummy.txt
+	    dst          - This is the destination folder. This needs to be a FULL path including
+	    the file extension. By default this is set to special://home/dummy.txt
 
 	    size         -  This is an optional integer, by default a file of 10 MB will be created.
 
@@ -1602,29 +1620,30 @@ with very poor components which are liable to irreversable corruption.
 	    'b' (bytes), 'kb' (kilobytes), 'gb' (gigabytes)
 
 	EXAMPLE CODE:
-		dummy = xbmc.translatePath('special://home/test_dummy.txt')
-		koding.Dummy_File(dst=dummy, size=100, size_format='b')
-		dialog.ok('DUMMY FILE CREATED','Check your Kodi home folder and you should see a 100 byte test_dummy.txt file.','[COLOR=gold]Press OK to delete this file.[/COLOR]')
-		os.remove(dummy)
+	-------------
+	dummy = 'special://home/test_dummy.txt'
+	koding.Dummy_File(dst=dummy, size=100, size_format='b')
+	dialog.ok('DUMMY FILE CREATED','Check your Kodi home folder and you should see a 100 byte test_dummy.txt file.','[COLOR=gold]Press OK to delete this file.[/COLOR]')
+	xbmcvfs.delete(dummy)
 
 ------------------------------------------------------------------------------------------
 
 CREATE PATHS:
 Send through a path to a file, if the directories required do not exist this will create them.
 
-CODE: Create_Paths(path)
+	CODE: Create_Paths(path)
 
 	AVAILABLE PARAMS:
 
 	    (*) path  -  This is the full path including the filename. The path
-	    sent through will be split up at every instance of '/' so if you
-	    only want to send through a directory you MUST include a trailing '/'
+	    sent through will be split up at every instance of '/'
 
 	EXAMPLE CODE:
-		my_path = xbmc.translatePath('special://home/test/testing/readme.txt')
-		koding.Create_Paths(path=my_path)
-		dialog.ok('PATH CREATED','Check in your Kodi home folder and you should now have sub-folders of /test/testing/.','[COLOR=gold]Press ok to remove these folders.[/COLOR]')
-		shutil.rmtree(xbmc.translatePath('special://home/test'))
+	-------------
+	my_path = xbmc.translatePath('special://home/test/testing/readme.txt')
+	koding.Create_Paths(path=my_path)
+	dialog.ok('PATH CREATED','Check in your Kodi home folder and you should now have sub-folders of /test/testing/.','[COLOR=gold]Press ok to remove these folders.[/COLOR]')
+	shutil.rmtree(xbmc.translatePath('special://home/test'))
 
 ------------------------------------------------------------------------------------------
 
@@ -1639,19 +1658,19 @@ Delete all kodi crashlogs. This function will retun the amount of successfully r
 	    Kodi please send through a list of the files you want deleted. The
 	    format to use needs to be like example shown below.
 
-
 	EXAMPLE CODE:
-		# Lets setup some extra crashlog types for tvmc and ftmc kodi forks
-		log_path =  xbmc.translatePath('special://logpath/')
-		tvmc_path = os.path.join(log_path,'tvmc_crashlog*.*')
-		ftmc_path = os.path.join(log_path,'ftmc_crashlog*.*')
+	-------------
+	# Lets setup some extra crashlog types for tvmc and ftmc kodi forks
+	log_path =  xbmc.translatePath('special://logpath/')
+	tvmc_path = os.path.join(log_path,'tvmc_crashlog*.*')
+	ftmc_path = os.path.join(log_path,'ftmc_crashlog*.*')
 
 
-		deleted_files = koding.Delete_Crashlogs(extra_paths=[tvmc_path, ftmc_path])
-		if deleted_files > 0:
-		    dialog.ok('CRASHLOGS DELETED','Congratulations, a total of %s crashlogs have been deleted.')
-		else:
-		    dialog.ok('NO CRASHLOGS','No crashlogs could be found on the system.')
+	deleted_files = koding.Delete_Crashlogs(extra_paths=[tvmc_path, ftmc_path])
+	if deleted_files > 0:
+	    dialog.ok('CRASHLOGS DELETED','Congratulations, a total of %s crashlogs have been deleted.')
+	else:
+	    dialog.ok('NO CRASHLOGS','No crashlogs could be found on the system.')
 
 ------------------------------------------------------------------------------------------
 
@@ -1660,11 +1679,12 @@ Delete all specific filetypes in a path (including sub-directories)
 
 	CODE: Delete_Files([filepath, filetype, subdirectories])
 
-	AVAILABLE PARAMS:  
-	    filepath  -  By default this points to the Kodi HOME folder (special://home).
+	AVAILABLE PARAMS:
+	    
+	    (*) filepath  -  By default this points to the Kodi HOME folder (special://home).
 	    The path you send through must be a physical path and not special://
 
-	    filetype  -  The type of files you want to delete, by default it's set to *.txt
+	    (*) filetype  -  The type of files you want to delete, by default it's set to *.txt
 
 	    subdirectories  -  By default it will only search the folder given, if set to True
 	    all filetypes listed above will be deleted in the sub-directories too.
@@ -1673,24 +1693,31 @@ Delete all specific filetypes in a path (including sub-directories)
 	by putting in the wrong path then it's your own stupid fault!
 
 	EXAMPLE CODE:
-		delete_path = xbmc.translatePath('special://profile/addon_data/test')
-		dialog.ok('DELETE FILES','All *.txt files will be deleted from:', '', '/userdata/addon_data/test/')
-		Delete_Files(filepath=delete_path, filetype='.txt', subdirectories=True)
+	-------------
+	delete_path = 'special://profile/addon_data/test'
+	xbmcvfs.mkdirs(delete_path)
+	test1 = os.path.join(delete_path,'test1.txt')
+	test2 = os.path.join(delete_path,'test2.txt')
+	koding.Text_File(test1,'w','testing1')
+	koding.Text_File(test2,'w','testing2')
+	dialog.ok('DELETE FILES','All *.txt files will be deleted from:', '', '/userdata/addon_data/test/')
+	koding.Delete_Files(filepath=delete_path, filetype='.txt', subdirectories=True)
 
 ------------------------------------------------------------------------------------------
 
 DELETE A FOLDER PATH:
-Completely delete a folder and all it's sub-folders. With the ability to add an ignore list for
-any folders/files you don't want removed.
+Completely delete a folder and all it's sub-folders. With the ability to add
+an ignore list for any folders/files you don't want removed.
 
 	CODE: Delete_Folders(filepath, [ignore])
 
 	AVAILABLE PARAMS:
 	    
-	    (*) filepath  -  Use the physical path you want to remove (not special://)
+	    (*) filepath  -  Use the physical path you want to remove, this must be converted
+	    to the physical path and will not work with special://
 
 	    ignore  -  A list of paths you want to ignore. These need to be sent
-	    through as physical paths so just use xbmc.translatePath when creating
+	    through as physical paths so just use koding.Physical_Path() when creating
 	    your list and these can be folder paths or filepaths.
 
 	WARNING: This is an extremely powerful and dangerous tool! If you wipe important
@@ -1699,54 +1726,68 @@ any folders/files you don't want removed.
 	wipe the whole root.
 
 	EXAMPLE CODE:
-		delete_path = xbmc.translatePath('special://profile/py_koding_test')
+	-------------
+	delete_path = koding.Physical_Path('special://profile/py_koding_test')
 
-		# Create new test directory to remove
-		if not os.path.exists(delete_path):
-		    os.makedirs(delete_path)
+	# Create new test directory to remove
+	if not os.path.exists(delete_path):
+	    os.makedirs(delete_path)
 
-		# Fill it with some dummy files
-		file1 = os.path.join(delete_path,'file1.txt')
-		file2 = os.path.join(delete_path,'file2.txt')
-		file3 = os.path.join(delete_path,'file3.txt')
-		koding.Dummy_File(dst=file1, size=10, size_format='kb')
-		koding.Dummy_File(dst=file2, size=10, size_format='kb')
-		koding.Dummy_File(dst=file3, size=10, size_format='kb')
+	# Fill it with some dummy files
+	file1 = os.path.join(delete_path,'file1.txt')
+	file2 = os.path.join(delete_path,'file2.txt')
+	file3 = os.path.join(delete_path,'file3.txt')
+	koding.Dummy_File(dst=file1, size=10, size_format='kb')
+	koding.Dummy_File(dst=file2, size=10, size_format='kb')
+	koding.Dummy_File(dst=file3, size=10, size_format='kb')
 
-		dialog.ok('[COLOR gold]TEST FILE CREATED[/COLOR]','If you look in your userdata folder you should now see a new test folder containing 3 dummy files. The folder name is \'py_koding_test\'.')
-		if dialog.yesno('[COLOR gold]DELETE FOLDER[/COLOR]','Everything except file1.txt will now be removed from:', '/userdata/py_koding_test/','Do you want to continue?'):
-		    koding.Delete_Folders(filepath=delete_path, ignore=[file1])
-		    dialog.ok('[COLOR gold]DELETE LEFTOVERS[/COLOR]','When you press OK we will delete the whole temporary folder we created including it\'s contents')
-		    koding.Delete_Folders(filepath=delete_path)
+	dialog.ok('TEST FILE CREATED','If you look in your userdata folder you should now see a new test folder containing 3 dummy files. The folder name is \'py_koding_test\'.')
+	if dialog.yesno('[COLOR gold]DELETE FOLDER[/COLOR]','Everything except file1.txt will now be removed from:', '/userdata/py_koding_test/','Do you want to continue?'):
+	    koding.Delete_Folders(filepath=delete_path, ignore=[file1])
+	    dialog.ok('DELETE LEFTOVERS','When you press OK we will delete the whole temporary folder we created including it\'s contents')
+	    koding.Delete_Folders(filepath=delete_path)
 
 ------------------------------------------------------------------------------------------
 
 EXTRACT:
-This function extract a zip or tar file and return true or false so unlike the builtin xbmc function "Extract" this one will pause code until it's completed the action.
+This function will extract a zip or tar file and return true or false so unlike the
+builtin xbmc function "Extract" this one will pause code until it's completed the action.
 
-	CODE: Extract(src,dst,[dp])
+	CODE: koding.Extract(src,dst,[dp])
 	dp is optional, by default it is set to false
 
 	AVAILABLE PARAMS:
-		(*) src    - This is the source file, the actual zip/tar. Make sure this is a full path to your zip file and also make sure you're not using "special://". This extract function is only compatible with .zip/.tar/.tar.gz files
 
-		(*) dst    - This is the destination folder, make sure it's a physical path and not "special://...". This needs to be a FULL path, if you want it to extract to the same location as where the zip is located you still have to enter the full path.
+	    (*) src    - This is the source file, the actual zip/tar. Make sure this is a full path to
+	    your zip file and also make sure you're not using "special://". This extract function
+	    is only compatible with .zip/.tar/.tar.gz files
 
-		dp - This is optional, if you pass through the dp function as a DialogProgress() then you'll get to see the status of the extraction process. If you choose not to add this paramater then you'll just get a busy spinning circle icon until it's completed. See the example below for a dp example.
+	    (*) dst    - This is the destination folder, make sure it's a physical path and not
+	    "special://...". This needs to be a FULL path, if you want it to extract to the same
+	    location as where the zip is located you still have to enter the full path.
 
-	EXAMPLE CODE WITH A DIALOG PROGRESS WINDOW:
-		koding_path = xbmc.translatePath('special://home/addons/script.module.python.koding.aio')
-		zip_dest = xbmc.translatePath('special://home/test_addon.zip')
-		extract_dest = xbmc.translatePath('special://home/TEST')
-		koding.Compress(src=koding_path,dst=zip_dest,compression='zip',parent=True)
-		dp = xbmcgui.DialogProgress()
-		dp.create('Extracting Zip','Please Wait')
-		if koding.Extract(_in=zip_dest,_out=extract_dest,dp=dp,show_error=True):
-		    dialog.ok('YAY IT WORKED!','We just zipped up your python koding add-on then extracted it to a new folder in your Kodi root directory called TEST. Press OK to delete these files.')
-		    os.remove(zip_dest)
-		    shutil.rmtree(extract_dest)
-		else:
-		    dialog.ok('BAD NEWS!','UH OH SOMETHING WENT HORRIBLY WRONG')
+	    dp - This is optional, if you pass through the dp function as a DialogProgress()
+	    then you'll get to see the status of the extraction process. If you choose not to add
+	    this paramater then you'll just get a busy spinning circle icon until it's completed.
+	    See the example below for a dp example.
+
+	    show_error - By default this is set to False, if set to True an error dialog 
+	    will appear showing details of the file which failed to extract.
+
+	EXAMPLE CODE:
+	-------------
+	koding_path = koding.Physical_Path('special://home/addons/script.module.python.koding.aio')
+	zip_dest = koding.Physical_Path('special://home/test_addon.zip')
+	extract_dest = koding.Physical_Path('special://home/TEST')
+	koding.Compress(src=koding_path,dst=zip_dest,compression='zip',parent=True)
+	dp = xbmcgui.DialogProgress()
+	dp.create('Extracting Zip','Please Wait')
+	if koding.Extract(_in=zip_dest,_out=extract_dest,dp=dp,show_error=True):
+	    dialog.ok('YAY IT WORKED!','We just zipped up your python koding add-on then extracted it to a new folder in your Kodi root directory called TEST. Press OK to delete these files.')
+	    xbmcvfs.delete(zip_dest)
+	    shutil.rmtree(extract_dest)
+	else:
+	    dialog.ok('BAD NEWS!','UH OH SOMETHING WENT HORRIBLY WRONG')
 
 ------------------------------------------------------------------------------------------
 
@@ -1757,16 +1798,56 @@ Show the amount of available free space in a path, this can be returned in a num
 
 	AVAILABLE PARAMS:
 
-		dirname  - This optional, by default it will tell you how much space is available in your special://home folder. If you require information for another path (such as a different partition or storage device) then enter the physical path. This currently only works for local paths and not networked drives.
+	    dirname  - This optional, by default it will tell you how much space is available in your special://home
+	    folder. If you require information for another path (such as a different partition or storage device)
+	    then enter the physical path. This currently only works for local paths and not networked drives.
 
-		filesize - By default you'll get a return of total bytes, however you can get the value as bytes, kilobytes, megabytes, gigabytes and terabytes..
+	    filesize - By default you'll get a return of total bytes, however you can get the value as bytes,
+	    kilobytes, megabytes, gigabytes and terabytes..
 
-			VALUES:
-			'b'	 = bytes (integer)
-			'kb' = kilobytes (float to 1 decimal place)
-			'mb' = kilobytes (float to 2 decimal places)
-			'gb' = kilobytes (float to 3 decimal places)
-			'tb' = terabytes (float to 4 decimal places)
+	        VALUES:
+	        'b'  = bytes (integer)
+	        'kb' = kilobytes (float to 1 decimal place)
+	        'mb' = kilobytes (float to 2 decimal places)
+	        'gb' = kilobytes (float to 3 decimal places)
+	        'tb' = terabytes (float to 4 decimal places)
+
+	EXAMPLE CODE:
+	-------------
+	HOME = koding.Physical_Path('special://home')
+	my_space = koding.Free_Space(HOME, 'gb')
+	dialog.ok('Free Space','Available space in HOME: %s GB' % my_space)
+
+------------------------------------------------------------------------------------------
+
+FOLDER SIZE:
+Return the size of a folder path including sub-directories,
+this can be returned in a number of different formats.
+
+	CODE: koding.Folder_Size([dirname, filesize])
+
+	AVAILABLE PARAMS:
+
+	    dirname  - This optional, by default it will tell you how much space is available in your
+	    special://home folder. If you require information for another path (such as a different
+	    partition or storage device) then enter the physical path. This currently only works for
+	    local paths and not networked drives.
+
+	    filesize - By default you'll get a return of total bytes, however you can get the value as
+	    bytes, kilobytes, megabytes, gigabytes and terabytes..
+
+	        VALUES:
+	        'b'  = bytes (integer)
+	        'kb' = kilobytes (float to 1 decimal place)
+	        'mb' = kilobytes (float to 2 decimal places)
+	        'gb' = kilobytes (float to 3 decimal places)
+	        'tb' = terabytes (float to 4 decimal places)
+
+	EXAMPLE CODE:
+	-------------
+	HOME = Physical_Path('special://home')
+	home_size = Folder_Size(HOME, 'mb')
+	dialog.ok('Folder Size','KODI HOME: %s MB' % home_size)
 
 ------------------------------------------------------------------------------------------
 
@@ -1804,39 +1885,10 @@ it will perform a hard reset command followed by a reboot.
 	    will not be recreated and you risk corruption.
 
 	EXAMPLE CODE:
-		if dialog.yesno('[COLOR gold]TOTAL WIPEOUT![/COLOR]','This will attempt give you a totally fresh install of Kodi.','Are you sure you want to continue?'):
-		    if dialog.yesno('[COLOR gold]FINAL CHANCE!!![/COLOR]','If you click Yes this WILL attempt to wipe your install', '[COLOR=dodgerblue]ARE YOU 100% CERTAIN YOU WANT TO WIPE?[/COLOR]'):
-		        clean_state = koding.Fresh_Install()
-
-------------------------------------------------------------------------------------------
-
-FOLDER SIZE:
-Return the size of a folder path including sub-directories, this can be returned in a number of different formats.
-
-	CODE: Folder_Size([dirname, filesize])
-
-	AVAILABLE PARAMS:
-
-	    dirname  - This optional, by default it will tell you how much space is available in your
-	    special://home folder. If you require information for another path (such as a different
-	    partition or storage device) then enter the physical path. This currently only works for
-	    local paths and not networked drives.
-
-	    filesize - By default you'll get a return of total bytes, however you can get the value as
-	    bytes, kilobytes, megabytes, gigabytes and terabytes..
-
-	        VALUES:
-	        'b'  = bytes (integer)
-	        'kb' = kilobytes (float to 1 decimal place)
-	        'mb' = kilobytes (float to 2 decimal places)
-	        'gb' = kilobytes (float to 3 decimal places)
-	        'tb' = terabytes (float to 4 decimal places)
-
-	EXAMPLE CODE:
-		HOME = xbmc.translatePath('special://home')
-		home_size = Folder_Size(HOME, 'mb')
-		dialog.ok('Folder Size','KODI HOME: %s MB' % home_size)
-
+	-------------
+	if dialog.yesno('[COLOR gold]TOTAL WIPEOUT![/COLOR]','This will attempt give you a totally fresh install of Kodi.','Are you sure you want to continue?'):
+	    if dialog.yesno('[COLOR gold]FINAL CHANCE!!![/COLOR]','If you click Yes this WILL attempt to wipe your install', '[COLOR=dodgerblue]ARE YOU 100% CERTAIN YOU WANT TO WIPE?[/COLOR]'):
+	        clean_state = koding.Fresh_Install()
 ------------------------------------------------------------------------------------------
 
 GET CONTENTS OF A PATH (INC. SUB-DIRECTORIES)
@@ -1864,12 +1916,13 @@ Return a list of either files or folders in a given path.
 	    through filter='.xml'.
 
 	EXAMPLE CODE:
-		ADDONS = xbmc.translatePath('special://home/addons')
-		addon_folders = koding.Get_Contents(path=ADDONS, folders=True, exclude_list=['packages','temp'], full_path=False)
-		results = ''
-		for item in addon_folders:
-		    results += 'FOLDER: [COLOR=dodgerblue]%s[/COLOR]\n'%item
-		koding.Text_Box('ADDON FOLDERS','Below is a list of folders found in the addons folder (excluding packages and temp):\n\n%s'%results)
+	-------------
+	ADDONS = Physical_Path('special://home/addons')
+	addon_folders = koding.Get_Contents(path=ADDONS, folders=True, exclude_list=['packages','temp'], full_path=False)
+	results = ''
+	for item in addon_folders:
+	    results += 'FOLDER: [COLOR=dodgerblue]%s[/COLOR]\n'%item
+	koding.Text_Box('ADDON FOLDERS','Below is a list of folders found in the addons folder (excluding packages and temp):\n\n%s'%results)
 
 ------------------------------------------------------------------------------------------
 
@@ -1892,11 +1945,12 @@ the one with the highest version number will be returned.
 	    then enter it in here.
 
 	EXAMPLE CODE:
-		mylist = ['plugin.test-1.0.zip','plugin.test-0.7.zip','plugin.test-1.1.zip','plugin.test-0.9.zip']
-		dialog.ok('[COLOR=gold]OUR LIST OF FILES[/COLOR]', '[COLOR=dodgerblue]%s[/COLOR]\n[COLOR=powderblue]%s[/COLOR]\n[COLOR=dodgerblue]%s[/COLOR]\n[COLOR=powderblue]%s[/COLOR]'%(mylist[0],mylist[1],mylist[2],mylist[3]))
+	-------------
+	mylist = ['plugin.test-1.0.zip','plugin.test-0.7.zip','plugin.test-1.1.zip','plugin.test-0.9.zip']
+	dialog.ok('OUR LIST OF FILES', '[COLOR=dodgerblue]%s[/COLOR]\n[COLOR=powderblue]%s[/COLOR]\n[COLOR=dodgerblue]%s[/COLOR]\n[COLOR=powderblue]%s[/COLOR]'%(mylist[0],mylist[1],mylist[2],mylist[3]))
 
-		highest = Highest_Version(content=mylist,start_point='-',end_point='.zip')
-		dialog.ok('HIGHEST VERSION', 'The highest version number of your files is:','[COLOR=dodgerblue]%s[/COLOR]'%highest)
+	highest = Highest_Version(content=mylist,start_point='-',end_point='.zip')
+	dialog.ok('HIGHEST VERSION', 'The highest version number of your files is:','[COLOR=dodgerblue]%s[/COLOR]'%highest)
 
 ------------------------------------------------------------------------------------------
 
@@ -1905,39 +1959,95 @@ Move a directory including all sub-directories to a new location.
 This will automatically create the new location if it doesn't already
 exist and it wierwrite any existing entries if they exist.
 
-CODE: Move_Tree(src, dst)
+	CODE: koding.Move_Tree(src, dst)
 
-AVAILABLE PARAMS:
+	AVAILABLE PARAMS:
 
-    (*) src  -  This is source directory that you want to copy
+	    (*) src  -  This is source directory that you want to copy
 
-    (*) dst  -  This is the destination location you want to copy a directory to.
+	    (*) dst  -  This is the destination location you want to copy a directory to.
 
-EXAMPLE CODE:
-source = xbmc.translatePath('special://home/addons/script.module.python.koding.aio')
-destination = xbmc.translatePath('special://home/Python Koding')
-koding.Move_Tree(source, destination)
-dialog.ok('CHECK YOUR KODI HOME FOLDER','Please check your Kodi home folder, you should now have the Python Koding add-on in there. When you press OK it will be moved back to addons')
-koding.Move_Tree(destination, source)
+	    dp - This is optional, if you pass through the dp function as a DialogProgress()
+	    then you'll get to see the status of the move process. See the example below for a dp example.
+
+	EXAMPLE CODE:
+	-------------
+	dp = xbmcgui.DialogProgress()
+	source = koding.Physical_Path('special://profile/move_test')
+
+	# Lets create a 500MB dummy file so we can move and see dialog progress
+	dummy = os.path.join(source,'dummy')
+	if not os.path.exists(source):
+	    os.makedirs(source)
+	koding.Dummy_File(dst=dummy+'1.txt', size=10, size_format='mb')
+	koding.Dummy_File(dst=dummy+'2.txt', size=10, size_format='mb')
+	koding.Dummy_File(dst=dummy+'3.txt', size=10, size_format='mb')
+	koding.Dummy_File(dst=dummy+'4.txt', size=10, size_format='mb')
+	koding.Dummy_File(dst=dummy+'5.txt', size=10, size_format='mb')
+	koding.Dummy_File(dst=dummy+'6.txt', size=10, size_format='mb')
+	dialog.ok('DUMMY FILE CREATED','If you want to check in your userdata folder you should have a new folder called "move_test" which has 6x 10MB dummy files.')
+
+	# This is optional but if you want to see a dialog progress then you'll need this
+	dp.create('MOVING FILES','Please Wait')
+
+	destination = koding.Physical_Path('special://home/My MOVED Dummy File')
+	koding.Move_Tree(source, destination, dp)
+	dialog.ok('CHECK YOUR KODI HOME FOLDER','Please check your Kodi home folder, the dummy file should now have moved in there. When you press OK it will be removed')
+	shutil.rmtree(destination)
 
 ------------------------------------------------------------------------------------------
 
 PATH TO CURRENT "LIVE" DATABASE:
-If you need to find out the current "real" database in use then this is the function for you. It will scan for a specific database type (e.g. addons) and return the path to the one which was last updated. This is particularly useful if the system's previously updated to a newer version rather than a fresh install - or if they've installed a "build" which contained old databases.
+If you need to find out the current "real" database in use then this is the function for you.
+It will scan for a specific database type (e.g. addons) and return the path to the one which was last updated.
+This is particularly useful if the system has previously updated to a newer version rather than a fresh install
+or if they've installed a "build" which contained old databases.
 
 	CODE: DB_Path_Check(db_path)
 
 	AVAILABLE VALUES:
-		The db_path can be any string you want, it needs to be the string the database starts with. If you want to find the path for the addons*.db you would use "addons" as the value, if you wanted to find the path of the MyVideos*.db you would use "myvideos" etc. - it is not case sensitive.
+
+	    (*) db_path  -  This is the string the database starts with.
+	    If you want to find the path for the addons*.db you would use "addons"
+	    as the value, if you wanted to find the path of the MyVideos*.db you would use
+	    "myvideos" etc. - it is not case sensitive.
+
+	EXAMPLE CODE:
+	-------------
+	dbpath = koding.DB_Path_Check(db_path='addons')
+	dialog.ok('ADDONS DB','The path to the current addons database is:',dbpath)
+
+------------------------------------------------------------------------------------------
+
+PHYSICAL PATHS:
+Send through a special:// path and get the real physical path returned.
+This has been written due to the problem where if you're running the Windows Store
+version of Kodi the built-in xbmc.translatePath() function is returning bogus results
+making it impossible to access databases.
+
+	CODE: koding.Physical_Path([path])
+
+	AVAILABLE PARAMS:
+	    
+	    path  -  This is the path to the folder/file you want returned. This is optional,
+	    if you leave this out it will just return the path to the root directory (special://home)
+
+	EXAMPLE CODE:
+	-------------
+	location = 'special://home/addons/script.module.python.koding.aio'
+	real_location = koding.Physical_Path(location)
+	xbmc.log(real_location,2)
+	dialog.ok('PHYSICAL PATH','The real path of special://home/addons/script.module.python.koding.aio is:','[COLOR=dodgerblue]%s[/COLOR]'%real_location)
 
 ------------------------------------------------------------------------------------------
 
 READ/WRITE TEXT FILES:
 Open/create a text file and read/write to it.
 
-	CODE: Text_File(path, mode, [text])
+	CODE: koding.Text_File(path, mode, [text])
 
-	AVAILABLE PARAMS:    
+	AVAILABLE PARAMS:
+	    
 	    (*) path  -  This is the path to the text file
 
 	    (*) mode  -  This can be 'r' (for reading) or 'w' (for writing)
@@ -1946,11 +2056,25 @@ Open/create a text file and read/write to it.
 	    is the text you want to enter. This will completely overwrite any
 	    text already in the file.
 
+	EXAMPLE CODE:
+	-------------
+	HOME = koding.Physical_Path('special://home')
+	koding_test = os.path.join(HOME, 'koding_test.txt')
+	koding.Text_File(path=koding_test, mode='w', text='Well done, you\'ve created a text file containing this text!')
+	dialog.ok('CREATE TEXT FILE','If you check your home Kodi folder and you should now have a new koding_test.txt file in there.','[COLOR=gold]DO NOT DELETE IT YET![/COLOR]')
+	mytext = koding.Text_File(path=koding_test, mode='r')
+	dialog.ok('TEXT FILE CONTENTS','The text in the file created is:','[COLOR=dodgerblue]%s[/COLOR]'%mytext,'[COLOR=gold]CLICK OK TO DELETE THE FILE[/COLOR]')
+	try:
+	    os.remove(koding_test)
+	except:
+	    dialog.ok('FAILED TO REMOVE','Could not remove the file, looks like you might have it open in a text editor. Please manually remove yourself')
+
 ------------------------------------------------------------------------------------------
 
 RETURN END OF A PATH:
-Split the path at every '/' and return the final file/folder name. If your path uses backslashes rather than forward
-slashes it will use that as the separator.
+Split the path at every '/' and return the final file/folder name.
+If your path uses backslashes rather than forward slashes it will use
+that as the separator.
 
 	CODE:  End_Path(path)
 
@@ -1959,12 +2083,13 @@ slashes it will use that as the separator.
 	    path  -  This is the path where you want to grab the end item name.
 
 	EXAMPLE CODE:
-		addons_path = xbmc.translatePath('special://home/addons')
-		file_name = koding.End_Path(path=addons_path)
-		dialog.ok('ADDONS FOLDER','Path checked:',addons_path,'Folder Name: [COLOR=dodgerblue]%s[/COLOR]'%file_name)
-		file_path = xbmc.translatePath('special://home/addons/script.module.python.koding.aio/addon.xml')
-		file_name = koding.End_Path(path=file_path)
-		dialog.ok('FILE NAME','Path checked:',file_path,'File Name: [COLOR=dodgerblue]%s[/COLOR]'%file_name)
+	-------------
+	addons_path = 'special://home/addons'
+	file_name = koding.End_Path(path=addons_path)
+	dialog.ok('ADDONS FOLDER','Path checked:',addons_path,'Folder Name: [COLOR=dodgerblue]%s[/COLOR]'%file_name)
+	file_path = 'special://home/addons/script.module.python.koding.aio/addon.xml'
+	file_name = koding.End_Path(path=file_path)
+	dialog.ok('FILE NAME','Path checked:',file_path,'File Name: [COLOR=dodgerblue]%s[/COLOR]'%file_name)
 
 ------------------------------------------------------------------------------------------
 
@@ -1980,8 +2105,9 @@ just write a simple function for it :)
 	CODE:  Current_Profile()
 
 	EXAMPLE CODE:
-		profile = koding.Current_Profile()
-		dialog.ok('CURRENT PROFILE','Your current running profile is:','[COLOR=dodgerblue]%s[/COLOR]' % profile)
+	-------------
+	profile = koding.Current_Profile()
+	dialog.ok('CURRENT PROFILE','Your current running profile is:','[COLOR=dodgerblue]%s[/COLOR]' % profile)
 
 ------------------------------------------------------------------------------------------
 
@@ -2003,13 +2129,14 @@ This will return the timestamp in various formats. By default it returns as "int
 	    'date_time' -  A clean interger style date with time at end: 2017-04-07 10:17:09
 
 	EXAMPLE CODE:
-		integer_time = koding.Timestamp('integer')
-		epoch_time = koding.Timestamp('epoch')
-		clean_time = koding.Timestamp('clean')
-		date_time = koding.Timestamp('date_time')
-		import datetime
-		installedtime = str(datetime.datetime.now())[:-7]
-		dialog.ok('CURRENT TIME','Integer: %s' % integer_time, 'Epoch: %s' % epoch_time, 'Clean: %s' % clean_time)
+	-------------
+	integer_time = koding.Timestamp('integer')
+	epoch_time = koding.Timestamp('epoch')
+	clean_time = koding.Timestamp('clean')
+	date_time = koding.Timestamp('date_time')
+	import datetime
+	installedtime = str(datetime.datetime.now())[:-7]
+	dialog.ok('CURRENT TIME','Integer: %s' % integer_time, 'Epoch: %s' % epoch_time, 'Clean: %s' % clean_time)
 
 ------------------------------------------------------------------------------------------
 
@@ -2020,10 +2147,6 @@ Use this to set built-in kodi settings via JSON or set skin settings.
 
 	AVAILABLE PARAMS:
 	    
-	    (*) setting - This is the name of the setting you want to change, it could be a
-	    setting from the kodi settings or a skin based setting. If you're wanting
-	    to enable/disable an add-on this is set as the add-on id.
-
 	    setting_type - The type of setting type you want to change. By default
 	    it's set to 'kodi_setting', see below for more info.
 
@@ -2046,15 +2169,20 @@ Use this to set built-in kodi settings via JSON or set skin settings.
 	        'json' : WIP - setitng = method, value = params, see documentation on
 	        JSON-RPC API here: http://kodi.wiki/view/JSON-RPC_API)
 
+	    setting - This is the name of the setting you want to change, it could be a
+	    setting from the kodi settings or a skin based setting. If you're wanting
+	    to enable/disable an add-on this is set as the add-on id.
+
 	    value: This is the value you want to change the setting to. By default this
 	    is set to 'true'.
 
 
 	EXAMPLE CODE:
-		if dialog.yesno('RSS FEEDS','Would you like to enable or disable your RSS feeds?',yeslabel='ENABLE',nolabel='DISABLE'):
-		    koding.Set_Setting(setting_type='kodi_setting', setting='lookandfeel.enablerssfeeds', value='true')
-		else:
-		    koding.Set_Setting(setting_type='kodi_setting', setting='lookandfeel.enablerssfeeds', value='false')
+	-------------
+	if dialog.yesno('RSS FEEDS','Would you like to enable or disable your RSS feeds?',yeslabel='ENABLE',nolabel='DISABLE'):
+	    koding.Set_Setting(setting_type='kodi_setting', setting='lookandfeel.enablerssfeeds', value='true')
+	else:
+	    koding.Set_Setting(setting_type='kodi_setting', setting='lookandfeel.enablerssfeeds', value='false')
 
 ------------------------------------------------------------------------------------------
 
@@ -2064,28 +2192,34 @@ Force close Kodi, should only be used in extreme circumstances.
 	CODE: Force_Close()
 
 	EXAMPLE CODE:
-		if dialog.yesno('FORCE CLOSE','Are you sure you want to forcably close Kodi? This could potentially cause corruption if system tasks are taking place in background.'):
-		    koding.Force_Close()
+	-------------
+	if dialog.yesno('FORCE CLOSE','Are you sure you want to forcably close Kodi? This could potentially cause corruption if system tasks are taking place in background.'):
+	    koding.Force_Close()
 
 ------------------------------------------------------------------------------------------
 
 GET USER ID & GROUP ID:
-A simple function to set user id and group id to the current running App for system commands. For example if you're
-using the subprocess command you could send through the preexec_fn paramater as koding.Run_As_Kodi. This function
-will also return the uid and gid in form of a dictionary.
+A simple function to set user id and group id to the current running App
+for system commands. For example if you're using the subprocess command
+you could send through the preexec_fn paramater as koding.Get_ID(setid=True).
+This function will also return the uid and gid in form of a dictionary.
 
-CODE: Get_ID([setid])
+	CODE: Get_ID([setid])
 
-AVAILABLE PARAMS:
-    
-    (*) setid  -  By default this is set to False but if set to True it
-    will set the ids (to be used for subprocess commands)
+	AVAILABLE PARAMS:
+	    
+	    (*) setid  -  By default this is set to False but if set to True it
+	    will set the ids (to be used for subprocess commands)
 
-EXAMPLE CODE:
-ids = Get_ID(setid=False)
-uid = ids['uid']
-gid = ids['gid']
-dialog.ok('USER & GROUP ID','User ID: %s'%uid, 'Group ID: %s'%gid)
+	EXAMPLE CODE:
+	-------------
+	ids = Get_ID(setid=False)
+	if ids:
+	    uid = ids['uid']
+	    gid = ids['gid']
+	    dialog.ok('USER & GROUP ID','User ID: %s'%uid, 'Group ID: %s'%gid)
+	else:
+	    dialog.ok('USER & GROUP ID','This function is not applicable to your system. We\'ve been sent back a return of False to indicate this function does not exist on your os.')
 
 ------------------------------------------------------------------------------------------
 
@@ -2114,18 +2248,19 @@ This will grab the log file contents, works on all systems even forked kodi.
 	    timestamp ordering like a normal log.
 
 	EXAMPLE CODE:
-		my_log = koding.Grab_Log()
-		dialog.ok('KODI LOG LOOP','Press OK to see various logging options, every 5 seconds it will show a new log style.')
-		koding.Text_Box('CURRENT LOG FILE (ORIGINAL)',my_log)
-		xbmc.sleep(5000)
-		my_log = koding.Grab_Log(formatting='clean', sort_order='reverse')
-		koding.Text_Box('CURRENT LOG FILE (clean in reverse order)',my_log)
-		xbmc.sleep(5000)
-		my_log = koding.Grab_Log(formatting='errors_warnings', sort_order='reverse')
-		koding.Text_Box('CURRENT LOG FILE (erros & warnings only - reversed)',my_log)
-		xbmc.sleep(5000)
-		old_log = koding.Grab_Log(log_type='old')
-		koding.Text_Box('OLD LOG FILE',old_log)
+	-------------
+	my_log = koding.Grab_Log()
+	dialog.ok('KODI LOG LOOP','Press OK to see various logging options, every 5 seconds it will show a new log style.')
+	koding.Text_Box('CURRENT LOG FILE (ORIGINAL)',my_log)
+	xbmc.sleep(5000)
+	my_log = koding.Grab_Log(formatting='clean', sort_order='reverse')
+	koding.Text_Box('CURRENT LOG FILE (clean in reverse order)',my_log)
+	xbmc.sleep(5000)
+	my_log = koding.Grab_Log(formatting='errors_warnings', sort_order='reverse')
+	koding.Text_Box('CURRENT LOG FILE (erros & warnings only - reversed)',my_log)
+	xbmc.sleep(5000)
+	old_log = koding.Grab_Log(log_type='old')
+	koding.Text_Box('OLD LOG FILE',old_log)
 
 ------------------------------------------------------------------------------------------
 
@@ -2134,7 +2269,12 @@ Return details of the last error produced, perfect for try/except statements
 
 	CODE: Last_Error()
 
-	EXAMPLE CODE: xbmc.log(Last_Error())
+	EXAMPLE CODE:
+	-------------
+	try:
+	    xbmc.log(this_should_error)
+	except:
+	    koding.Text_Box('ERROR MESSAGE',Last_Error())
 
 ------------------------------------------------------------------------------------------
 
@@ -2149,7 +2289,8 @@ distros so if you know of any improved code please do pass on. Thank you.
 	CODE: Network_Settings()
 
 	EXAMPLE CODE:
-		koding.Network_Settings()
+	-------------
+	koding.Network_Settings()
 
 ------------------------------------------------------------------------------------------
 
@@ -2169,29 +2310,34 @@ Print to the Kodi log but only if debugging is enabled in settings.xml
 	    the dolog command was called from along with the filepath it was called from.
 
 	EXAMPLE CODE:
-		koding.dolog(string='Quick test to see if this gets printed to the log', my_debug=True, line_info=True)
-		dialog.ok('[COLOR gold]CHECK LOGFILE 1[/COLOR]','If you check your log file you should be able to see a new test line we printed and immediately below that should be details of where it was called from.')
-		koding.dolog(string='This one should print without the line and file info', my_debug=True, line_info=False)
-		dialog.ok('[COLOR gold]CHECK LOGFILE 2[/COLOR]','If you check your log file again you should now be able to see a new line printed but without the file/line details.')
+	-------------
+	koding.dolog(string='Quick test to see if this gets printed to the log', my_debug=True, line_info=True)
+	dialog.ok('[COLOR gold]CHECK LOGFILE 1[/COLOR]','If you check your log file you should be able to see a new test line we printed \
+	and immediately below that should be details of where it was called from.')
+	koding.dolog(string='This one should print without the line and file info', my_debug=True, line_info=False)
+	dialog.ok('[COLOR gold]CHECK LOGFILE 2[/COLOR]','If you check your log file again you should now be able to see a new line printed \
+	but without the file/line details.')
 
 ------------------------------------------------------------------------------------------
 
 PYTHON VERSION:
-Return the current version of Python as a string. Very useful if you need to find out whether or not to return
-https links (Python 2.6 is not SSL friendly).
+Return the current version of Python as a string. Very useful if you need
+to find out whether or not to return https links (Python 2.6 is not SSL friendly).
 
-	CODE: Python_Version()
+CODE: Python_Version()
 
 	EXAMPLE CODE:
+	-------------
 	py_version = koding.Python_Version()
-	dialog.ok('[COLOR gold]PYTHON VERSION[/COLOR]','You are currently running:','Python v.%s'%py_version)
+	dialog.ok('PYTHON VERSION','You are currently running:','Python v.%s'%py_version)
 
 ------------------------------------------------------------------------------------------
 
 REFRESH/RELOAD VARIOUS SECTIONS:
-Refresh a number of items in kodi, choose the order they are executed in by putting first in your r_mode.
-For example if you want to refresh addons then repo and then the profile you would send through a list in
-the order you want them to be executed.
+Refresh a number of items in kodi, choose the order they are
+executed in by putting first in your r_mode. For example if you
+want to refresh addons then repo and then the profile you would
+send through a list in the order you want them to be executed.
 
 	CODE: Refresh(r_mode, [profile])
 
@@ -2222,8 +2368,11 @@ the order you want them to be executed.
 	    but you can pass through a profile name here.
 
 	EXAMPLE CODE:
-		dialog.ok('RELOAD SKIN','We will now attempt to update the addons, pause 3s, update repos and pause 2s then reload the default profile. Press OK to continue.')
-		koding.Refresh(r_mode=['addons~3000', 'repos~2000', 'profile'], profile_name='default')
+	-------------
+	dialog.ok('RELOAD SKIN','We will now attempt to update the addons, pause 3s, update repos and pause 2s then reload the skin. Press OK to continue.')
+	koding.Refresh(r_mode=['addons~3000', 'repos~2000', 'skin'])
+	xbmc.sleep(2000)
+	dialog.ok('COMPLETE','Ok that wasn\'t the best test to perform as you can\'t physically see any visible changes other than the skin refreshing so you\'ll just have to trust us that it worked!')
 
 ------------------------------------------------------------------------------------------
 
@@ -2241,9 +2390,10 @@ be a dictionary with the keys 'min' and 'max'.
 	    but the most commonly used are xbmc.gui and xbmc.python.
 
 	EXAMPLE CODE:
-		xbmc_gui = Requirements('xbmc.gui')
-		xbmc_python = Requirements('xbmc.python')
-		dialog.ok('DEPENDENCIES','[COLOR=dodgerblue]xbmc.gui[/COLOR]  Min: %s  Max: %s'%(xbmc_gui['min'],xbmc_gui['max']),'[COLOR=dodgerblue]xbmc.python[/COLOR]  Min: %s  Max: %s'%(xbmc_python['min'],xbmc_python['max']))
+	-------------
+	xbmc_gui = Requirements('xbmc.gui')
+	xbmc_python = Requirements('xbmc.python')
+	dialog.ok('DEPENDENCIES','[COLOR=dodgerblue]xbmc.gui[/COLOR]  Min: %s  Max: %s'%(xbmc_gui['min'],xbmc_gui['max']),'[COLOR=dodgerblue]xbmc.python[/COLOR]  Min: %s  Max: %s'%(xbmc_python['min'],xbmc_python['max']))
 
 ------------------------------------------------------------------------------------------
 
@@ -2253,14 +2403,16 @@ Return the Kodi app name you're running, useful for fork compatibility
 	CODE: Running_App()
 
 	EXAMPLE CODE:
-		my_kodi = koding.Running_App()
-		kodi_ver = xbmc.getInfoLabel("System.BuildVersion")
-		dialog.ok('KODI VERSION','You are running:','[COLOR=dodgerblue]%s[/COLOR] - v.%s' % (my_kodi, kodi_ver))
+	-------------
+	my_kodi = koding.Running_App()
+	kodi_ver = xbmc.getInfoLabel("System.BuildVersion")
+	dialog.ok('KODI VERSION','You are running:','[COLOR=dodgerblue]%s[/COLOR] - v.%s' % (my_kodi, kodi_ver))
 
 ------------------------------------------------------------------------------------------
 
 SLEEP IF FUNCTION ACTIVE:
-This will allow you to pause code while a specific function is running in the background.
+This will allow you to pause code while a specific function is
+running in the background.
 
 	CODE: Sleep_If_Function_Active(function, args, kill_time, show_busy)
 
@@ -2282,14 +2434,13 @@ This will allow you to pause code while a specific function is running in the ba
 	    false if you'd rather not have this.
 
 	EXAMPLE CODE:
-		# Create a basic function
-		def Open_Test_URL(url):
-		    koding.Open_URL(url)
+	-------------
+	def Open_Test_URL(url):
+	    koding.Open_URL(url)
 
-		# Main Code
-		dialog.ok('SLEEP IF FUNCTION ACTIVE','We will now attempt to read a 20MB zip and then give up after 10 seconds.','Press OK to continue.')
-		koding.Sleep_If_Function_Active(function=Open_Test_URL, args=['http://download.thinkbroadband.com/20MB.zip'], kill_time=10, show_busy=True)
-		dialog.ok('FUNCTION COMPLETE','Of course we cannot read that file in just 10 seconds so we\'ve given up!')
+	dialog.ok('SLEEP IF FUNCTION ACTIVE','We will now attempt to read a 20MB zip and then give up after 10 seconds.','Press OK to continue.')
+	koding.Sleep_If_Function_Active(function=Open_Test_URL, args=['http://download.thinkbroadband.com/20MB.zip'], kill_time=10, show_busy=True)
+	dialog.ok('FUNCTION COMPLETE','Of course we cannot read that file in just 10 seconds so we\'ve given up!')
 
 ------------------------------------------------------------------------------------------
 
@@ -2306,21 +2457,23 @@ This will allow you to pause code while a specific window is open.
 	    here: http://kodi.wiki/view/Window_IDs
 
 	EXAMPLE CODE:
-		koding.Text_Box('EXAMPLE TEXT','This is just an example, normally a text box would not pause code and the next command would automatically run immediately over the top of this.')
-		koding.Sleep_If_Window_Active(10147) # This is the window id for the text box
-		dialog.ok('WINDOW CLOSED','The window has now been closed so this dialog code has now been initiated')
+	-------------
+	koding.Text_Box('EXAMPLE TEXT','This is just an example, normally a text box would not pause code and the next command would automatically run immediately over the top of this.')
+	koding.Sleep_If_Window_Active(10147) # This is the window id for the text box
+	dialog.ok('WINDOW CLOSED','The window has now been closed so this dialog code has now been initiated')
 
 ------------------------------------------------------------------------------------------
 
 SYSTEM COMMANDS:
-This is just a simplified method of grabbing certain Kodi infolabels, paths and booleans as well as performing
-some basic built in kodi functions. We have a number of regularly used functions added to a dictionary which can
-quickly be called via this function or you can use this function to easily run a command not currently in the dictionary.
-Just use one of the many infolabels, builtin commands or conditional visibilities available:
+This is just a simplified method of grabbing certain Kodi infolabels, paths
+and booleans as well as performing some basic built in kodi functions.
+We have a number of regularly used functions added to a dictionary which can
+quickly be called via this function or you can use this function to easily
+run a command not currently in the dictionary. Just use one of the
+many infolabels, builtin commands or conditional visibilities available:
 
 info: http://kodi.wiki/view/InfoLabels
 bool: http://kodi.wiki/view/List_of_boolean_conditions
-exec: http://kodi.wiki/view/List_of_Built_In_Functions
 
 	CODE: System(command, [function])
 
@@ -2381,10 +2534,11 @@ exec: http://kodi.wiki/view/List_of_Built_In_Functions
 	        'exec' : This will allow you to send through a xbmc.executebuiltin() command
 
 	EXAMPLE CODE:
-		current_time = koding.System(command='time')
-		current_label = koding.System(command='currentlabel')
-		is_folder = koding.System(command='ListItem.IsFolder', function='bool')
-		dialog.ok('PULLED DETAILS','The current time is %s' % current_time, 'Folder status of list item [COLOR=dodgerblue]%s[/COLOR]: %s' % (current_label, is_folder),'^ A zero means False, as in it\'s not a folder.')
+	-------------
+	current_time = koding.System(command='time')
+	current_label = koding.System(command='currentlabel')
+	is_folder = koding.System(command='ListItem.IsFolder', function='bool')
+	dialog.ok('PULLED DETAILS','The current time is %s' % current_time, 'Folder status of list item [COLOR=dodgerblue]%s[/COLOR]: %s' % (current_label, is_folder),'^ A zero means False, as in it\'s not a folder.')
 
 ------------------------------------------------------------------------------------------
 
@@ -2407,14 +2561,15 @@ Return a list of files found containing non ASCII characters in the filename.
 	    and send through as the param.
 	        
 	EXAMPLE CODE:
-		home = xbmc.translatePath('special://home')
-		progress = xbmcgui.DialogProgress()
-		progress.create('ASCII CHECK')
-		my_return = ASCII_Check(sourcefile=home, dp=progress)
-		if len(my_return) > 0:
-		    dialog.select('NON ASCII FILES', my_return)
-		else:
-		    dialog.ok('ASCII CHECK CLEAN','Congratulations!','There weren\'t any non-ASCII files found on this system.')
+	-------------
+	home = koding.Physical_Path('special://home')
+	progress = xbmcgui.DialogProgress()
+	progress.create('ASCII CHECK')
+	my_return = ASCII_Check(sourcefile=home, dp=progress)
+	if len(my_return) > 0:
+	    dialog.select('NON ASCII FILES', my_return)
+	else:
+	    dialog.ok('ASCII CHECK CLEAN','Congratulations!','There weren\'t any non-ASCII files found on this system.')
 
 ------------------------------------------------------------------------------------------
 
@@ -2423,15 +2578,16 @@ Clean a string, removes whitespaces and common buggy formatting when pulling fro
 
 	CODE: Cleanup_String(my_string)
 
-	    AVAILABLE PARAMS:
+	AVAILABLE PARAMS:
+	    
+	    (*) my_string   -  This is the main text you want cleaned up.
 	        
-	        (*) my_string   -  This is the main text you want cleaned up.
-
 	EXAMPLE CODE:
-		current_text = '" This is a string of text which should be cleaned up   /'
-		dialog.ok('[COLOR gold]ORIGINAL STRING[/COLOR]', '[COLOR dodgerblue]%s[/COLOR]\n\nPress OK to view the cleaned up version.'%current_text)
-		clean_text = koding.Cleanup_String(current_text)
-		dialog.ok('[COLOR gold]CLEAN STRING[/COLOR]', '[COLOR dodgerblue]%s[/COLOR]'%clean_text)
+	-------------
+	current_text = '" This is a string of text which should be cleaned up   /'
+	dialog.ok('ORIGINAL STRING', '[COLOR dodgerblue]%s[/COLOR]\n\nPress OK to view the cleaned up version.'%current_text)
+	clean_text = koding.Cleanup_String(current_text)
+	dialog.ok('CLEAN STRING', '[COLOR dodgerblue]%s[/COLOR]'%clean_text)
 
 ------------------------------------------------------------------------------------------
 
@@ -2440,36 +2596,37 @@ This will return whether the item received is a dictionary, list, string, intege
 
 	CODE:  Data_Type(data)
 
-	    AVAILABLE PARAMS:
-	        
-	        (*) data  -  This is the variable you want to check.
+	AVAILABLE PARAMS:
+	    
+	    (*) data  -  This is the variable you want to check.
 
-	    RETURN VALUES:
-	    	list, dict, str, int, float, bool
+	RETURN VALUES:
+	    list, dict, str, int, float, bool
 
 	EXAMPLE CODE:
-		test1 = ['this','is','a','list']
-		test2 = {"a" : "1", "b" : "2", "c" : 3}
-		test3 = 'this is a test string'
-		test4 = 12
-		test5 = 4.3
-		test6 = True
+	-------------
+	test1 = ['this','is','a','list']
+	test2 = {"a" : "1", "b" : "2", "c" : 3}
+	test3 = 'this is a test string'
+	test4 = 12
+	test5 = 4.3
+	test6 = True
 
-		my_return = '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test1, koding.Data_Type(test1))
-		my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test2, koding.Data_Type(test2))
-		my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test3, koding.Data_Type(test3))
-		my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test4, koding.Data_Type(test4))
-		my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test5, koding.Data_Type(test5))
-		my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test6, koding.Data_Type(test6))
+	my_return = '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test1, koding.Data_Type(test1))
+	my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test2, koding.Data_Type(test2))
+	my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test3, koding.Data_Type(test3))
+	my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test4, koding.Data_Type(test4))
+	my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test5, koding.Data_Type(test5))
+	my_return += '[COLOR dodgerblue]%s[/COLOR] : %s\n' % (test6, koding.Data_Type(test6))
 
-		koding.Text_Box('TEST RESULTS', my_return)
+	koding.Text_Box('TEST RESULTS', my_return)
 
 ------------------------------------------------------------------------------------------
 
 DECODE STRING TO CLEAN TEXT:
 This will allow you to send a string which contains a variety of special characters (including
 non ascii, unicode etc.) and it will convert into a nice clean string which plays nicely
-with Python and Kodi. If it contains characters which will not play nicely it will strip them.
+with Python and Kodi.
 
 	CODE: Decode_String(string)
 
@@ -2478,44 +2635,47 @@ with Python and Kodi. If it contains characters which will not play nicely it wi
 	    (*) string - This is the string you want to convert
 
 	EXAMPLE CODE:
-		my_string = 'symbols like [COLOR dodgerblue]¥¨˚∆ƒπø“¬∂≈óõřĖė[/COLOR] can cause errors \nnormal chars like [COLOR dodgerblue]asfasdf[/COLOR] are fine'
-		dialog.ok('ORIGINAL TEXT',my_string)
-		my_string = koding.Decode_String(my_string)
-		dialog.ok('DECODED/STRIPPED',my_string)
+	-------------
+	my_string = 'symbols like [COLOR dodgerblue]¥¨˚∆ƒπø“¬∂≈óõřĖė[/COLOR] can cause errors \nnormal chars like [COLOR dodgerblue]asfasdf[/COLOR] are fine'
+	dialog.ok('ORIGINAL TEXT',my_string)
+	my_string = koding.Decode_String(my_string)
+	dialog.ok('DECODED/STRIPPED',my_string)
 		
 ------------------------------------------------------------------------------------------
 
 FANCY TEXT:
-Capitalize a string and make the first colour of each string blue and the rest of text white.
+Capitalize a string and make the first colour of each string blue and the rest of text white
 That's the default colours but you can change to whatever colours you want.
 
 	CODE: Colour_Text(text, [color1, color2])
 
-	    AVAILABLE PARAMS:
-	        
-	        (*) text   -  This is the main text you want to change
+	AVAILABLE PARAMS:
+	    
+	    (*) text   -  This is the main text you want to change
 
-	        colour1 -  This is optional and is set as dodgerblue by default.
-	        This is the first letter of each word in the string
+	    colour1 -  This is optional and is set as dodgerblue by default.
+	    This is the first letter of each word in the string
 
-	        colour2 -  This is optional and is set as white by default. 
-	        This is the colour of the text
+	    colour2 -  This is optional and is set as white by default. 
+	    This is the colour of the text
 
 	IMPORTANT: I use the Queens English so please note the word "colour" has a 'u' in it!
 
 	EXAMPLE CODE:
-		current_text = 'This is a string of text which should be changed to dodgerblue and white with every first letter capitalised'
-		mytext = koding.Colour_Text(text=current_text, colour1='dodgerblue', colour2='white')
-		xbmc.log(current_text)
-		xbmc.log(mytext)
-		dialog.ok('CURRENT TEXT', current_text)
-		dialog.ok('NEW TEXT', mytext)~"""
+	-------------
+	current_text = 'This is a string of text which should be changed to dodgerblue and white with every first letter capitalised'
+	mytext = koding.Colour_Text(text=current_text, colour1='dodgerblue', colour2='white')
+	xbmc.log(current_text)
+	xbmc.log(mytext)
+	dialog.ok('CURRENT TEXT', current_text)
+	dialog.ok('NEW TEXT', mytext)
 
 ------------------------------------------------------------------------------------------
 
 FIND IN TEXT:
-Regex through some text and return a list of matches. Please note this will return a LIST so even if
-only one item is found you will still need to access it as a list, see example below.
+Regex through some text and return a list of matches.
+Please note this will return a LIST so even if only one item is found
+you will still need to access it as a list, see example below.
 
 	CODE: Find_In_Text(content, start, end, [show_errors])
 
@@ -2527,65 +2687,77 @@ only one item is found you will still need to access it as a list, see example b
 
 	    (*) end      -  The end search string
 
-	    show_errors  -  Default is True, the code will show help dialogs for bad code.
-	    Set to False if you want to hide these messages
+	    show_errors  -  Default is False, if set to True the code will show help
+	    dialogs for bad code.
 
 	EXAMPLE CODE:
-		textsearch = 'This is some text so lets have a look and see if we can find the words "lets have a look"'
-		search_result = koding.Find_In_Text(textsearch, 'text so ', ' and see')
-		dialog.ok('SEARCH RESULT','You searched for the start string of "text so " and the end string of " and see". Your result is: %s' % search_result[0])
+	-------------
+	textsearch = 'This is some text so lets have a look and see if we can find the words "lets have a look"'
+	dialog.ok('ORIGINAL TEXT','Below is the text we\'re going to use for our search:','[COLOR dodgerblue]%s[/COLOR]'%textsearch)
+	search_result = koding.Find_In_Text(textsearch, 'text so ', ' and see')
+	dialog.ok('SEARCH RESULT','You searched for the start string of "text so " and the end string of " and see".','','Your result is: [COLOR dodgerblue]%s[/COLOR]' % search_result[0])
 
-		# Please note: we know for a fact there is only one result which is why we're only accessing list item zero.
-		# If we were expecting more than one return we would probably do something more useful and loop through in a for loop.
+	# Please note: we know for a fact there is only one result which is why we're only accessing list item zero.
+	# If we were expecting more than one return we would probably do something more useful and loop through in a for loop.
 
 ------------------------------------------------------------------------------------------
 
 FUZZY MATCH:
-Send through a list of items and try to match against the search string. This will match where the
-search_string exists in the list or an item in the list exists in the search_string.
+Send through a list of items and try to match against the search string.
+This will match where the search_string exists in the list or an item in
+the list exists in the search_string.
 
-CODE: Fuzzy_Search(search_string, search_list, [strip])
+	CODE: Fuzzy_Search(search_string, search_list, [strip])
 
-AVAILABLE PARAMS:
-    
-    (*) search_string  -  This is the string to search for
+	AVAILABLE PARAMS:
+	    
+	    (*) search_string  -  This is the string to search for
 
-    (*) search_list    -  The list of items to search through
+	    (*) search_list    -  The list of items to search through
 
-    replace_strings  -  Optionally send through a list of strings you want to
-    replace. For example you may want to search for "West Ham United" but in
-    the list you've sent through they've abbreviated it to "West Ham Utd FC". In
-    this case we might want to send through a replace_strings list of:
+	    replace_strings  -  Optionally send through a list of strings you want to
+	    replace. For example you may want to search for "West Ham United" but in
+	    the list you've sent through they've abbreviated it to "West Ham Utd FC". In
+	    this case we might want to send through a replace_strings list of:
 
-    (["united","utd"], ["fc",""])
+	    (["united","utd"], ["fc",""])
 
-    This will remove any instances of "FC" from the search and it will replace
-    instances of "united" to "utd". The code will convert everythig to lowercase
-    so it doesn't matter what case you use in these searches.
+	    This will remove any instances of "FC" from the search and it will replace
+	    instances of "united" to "utd". The code will convert everythig to lowercase
+	    so it doesn't matter what case you use in these searches.
 
-EXAMPLE CODE:
+	EXAMPLE CODE:
+	-------------
 	my_search = 'west ham utd'
 	my_list = ['west ham united', 'west ham utd', 'rangers fc', 'Man City', 'West Ham United FC', 'Fulham FC', 'West Ham f.c']
 	my_replace = (["united","utd"], ["fc",""], ["f.c",""])
-	dialog.ok('[COLOR gold]FUZZY SEARCH[/COLOR]','Let\'s search for matches similar to "west ham utd" in the list:\n\n%s'%my_list)
+	dialog.ok('FUZZY SEARCH','Let\'s search for matches similar to "west ham utd" in the list:\n\n%s'%my_list)
 	search_result = koding.Fuzzy_Search(my_search, my_list, my_replace)
 	good = ', '.join(search_result)
 	bad = ''
 	for item in my_list:
 	    if item not in search_result:
 	        bad += item+', '
-	dialog.ok('[COLOR gold]RESULTS FOUND[/COLOR]','[COLOR=dodgerblue]SEARCH:[/COLOR] %s\n[COLOR=lime]GOOD:[/COLOR] %s\n[COLOR=cyan]BAD:[/COLOR] %s'%(my_search,good,bad))
+	dialog.ok('RESULTS FOUND','[COLOR=dodgerblue]SEARCH:[/COLOR] %s\n[COLOR=lime]GOOD:[/COLOR] %s\n[COLOR=cyan]BAD:[/COLOR] %s'%(my_search,good,bad))
 
 ------------------------------------------------------------------------------------------
 
 GENERATE RANDOM PASSWORD:
-This will generate a random string made up of uppercase & lowercase ASCII characters and digits - it does not contain special characters.
+This will generate a random string made up of uppercase & lowercase ASCII
+characters and digits - it does not contain special characters.
 
 	CODE:  ID_Generator([size])
 	size is an optional paramater.
 
 	AVAILABLE PARAMS:
-		Size - just send through an integer, this is the length of the string you'll get returned. So if you want a password generated that's 20 characters long just use ID_Generator(20). The default is 15.
+
+	    size - just send through an integer, this is the length of the string you'll get returned.
+	    So if you want a password generated that's 20 characters long just use ID_Generator(20). The default is 15.
+
+	EXAMPLE CODE:
+	-------------
+	my_password = koding.ID_Generator(20)
+	dialog.ok('ID GENERATOR','Password generated:', '', '[COLOR=dodgerblue]%s[/COLOR]' % my_password)
 
 ------------------------------------------------------------------------------------------
 
@@ -2608,30 +2780,91 @@ any add-on or even the built-in kodi language strings.
 	    to pull from the built-in kodi resources files just set as 'system'.
 
 	EXAMPLE CODE:
-		kodi_string = koding.String(code=10140, source='system')
-		koding_string = koding.String(code=30825, source='script.module.python.koding.aio')
-		dialog.ok('SYSTEM STRING','The string [COLOR=dodgerblue]10140[/COLOR] pulled from the default system language resources is:','[COLOR=gold]%s[/COLOR]' % kodi_string)
-		dialog.ok('PYTHON KODING STRING','The string [COLOR=dodgerblue]30825[/COLOR] pulled from the Python Koding language resources is:','[COLOR=gold]%s[/COLOR]' % koding_string)
+	-------------
+	kodi_string = koding.String(code=10140, source='system')
+	koding_string = koding.String(code=30825, source='script.module.python.koding.aio')
+	dialog.ok('SYSTEM STRING','The string [COLOR=dodgerblue]10140[/COLOR] pulled from the default system language resources is:','[COLOR=gold]%s[/COLOR]' % kodi_string)
+	dialog.ok('PYTHON KODING STRING','The string [COLOR=dodgerblue]30825[/COLOR] pulled from the Python Koding language resources is:','[COLOR=gold]%s[/COLOR]' % koding_string)
 		
 ------------------------------------------------------------------------------------------
 
-MD5 CHECK:
-Return the md5 value of file or directory, this will return just one unique value.
+LIST FROM DICTIONARY:
+Send through a dictionary and return a list of either the keys or values.
+Please note: The returned list will be sorted in alphabetical order.
 
-	CODE: md5_check(src)
+	CODE: List_From_Dict(mydict,[use_key])
 
 	AVAILABLE PARAMS:
 
-	    (*) src  -  This is source directory/file you want the md5 value of.
+	    (*) mydict  -  This is the dictionary (original data) you want to traverse through.
+
+	    use_key  -  By default this is set to True and a list of all your dictionary keys
+	    will be returned. Set to False if you'd prefer to have a list of the values returned.
 
 	EXAMPLE CODE:
-		home = xbmc.translatePath('special://home')
-		home_md5 = koding.md5_check(home)
-		dialog.ok('md5 Check', 'The md5 of your home folder is:', home_md5)
+	-------------
+		raw_data = {'test1':'one','test2':'two','test3':'three','test4':'four','test5':'five'}
+		mylist1 = koding.List_From_Dict(mydict=raw_data)
+		mylist2 = koding.List_From_Dict(mydict=raw_data,use_key=False)
+		koding.Text_Box('LIST_FROM_DICT','Original dictionary: [COLOR dodgerblue]%s[/COLOR][CR][CR]Returned List (use_key=True): [COLOR dodgerblue]%s[/COLOR][CR]Returned List (use_key=False): [COLOR dodgerblue]%s[/COLOR]'%(raw_data,mylist1,mylist2))
 
-		guisettings = xbmc.translatePath('special://profile/guisettings.xml')
-		guisettings_md5 = koding.md5_check(guisettings)
-		dialog.ok('md5 Check', 'The md5 of your guisettings.xml:', guisettings_md5)
+------------------------------------------------------------------------------------------
+
+MERGE DICTIONARIES:
+Send through any number of dictionaries and get a return of one merged dictionary.
+Please note: If you have duplicate keys the value will be overwritten by the final
+dictionary to be checked. So if you send through dicts a-f and the same key exists
+in dicts a,e,f the final value for that key would be whatever is set in 'f'.
+
+	CODE: Merge_Dicts(*dict_args)
+
+	AVAILABLE PARAMS:
+
+	    (*) *dict_args  -  Enter as many dictionaries as you want, these will be merged
+	    into one final dictionary. Please send each dictionary through as a new paramater.
+
+	EXAMPLE CODE:
+	-------------
+		dict1 = {'1':'one','2':'two'}
+		dict2 = {'3':'three','4':'four','5':'five'}
+		dict3 = {'6':'six','7':'seven'}
+		dict4 = {'1':'three','8':'eight'}
+
+		mytext = 'Original Dicts:\ndict1 = %s\ndict2 = %s\ndict3 = %s\ndict4 = %s\n\n'%(repr(dict1),repr(dict2),repr(dict3),repr(dict4))
+		mytext += 'Merged dictionaries (1-3): %s\n\n'%repr(koding.Merge_Dicts(dict1,dict2,dict3))
+		mytext += 'Merged dictionaries (1-4): %s\n\n'%repr(koding.Merge_Dicts(dict1,dict2,dict3,dict4))
+		mytext += "[COLOR = gold]IMPORTANT:[/COLOR]\nNotice how on the last run the key '1'now has a value of three.\nThis is because dict4 also contains that same key."
+		Text_Box('Merge_Dicts',mytext)
+
+------------------------------------------------------------------------------------------
+
+MD5 CHECK:
+Return the md5 value of string/file/directory, this will return just one unique value.
+
+	CODE: md5_check(src,[string])
+
+	AVAILABLE PARAMS:
+
+	    (*) src  -  This is the source you want the md5 value of.
+	    This can be a string, path of a file or path to a folder.
+
+	    string  -  By default this is set to False but if you want to send
+	    through a string rather than a path set this to True.
+
+	EXAMPLE CODE:
+	-------------
+	home = koding.Physical_Path('special://home')
+	home_md5 = koding.md5_check(home)
+	dialog.ok('md5 Check', 'The md5 of your home folder is:', '[COLOR=dodgerblue]%s[/COLOR]'%home_md5)
+
+	guisettings = xbmc.translatePath('special://profile/guisettings.xml')
+	guisettings_md5 = koding.md5_check(guisettings)
+	dialog.ok('md5 Check', 'The md5 of your guisettings.xml:', '[COLOR=dodgerblue]%s[/COLOR]'%guisettings_md5)
+
+	mystring = 'This is just a random text string we\'ll get the md5 value of'
+	myvalue = koding.md5_check(src=mystring,string=True)
+	dialog.ok('md5 String Check', 'String to get md5 value of:', '[COLOR=dodgerblue]%s[/COLOR]'%mystring)
+	dialog.ok('md5 String Check', 'The md5 value of your string:', '[COLOR=dodgerblue]%s[/COLOR]'%myvalue)
 
 ------------------------------------------------------------------------------------------
 
@@ -2662,15 +2895,57 @@ returned you can use the Data_Type function from Koding which will return 'str' 
 	    items by sending through ['link','title','thumb']
 
 	EXAMPLE CODE:
-		dialog.ok('DICTIONARY OF ITEMS','We will now attempt to return a list of details pulled from the noobsandnerds repository addon.xml (NaN repo needs to be installed for this to work).')
-		xml_file = xbmc.translatePath('special://home/addons/repository.noobsandnerds/addon.xml')
-		xml_file = koding.Text_File(xml_file,'r')
-		repo_details = koding.Parse_XML(source=xml_file, block='dir', tags=['info','checksum','datadir'])
-		counter = 0
-		for item in repo_details:
-		    dialog.ok( '[COLOR gold]REPO %s[/COLOR]'%(counter+1),'info path: %s\nchecksum path: %s\ndatadir: %s' % (repo_details[counter]['info'],repo_details[counter]['checksum'],repo_details[counter]['datadir']) )
-		    counter += 1
-		dialog.ok('[COLOR=dodgerblue]FINAL NOTICE[/COLOR]','You probably didn\'t notice but the details of the main noobsandnerds repo paths did NOT show, this is because they are not encapsulated in <dir> tags which we used as the \'block\' to check for.')
+	-------------
+	dialog.ok('DICTIONARY OF ITEMS','We will now attempt to return a list of the source details pulled from the official Kodi repository addon.xml')
+	xml_file = koding.Physical_Path('special://xbmc/addons/repository.xbmc.org/addon.xml')
+	xml_file = koding.Text_File(xml_file,'r')
+	xbmc.log(xml_file,2)
+	repo_details = koding.Parse_XML(source=xml_file, block='extension', tags=['info','checksum','datadir'])
+	counter = 0
+	for item in repo_details:
+	    dialog.ok( 'REPO %s'%(counter+1),'info path: [COLOR dodgerblue]%s[/COLOR]\nchecksum path: [COLOR dodgerblue]%s[/COLOR]\ndatadir: [COLOR dodgerblue]%s[/COLOR]' % (repo_details[counter]['info'],repo_details[counter]['checksum'],repo_details[counter]['datadir']) )
+	    counter += 1
+
+------------------------------------------------------------------------------------------
+
+REMOVE FORMATTING FROM TEXT:
+This will cleanup a Kodi string, it can remove color, bold and italic tags as well as
+preceding spaces, dots and dashes. Particularly useful if you want to show the names of
+add-ons in alphabetical order where add-on names have deliberately had certain formatting
+added to them to get them to always show at the top of lists.
+
+	CODE: Remove_Formatting(string, [color, bold, italic, spaces, dots, dashes])
+
+	AVAILABLE PARAMS:
+
+	    (*) string  -  This is string you want to remove formatting from.
+
+	    color  -  By default this is set to true and all references to the color tag
+	    will be removed, set this to false if you don't want color formatting removed.
+
+	    bold  -  By default this is set to true and all references to the bold tag
+	    will be removed, set this to false if you don't want bold formatting removed.
+
+	    italic  -  By default this is set to true and all references to the italic tag
+	    will be removed, set this to false if you don't want italic formatting removed.
+
+	    spaces  -  By default this is set to true and any spaces at the start of the text
+	    will be removed, set this to false if you don't want the spaces removed.
+
+	    dots  -  By default this is set to true and any dots (.) at the start of the text
+	    will be removed, set this to false if you don't want the dots removed.
+
+	    dashes  -  By default this is set to true and any dashes (-) at the start of the text
+	    will be removed, set this to false if you don't want the dashes removed.
+
+	EXAMPLE CODE:
+	-------------
+	mystring = '...-- [I]This[/I]  is the [COLOR dodgerblue]ORIGINAL[/COLOR] [B][COLOR cyan]TEXT[/COLOR][/B]'
+	dialog.ok('ORIGINAL TEXT','Below is the original text we\'re going to try and clean up:[CR]%s'%mystring)
+	dialog.ok('DOTS REMOVED','[COLOR gold]Original:[/COLOR][CR]%s[CR][COLOR gold]This is with only dots set to True:[/COLOR][CR]%s'%(mystring,koding.Remove_Formatting(mystring, color=False, bold=False, italic=False, spaces=False, dots=True, dashes=False)))
+	dialog.ok('DOTS & DASHES REMOVED','[COLOR gold]Original:[/COLOR][CR]%s[CR][COLOR gold]This is with dots & dashes set to True:[/COLOR][CR]%s'%(mystring,koding.Remove_Formatting(mystring, color=False, bold=False, italic=False, spaces=False, dots=True, dashes=True)))
+	dialog.ok('DOTS, DASHES & SPACES REMOVED','[COLOR gold]Original:[/COLOR][CR]%s[CR][COLOR gold]This is with dots, dashes & spaces set to True:[/COLOR][CR]%s'%(mystring,koding.Remove_Formatting(mystring, color=False, bold=False, italic=False, spaces=True, dots=True, dashes=True)))
+	dialog.ok('ALL FORMATTING REMOVED','[COLOR gold]Original:[/COLOR][CR]%s[CR][COLOR gold]This is with all options set to True:[/COLOR][CR]%s'%(mystring,koding.Remove_Formatting(mystring)))
 
 ------------------------------------------------------------------------------------------
 
@@ -2703,23 +2978,24 @@ specific items in your new list.
 
 
 	EXAMPLE CODE:
-		my_list = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen']
-		dialog.ok('[COLOR gold]SPLIT LIST 1[/COLOR]','We will now attempt to split the following list into blocks of 5:\n%s'%my_list)
-		newlist = koding.Split_List(source=my_list, split_point=5)
-		dialog.ok('[COLOR gold]RESULTS[/COLOR]','Our returned var:\n%s'%newlist)
-		dialog.ok('[COLOR gold]SPLIT LIST 2[/COLOR]','We will now attempt to split the same list at every 5th item position and only show items [0,1,3]')
-		newlist = koding.Split_List(source=my_list, split_point=5, include=[0,1,3])
-		dialog.ok('[COLOR gold]RESULTS[/COLOR]','Our returned var:\n%s'%newlist)
-		dialog.ok('[COLOR gold]SPLIT LIST 3[/COLOR]','We will now attempt to split the same list at every 5th item position and only show the first 3 items.')
-		newlist = koding.Split_List(source=my_list, split_point=5, include=3)
-		dialog.ok('[COLOR gold]RESULTS[/COLOR]','Our returned var:\n%s'%newlist)
+	-------------
+	my_list = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen']
+	dialog.ok('SPLIT LIST 1','We will now attempt to split the following list into blocks of 5:\n%s'%my_list)
+	newlist = koding.Split_List(source=my_list, split_point=5)
+	dialog.ok('RESULTS','Our returned var:\n%s'%newlist)
+	dialog.ok('SPLIT LIST 2','We will now attempt to split the same list at every 5th item position and only show items [0,1,3]')
+	newlist = koding.Split_List(source=my_list, split_point=5, include=[0,1,3])
+	dialog.ok('RESULTS','Our returned var:\n%s'%newlist)
+	dialog.ok('SPLIT LIST 3','We will now attempt to split the same list at every 5th item position and only show the first 3 items.')
+	newlist = koding.Split_List(source=my_list, split_point=5, include=3)
+	dialog.ok('RESULTS','Our returned var:\n%s'%newlist)
 
 ------------------------------------------------------------------------------------------
 
 SPLIT STRING INTO LINES OF X AMOUNT OF CHARACTERS:
 Splits up a piece of text into a list of lines x amount of chars in length.
 
-	CODE: Split_Lines(raw_string, size)
+	CODE: koding.Split_Lines(raw_string, size)
 
 	AVAILABLE PARAMS:
 
@@ -2728,10 +3004,11 @@ Splits up a piece of text into a list of lines x amount of chars in length.
 	    (*) size        -  This is the maximum size you want the line length to be (in characters)
 
 	EXAMPLE CODE:
-		raw_string = 'This is some test code, let\'s take a look and see what happens
-		if we split this up into lines of 20 chars per line'
-		my_list = koding.Split_Lines(raw_string,20)
-		koding.Text_Box('List of lines',str(my_list))
+	-------------
+	raw_string = 'This is some test code, let\'s take a look and see what happens if we split this up into lines of 20 chars per line'
+	dialog.ok('ORIGINAL TEXT',raw_string)
+	my_list = koding.Split_Lines(raw_string,20)
+	koding.Text_Box('List of lines',str(my_list))
 
 ------------------------------------------------------------------------------------------
 
@@ -2757,12 +3034,13 @@ into a list of dictionaries with your own custom keys.
 	    so if you want to access the 2nd table on the page it will be table=1.
 
 	EXAMPLE CODE:
-		dialog.ok('[COLOR gold]TABLE DATA[/COLOR]','Let\'s pull some details from the proxy list table found at:\nhttps://hidemy.name/en/proxy-list/.')
-		proxies = koding.Table_Convert(url='https://hidemy.name/en/proxy-list/', contents={"ip":0,"port":1}, table=0)
-		mytext = '[COLOR dodgerblue]Here are some proxies:[/COLOR]\n'
-		for item in proxies:
-		    mytext += '\nIP: %s\nPort: %s\n[COLOR steelblue]----------------[/COLOR]'%(item['ip'],item['port'])
-		Text_Box('MASTER PROXY LIST',mytext)
+	-------------
+	dialog.ok('TABLE DATA','Let\'s pull some details from the proxy list table found at:\nhttps://free-proxy-list.net.')
+	proxies = koding.Table_Convert(url='https://free-proxy-list.net', contents={"ip":0,"port":1}, table=0)
+	mytext = '[COLOR dodgerblue]Here are some proxies:[/COLOR]\n'
+	for item in proxies:
+	    mytext += '\nIP: %s\nPort: %s\n[COLOR steelblue]----------------[/COLOR]'%(item['ip'],item['port'])
+	Text_Box('MASTER PROXY LIST',mytext)
 
 ------------------------------------------------------------------------------------------
 
@@ -2780,7 +3058,7 @@ within a second or two of playback being successful (or not).
 	CODE: Check_Playback()
 
 	AVAILABLE PARAMS:
-	    
+
 	    ignore_dp  -  By default this is set to True but if set to False
 	    this will ignore the DialogProgress window. If you use a DP while
 	    waiting for the stream to start then you'll want to set this True.
@@ -2796,13 +3074,14 @@ within a second or two of playback being successful (or not).
 	    for this is 10s.
 
 	EXAMPLE CODE:
-		xbmc.Player().play('http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
-		isplaying = koding.Check_Playback()
-		if isplaying:
-		    dialog.ok('PLAYBACK SUCCESSFUL','Congratulations, playback was successful')
-		    xbmc.Player().stop()
-		else:
-		    dialog.ok('PLAYBACK FAILED','Sorry, playback failed :(')
+	-------------
+	xbmc.Player().play('http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
+	isplaying = koding.Check_Playback()
+	if isplaying:
+	    dialog.ok('PLAYBACK SUCCESSFUL','Congratulations, playback was successful')
+	    xbmc.Player().stop()
+	else:
+	    dialog.ok('PLAYBACK FAILED','Sorry, playback failed :(')
 
 ------------------------------------------------------------------------------------------
 
@@ -2817,13 +3096,14 @@ will even return the plugin path if it's been played through an external add-on.
 	CODE: Last_Played()
 
 	EXAMPLE CODE:
+	-------------
 	if koding.Play_Video('http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov'):
 	    xbmc.sleep(3000)
 	    xbmc.Player().stop()
 	    last_vid = Last_Played()
-	    dialog.ok('[COLOR gold]VIDEO LINK[/COLOR]','The link we just played is:\n\n%s'%last_vid)
+	    dialog.ok('VIDEO LINK','The link we just played is:\n\n%s'%last_vid)
 	else:
-	    dialog.ok('[COLOR gold]PLAYBACK FAILED[/COLOR]','Sorry this video is no longer available, please try using a different video link.')
+	    dialog.ok('PLAYBACK FAILED','Sorry this video is no longer available, please try using a different video link.')
 
 ------------------------------------------------------------------------------------------
 
@@ -2848,28 +3128,34 @@ a blog page).
 	    selection window, by default it's set to "Stream Selection"
 
 	EXAMPLE CODE:
-		# This example uses YouTube plugin paths but any playable paths will work
-		vid = koding.M3U_Selector(url='http://totalrevolution.tv/videos/playlists/youtube.m3u')
+	-------------
+	dialog.ok('M3U SELECTOR','We will now call this function using the following url:','','[COLOR dodgerblue]http://totalrevolution.tv/videos/playlists/youtube.m3u[/COLOR]')
 
-		# Make sure there is a valid link returned
-		if vid:
-		    playback = koding.Play_Video(vid['url'])
-		if playback:
-		    dialog.ok('SUCCESS!','Congratulations the playback was successful!')
+	# This example uses YouTube plugin paths but any playable paths will work
+	vid = koding.M3U_Selector(url='http://totalrevolution.tv/videos/playlists/youtube.m3u')
+
+
+	# Make sure there is a valid link returned
+	if vid:
+	    playback = koding.Play_Video(video=vid['url'], showbusy=False)
+	    if playback:
+	        dialog.ok('SUCCESS!','Congratulations the playback was successful!')
 	        xbmc.Player().stop()
-
-		else:
-		    dialog.ok('OOPS!','Looks like something went wrong there, the playback failed. Check the links are still valid.')
+	    else:
+	        dialog.ok('OOPS!','Looks like something went wrong there, the playback failed. Check the links are still valid.')
 
 ------------------------------------------------------------------------------------------
 
 PLAY VIDEO:
-This will attempt to play a video and return True or False on whether or not playback was successful.
-This function is similar to Check_Playback but this actually tries a number of methods to play the
-video whereas Check_Playback does not actually try to play a video - it will just return True/False on
-whether or not a video is currently playing.
+This will attempt to play a video and return True or False on
+whether or not playback was successful. This function is similar
+to Check_Playback but this actually tries a number of methods to
+play the video whereas Check_Playback does not actually try to
+play a video - it will just return True/False on whether or not
+a video is currently playing.
 
-If you have m3u or m3u8 playlist links please use the M3U_Selector function to get the final resolved url.
+If you have m3u or m3u8 playlist links please use the M3U_Selector
+function to get the final resolved url.
 
 	CODE: Play_Video(video, [showbusy, content, ignore_dp, timeout, item])
 
@@ -2909,14 +3195,21 @@ If you have m3u or m3u8 playlist links please use the M3U_Selector function to g
 	    the auto-generation. If anything else sent through no metadata will be set,
 	    you would use this option if you've already set metadata in a previous function.
 
+	    player  -  By default this is set to xbmc.Player() but you can send through
+	    a different class/function if required.
 
+	    resolver  -  By default this is set to urlresolver but if you prefer to use
+	    your own custom resolver then just send through that class when calling this
+	    function and the link sent through will be resolved by your custom resolver.
+    
 	EXAMPLE CODE:
-		isplaying = koding.Play_Video('http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
-		if isplaying:
-		    dialog.ok('PLAYBACK SUCCESSFUL','Congratulations, playback was successful')
-		    xbmc.Player().stop()
-		else:
-		    dialog.ok('PLAYBACK FAILED','Sorry, playback failed :(')
+	-------------
+	isplaying = koding.Play_Video('http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
+	if isplaying:
+	    dialog.ok('PLAYBACK SUCCESSFUL','Congratulations, playback was successful')
+	    xbmc.Player().stop()
+	else:
+	    dialog.ok('PLAYBACK FAILED','Sorry, playback failed :(')
 ------------------------------------------------------------------------------------------
 
 SLEEP IF PLAYBACK IS ACTIVE:
@@ -2925,10 +3218,92 @@ This will allow you to pause code while kodi is playing audio or video
 	CODE: Sleep_If_Playback_Active()
 
 	EXAMPLE CODE:
-		dialog.ok('PLAY A VIDEO','We will now attempt to play a video, once you stop this video you should see a dialog.ok message.')
-		xbmc.Player().play('http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_stereo.avi')
-		koding.Sleep_If_Playback_Active()
-		dialog.ok('PLAYBACK FINISHED','The playback has now been finished so this dialog code has now been initiated')
+	-------------
+	dialog.ok('PLAY A VIDEO','We will now attempt to play a video, once you stop this video you should see a dialog.ok message.')
+	xbmc.Player().play('http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_stereo.avi')
+	xbmc.sleep(3000) # Give kodi enough time to load up the video
+	koding.Sleep_If_Playback_Active()
+	dialog.ok('PLAYBACK FINISHED','The playback has now been finished so this dialog code has now been initiated')
+
+------------------------------------------------------------------------------------------
+
+TEST LINKS:
+Send through a link and test whether or not it's playable on other devices.
+Many links include items in the query string which lock the content down to your
+IP only so what may open fine for you may not open for anyone else!
+
+This function will attempt to load the page using a proxy. If when trying to access
+the link via a proxy the header size and content-type match then we assume the
+link will play on any device. This is not fool proof and could potentially return
+false positives depending on the security used on the website being accessed.
+
+The return you'll get is a dictionary of the following items:
+
+    'plugin_path' - This will have the path for a plugin, it means the stream was
+    originally passed through an add-on to get the final link. If this is not set
+    to None then it "should" work on any device so long as that add-on is installed
+    (e.g. YouTube).
+
+    'url' - This is the final resolved url which Kodi was playing, you need to check
+    the status though to find out whether or not that link is locked to your IP only.
+
+    'status' - This will return one of the following status codes:
+        good - The link should work on all IPs.
+
+        bad_link - The link was not valid, won't even play on your current Kodi setup.
+
+        proxy_fail - None of the proxies sent through worked.
+
+        locked - The url only works on this device, if this is the case consider using
+        the plugin_path which should generally work on all devices (although this does
+        depend on how the developer of that add-on coded up their add-on).
+
+	CODE: Link_Tester([proxy_list, url, ip_col, port_col, table])
+
+	AVAILABLE PARAMS:
+
+	    video  -  This is the url of the video you want to check
+
+	    local_check - By default this is set to True and this function will first of
+	    all attempt to play the video locally with no proxy just to make sure the
+	    link is valid in the first place. If you want to skip this step then set
+	    this to False.
+
+	    proxy_list  -  If you already have a list of proxies you want to test with
+	    send them through in the form of a list of dictionaries. Use the following
+	    format: [{"ip":"0.0.0.0","port":"80"},{"ip":"127.0.0.1","port":"8080"}]
+
+	    proxy_url  -  If you want to scrape for online proxies and loop through until a
+	    working one has been found you can set the url here. If using this then
+	    proxy_list can be left as the default (None). If you open this Link_Tester
+	    function with no params the defaults are setup to grab from:
+	    free-proxy-list.net but there is no guarantee this will always
+	    work, the website may well change it's layout/security over time.
+
+	    ip_col  -  If you've sent through a proxy_url then you'll need to set a column number
+	    for where in the table the IP address is stored. The default is 0
+
+	    port_col  -  If you've sent through a proxy_url then you'll need to set a column number
+	    for where in the table the port details are stored. The default is 1
+
+	    table  -  If you've sent through a proxy_url then you'll need to set a table number.
+	    The default is 0 - this presumes we need to use the first html table found on the
+	    page, if you require a different table then alter accordingly - remember zero is the
+	    first instance so if you want the 3rd table on the page you would set to 2.
+
+	EXAMPLE CODE:
+	-------------
+	vid_test = Link_Tester(video='http://totalrevolution.tv/videos/python_koding/Browse_To_Folder.mov')
+	if vid_test['status'] == 'bad_link':
+	    dialog.ok('BAD LINK','The link you sent through cannot even be played on this device let alone another one!')
+	elif vid_test['status'] == 'proxy_fail':
+	    dialog.ok('PROXIES EXHAUSTED','It was not possible to get any working proxies as a result it\'s not possible to fully test whether this link will work on other devices.')
+	elif vid_test['status'] == 'locked':
+	    dialog.ok('NOT PLAYABLE','Although you can play this link locally the tester was unable to play it when using a proxy so this is no good.')
+	    if vid_test['plugin_path']:
+	        dialog.ok('THERE IS SOME GOOD NEWS!','Although the direct link for this video won\'t work on other IPs it "should" be possible to open this using the following path:\n[COLOR dodgerblue]%s[/COLOR]'%vid_test['plugin_path'])
+	else:
+	    dialog.ok('WORKING!!!','Congratulations this link can be resolved and added to your playlist.')
 
 ------------------------------------------------------------------------------------------
 
@@ -2936,19 +3311,20 @@ W E B   T O O L S
 
 ------------------------------------------------------------------------------------------
 
-CLEANUP URL:
+CLEANUO URL:
 Clean a url, removes whitespaces and common buggy formatting when pulling from websites
 
 	CODE: Cleanup_URL(url)
 
-    AVAILABLE PARAMS:
-        
-        (*) url   -  This is the main url you want cleaned up.
+	AVAILABLE PARAMS:
+	        
+	    (*) url   -  This is the main url you want cleaned up.
 
 	EXAMPLE CODE:
-		raw_url = '" http://test.com/video/"/'
-		clean_url = koding.Cleanup_URL(raw_url)
-		dialog.ok('CLEANUP URL', 'Orig: %s'%raw_url,'Clean: %s'%clean_url)
+	-------------
+	raw_url = '" http://test.com/video/"/'
+	clean_url = koding.Cleanup_URL(raw_url)
+	dialog.ok('CLEANUP URL', 'Orig: %s'%raw_url,'Clean: %s'%clean_url)
 
 ------------------------------------------------------------------------------------------
 
@@ -2959,33 +3335,43 @@ This will download a file, currently this has to be a standard download link whi
 	dp is optional, by default it is set to false
 
 	AVAILABLE PARAMS:
-		(*) src    - This is the source file, the URL to your download. If you attempted to download an item but it's not behaving the way you think it should (e.g. a zip file not unzipping) then change the extension of the downloaded file to .txt and open up in a text editor. You'll most likely find it's just a piece of text that was returned from the URL you gave and it should have details explaining why it failed. Could be that's the wrong URL, it requires some kind of login, it only accepts certain user-agents etc.
 
-		(*) dst    - This is the destination file, make sure it's a physical path and not "special://...". Also remember you need to add the actual filename to the end of the path, so if we were downloading something to the "downloads" folder and we wanted the file to be called "test.txt" we would use this path: dst = "downloads/test.txt". Of course the downloads folder would actually need to exist otherwise it would fail and based on this poor example the downloads folder would be at root level of your device as we've not specified a path prior to that so it just uses the first level that's accessible.
+	    (*) src  - This is the source file, the URL to your download. If you attempted to download an item but it's not behaving the way you think it should (e.g. a zip file not unzipping) then change the extension of the downloaded file to .txt and open up in a text editor. You'll most likely find it's just a piece of text that was returned from the URL you gave and it should have details explaining why it failed. Could be that's the wrong URL, it requires some kind of login, it only accepts certain user-agents etc.
 
-		dp - This is optional, if you pass through the dp function as a DialogProgress() then you'll get to see the progress of the download. If you choose not to add this paramater then you'll just get a busy spinning circle icon until it's completed. See the example below for a dp example.
+	    (*) dst  - This is the destination file, make sure it's a physical path and not "special://...". Also remember you need to add the actual filename to the end of the path, so if we were downloading something to the "downloads" folder and we wanted the file to be called "test.txt" we would use this path: dst = "downloads/test.txt". Of course the downloads folder would actually need to exist otherwise it would fail and based on this poor example the downloads folder would be at root level of your device as we've not specified a path prior to that so it just uses the first level that's accessible.
 
-	EXAMPLE CODE WITH A DIALOG PROGRESS WINDOW:
-		src = 'http://noobsandnerds.com/portal/Bits%20and%20bobs/Documents/user%20guide%20of%20the%20gyro%20remote.pdf'
-		dst = xbmc.translatePath('special://home/remote.pdf')
-		dp = xbmcgui.DialogProgress()
-		dp.create('Downloading File','Please Wait')
-		koding.Download(src,dst,dp)
-		dialog.ok('[COLOR gold]DOWNLOAD COMPLETE[/COLOR]','Your download is complete, please check your home Kodi folder. There should be a new file called remote.pdf - you can delete this if you want.')
+	    dp - This is optional, if you pass through the dp function as a DialogProgress() then you'll get to see the progress of the download. If you choose not to add this paramater then you'll just get a busy spinning circle icon until it's completed. See the example below for a dp example.
+
+	    timeout - By default this is set to 5. This is the max. amount of time you want to allow for checking whether or
+	    not the url is a valid link and can be accessed via the system.
+
+	EXAMPLE CODE:
+	-------------
+	src = 'http://noobsandnerds.com/portal/Bits%20and%20bobs/Documents/user%20guide%20of%20the%20gyro%20remote.pdf'
+	dst = 'special://home/remote.pdf'
+	dp = xbmcgui.DialogProgress()
+	dp.create('Downloading File','Please Wait')
+	koding.Download(src,dst,dp)
+	dialog.ok('DOWNLOAD COMPLETE','Your download is complete, please check your home Kodi folder. There should be a new file called remote.pdf.')
+	dialog.ok('DELETE FILE','Click OK to delete the downloaded file.')
+	xbmcvfs.delete(dst)
 
 ------------------------------------------------------------------------------------------
 
 GRAB THE EXTENSION OF A URL:
-Return the extension of any given url
+Return the extension of a url
 
-	CODE:   koding.Get_Extension(url)
+	CODE:   Get_Extension(url)
 
 	AVAILABLE PARAMS:
+
 	    (*) url  -  This is the url you want to grab the extension from
 
 	EXAMPLE CODE:
-		url_extension = koding.Get_Extension('http://testpage.com/myfile.mp4')
-		dialog.ok('FILE EXTENSION',The file extension of http://testpage.com/myfile.mp4 is:','','[COLOR=dodgerblue]%s[/COLOR]'%url_extension)
+	-------------
+	dialog.ok('ONLINE FILE','We will now try and get the extension of the file found at this URL:','','[COLOR=dodgerblue]http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4[/COLOR]')
+	url_extension = koding.Get_Extension('http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_1mb.mp4')
+	dialog.ok('FILE EXTENSION','The file extension of this Big Buck Bunny sample is:','','[COLOR=dodgerblue]%s[/COLOR]'%url_extension)
 
 ------------------------------------------------------------------------------------------
 
@@ -3033,62 +3419,22 @@ then I take no responsibility if it doesn't work!
 	    proxies = {"http":"http://10.10.1.10:3128","htts":"https://10.10.1.10:3128"}
 
 	EXAMPLE CODE:
-		dialog.ok('[COLOR gold]OPEN FORUM PAGE[/COLOR]','We will attempt to open the noobsandnerds forum page and return the contents. You will now be asked for your forum credentials.')
-		myurl = 'http://noobsandnerds.com/support/index.php'
-		username = koding.Keyboard('ENTER USERNAME')
-		password = koding.Keyboard('ENTER PASSWORD')
-		params = {"username":username,"password":password}
-		xbmc.log(repr(params),2)
-		url_contents = koding.Open_URL(url=myurl, payload=params, post_type='get')
-		koding.Text_Box('CONTENTS OF WEB PAGE',url_contents)
-
-------------------------------------------------------------------------------------------
-
-PROXY LIST:
-Returns a list of verified proxies, courtesy of proxyfor.eu
-The default return you'll get is a dictionary of countries where each
-value is a list containing dictionaries of "ip", "port" and "speed".
-
-Please note this function will most likely break at some point in the
-future as it relies on web scraping. If you find it's broken please
-contact the developer via the noobsandnerds forum.
-
-	CODE:   Proxy_List([dictionary])
-
-	AVAILABLE PARAMS:
-
-	    country  -  By default you'll get a dictionary of countries, each
-	    of which have lists of available proxies. If set to False you'll receive
-	    just one list of dictionaries. See the example code below to understand
-	    how the two can be used.
-
-	EXAMPLE CODE:
-		dialog.ok('[COLOR gold]GRAB PROXIES[/COLOR]','Let\'s pull results with both the default settings and also with country set to False. This should hopefully show how the 2 different modes can be of use.')
-		proxies = koding.Proxy_List()
-		mytext = '[COLOR dodgerblue]Here are some proxies, as shown in this example if you know the name of the country you want it makes it very simple to sort the results:[/COLOR]\n\n[COLOR gold]China:[/COLOR]\n'
-
-		for item in proxies['China']:
-		    mytext += 'IP: %s\nPort: %s\nSpeed: %s\n[COLOR steelblue]----------------[/COLOR]\n'%(item['ip'],item['port'],item['speed'])
-
-		mytext += '\n[COLOR gold]United States:[/COLOR]\n'
-		for item in proxies['United States']:
-		    mytext += 'IP: %s\nPort: %s\nSpeed: %s\n[COLOR steelblue]----------------[/COLOR]\n'%(item['ip'],item['port'],item['speed'])
-		Text_Box('MASTER PROXY LIST',mytext)
-		xbmc.sleep(7000)
-		dialog.ok('[COLOR gold]MASTER PROXY LIST[/COLOR]','Now let\'s try with a master list (country set to False). We still get the country details but it\'s not in the form of a dictionary and is just one big list.\n')
-		proxies = koding.Proxy_List(country=False)
-		mytext = '[COLOR dodgerblue]Here are all the proxies found, We don\'t really care about sorting by country so we can just list the whole lot in one big list:[/COLOR]\n'
-		for item in proxies:
-		    item = item[0]
-		    mytext += 'Country: %s\nIP: %s\nPort: %s\nSpeed: %s\n[COLOR steelblue]----------------[/COLOR]\n'%(item['country'],item['ip'],item['port'],item['speed'])
-		Text_Box('MASTER PROXY LIST',mytext)
+	-------------
+	dialog.ok('OPEN FORUM PAGE','We will attempt to open the noobsandnerds forum page and return the contents. You will now be asked for your forum credentials.')
+	myurl = 'http://noobsandnerds.com/support/index.php'
+	username = koding.Keyboard('ENTER USERNAME')
+	password = koding.Keyboard('ENTER PASSWORD')
+	params = {"username":username,"password":password}
+	xbmc.log(repr(params),2)
+	url_contents = koding.Open_URL(url=myurl, payload=params, post_type='get')
+	koding.Text_Box('CONTENTS OF WEB PAGE',url_contents)
 
 ------------------------------------------------------------------------------------------
 
 VALIDATE LINK:
 Returns the code for a particular link, so for example 200 is a good link and 404 is a URL not found
 
-	CODE:   koding.Validate_Link(url,[timeout])
+	CODE:   Validate_Link(url,[timeout])
 
 	AVAILABLE PARAMS:
 
@@ -3097,92 +3443,11 @@ Returns the code for a particular link, so for example 200 is a good link and 40
 	    timeout  -  An optional timeout integer for checking url (default is 30 seconds)
 
 	EXAMPLE CODE:
-		url_code = koding.Validate_Link('http://totalrevolution.tv')
-		if url_code == 200:
-		    dialog.ok('WEBSITE STATUS','The website [COLOR=dodgerblue]totalrevolution.tv[/COLOR] is [COLOR=lime]ONLINE[/COLOR]')
-		else:
+	-------------
+	url_code = koding.Validate_Link('http://totalrevolution.tv')
+	if url_code == 200:
+	    dialog.ok('WEBSITE STATUS','The website [COLOR=dodgerblue]totalrevolution.tv[/COLOR] is [COLOR=lime]ONLINE[/COLOR]')
+	else:
 	    dialog.ok('WEBSITE STATUS','The website [COLOR=dodgerblue]totalrevolution.tv[/COLOR] is [COLOR=red]OFFLINE[/COLOR]')
-
-------------------------------------------------------------------------------------------
-
-RUN CODE FROM YOUR OWN SERVER:
-If you have web pages of your own then you can hook into them using koding.Main(url) which will pull the return from the URL and attempt to execute that code.
-
-WARNING: Running code directly from a server is generally discouraged, any add-ons using such code will certainly not be accepted on the official kodi.tv forum as it is strictly against their rules. By having add-ons capable of self updating and bypassing their highly vetted repository system it would be a security breach for the foundation so their stance on this is completely understandable. For third party development you are presumably in control of your own repository so it really shouldn't make much difference, however do note that running code directly from a server is slower than running locally and you'll find it's discouraged by a number of devs. Can certainly be useful for quick dynamic updates which need to take place though.
-
-	CODE:	koding.Main(url,[post_type])
-	post_type is optional, by default it's set as 'get'
-
-	AVAILABLE VALUES:
-		'get'  -  This is already the default so no real need to add this but this uses a standard query string
-		
-		'post' -  This will convert the query string into a post
-
-	EXAMPLE CODE:
-		koding.Main('http://testpage.com?query1=value1&query2=value2', post_type='post')
-
-------------------------------------------------------------------------------------------
-
-
-NOOBSANDNERDS FEATURES - CURRENTLY ON HOLD DUE TO TECHNICAL (SERVER) ISSUES
-===========================================================================
-
-The following unique features are only available to developers who have their addons supported at noobsandnerds.com. The more users they have hooking into these functions the more money they need to spend on servers and as NaN is a voluntarily run site they rely solely on donations and google ads to keep the site going. If you're interested in hooking into these features please send whufclee a PM on the noobsandnerds forum.
-
-SECURITY
-========
-Lock your code to your add-on. You can lock code so it only works with your add-on id, if someone tries to clone your code without your consent then they would only be able to run it if they used the same ID. Even if someone did try to clone the add-on using the same ID you're able to push code remotely via the sync options available (details below). What code you choose to push is entirely your call but it must not be a malicious act against the end user - developers using malicious code will not be tolerated on this system. Simply forcing the add-on to sync with your fanart/icon/addon.xml should suffice - it will then overwrite the bogus version automatically.
-
-LOGIN FEATURES
-==============
-If you want specific features only avaialble via NaN login you'll need to add login details in your settings.xml. This is optional, there is no requirement to force login upon your users but it can be useful - especially with the new upcoming Add-on Portal features where users will be able to hook into a more personalised system. Some developers also want to try and limit the amount of users accessing their add-on due to too many hits on a server, this will help with that as you can lock certain features to login only. Login is locked to a max. of 3 different IP's in a 24hr period, if the same login credentials are used by more than 3 different IP's the account will be temporarily suspended for 24 hours and they will no longer have any access to any of the add-on. If you require login then you'll need the following id's in your settings.xml
-
-		<setting id="login" label="Enable noobsandnerds login" type="bool" default="false"/>
-		<setting id="username" label="Username" type="text" default="" visible="eq(-1,true) "/>
-		<setting id="password" label="password" type="text" default="" option="hidden" visible="eq(-2,true) "/>
-
-AUTO INSTALL THIRD PARTY ADD-ONS ON STARTUP
-===========================================
-If there's any add-ons your code can hook into which aren't hosted on your repository then you can set a list of add-ons you want installed when the user opens your add-on. This list of add-ons can be set online via your own (*)admin panel, all that's required is a list of comma separated addon id's. You will need the following added into your settings.xml file:
-
-		<setting id="installaddons"	label="Offer to install recommended extras"	type="enum"	values="Off|Auto|Ask"	default="0"	visible="true"/>
-		<setting id="installrepos"	label="Install relevant repositories"	type="enum"	values="Off|Auto|Ask"	default="0"	visible="eq(-1,1)||eq(-1,2)"/>
-		<setting id="silent"	    label="Install type"	type="enum"	values="Show Install Progress|Silent"	default="0"	visible="eq(-2,1)||eq(-2,2)"/>
-
-Of course if you don't want to give the end user choices then it's possible to set the defaults of these id's and set visibility as false. However, ethically the user should always be given a choice, especially if your imports contain third party code not maintained by yourself as there's no guarantee what code that third party may push in the future.
-
-TEST/DEVELOPMENT VERSIONS
-=========================
-If you want to offer a test version only available to donators or a specific test group then you can do so very easily. Your test add-on needs to be uploaded via your (*)admin panel and all the user needs to do is enter their NaN login credentials, if they are in the correct test group and have access then they can switch between test or live version at the click of a button in settings. To the end user it will only appear as one add-on that's installed but it can be opened into test or live just by one simple change in the settings. Please add this to your settings.xml file if you want to offer test versions:
-
-		<setting id="testver" label="Use test version" type="bool" default="true" />
-		<setting id="testsettings" label="Test version settings" type="action"	action="RunScript(special://home/addons/script.module.python.koding.aio/lib/koding/__init__.py,settings,your.plugin.id)" option="close" />
-
-CREATE DEVELOPMENT VERSIONS RUNNING OFF YOUR OWN SERVER
-=======================================================
-If your add-on relies on grabbing content you've added to the NaN servers but you don't want to mess around with the live environment you can create a development version of the add-on and have it hit your own server instead. The development version can just be a duplicate of your existing add-on but with a new id, contact a member of the admin team at NaN to get it approved and then you'll be able to edit the base domain as you wish.
-
-SYNCHRONISE FILES
-=================
-By adding small zip files on the server you can have your add-on auto-syncing with specific files. Particularly useful if you have userdata which is required but often requires some sort of regular changes.
-
-The system will check every 24 hours for newly updated files. This can of course be overrided in extreme circumstances by clearing the cookie file and it will then check again. This hack should only be used in extreme circumstances and anyone found to be abusing this will most likely end up with their add-on blacklisted as it can potentially cause a ddos attack affect on the servers and affect other add-ons (and normal web users) using the system.
-
-
-RUNNING ENCRYPTED/ONLINE CODE
-=============================
-
-RUN ENCRYPTED CODE ON FIRST RUN:
-If you want to hide specific code then you can do so by uploading a segment of code via the web form and this will be run automatically (encrypted) when you run the add-on, this is cached so if testing make sure you clear your cookies folder otherwise you may get false positives. If you wish to run this specific piece of code at any point later on in the add-on you can simply call koding.User_Info()
-
-RUN CUSTOM ONLINE CODE:
-You can upload as many segments of code as you want and they can run by using the following command: koding.Main(url) where url is the name of the code page you created, e.g. 'check_updates'.
-
-RUN UNIVERSAL NAN CODE :
-You can run a variety of universal NaN modules, if you want to submit new ones then you're free to do so, just get in touch with a member of admin. Below are a list of the current functions available to anyone who's add-on has been accepted on the system.
-
-------------------------------------------------------------------------------------------
-
-RETURN THE BASE URL: koding.Check_Cookie('base') - NaN uses a special load balancing system whereby multiple servers are used, all sync'd with access to the same content. If you need to hook into files hosted on your NaN account then using this function will return the base url. This may change from day to day, every add-on that uses koding.py will automatically get a new randomised server to use for the following 24 hours. This helps prevent ddos attacks, gives fallback options for any slow servers and also makes sure there are sufficient backups of your important files.
 
 ------------------------------------------------------------------------------------------

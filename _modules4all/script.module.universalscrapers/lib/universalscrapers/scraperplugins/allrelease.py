@@ -79,7 +79,7 @@ class allrelease(Scraper):
 
             block = re.compile('<div class="entry-content">(.+?)</div><!-- .entry-content -->',re.DOTALL).findall(OPEN)
             Endlinks = re.compile('href=(.+?) target=',re.DOTALL).findall(str(block))
-            iframe = re.compile('<IFRAME SRC=(.*?) ')
+            iframe = re.compile('<IFRAME SRC=(.*?) FRAMEBORDER',re.DOTALL).findall(str(block))
             count = 0     
             for link in Endlinks:
                 #if link.endswith('.mkv') or link.endswith('.html'):

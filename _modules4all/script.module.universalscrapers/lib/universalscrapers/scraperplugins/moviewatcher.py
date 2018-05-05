@@ -78,12 +78,23 @@ class moviewatcher(Scraper):
                 headers={'User-Agent':User_Agent}
                 r = requests.get(link,headers=headers,allow_redirects=False)
                 stream_url = r.headers['location']
-                if not urlresolver.HostedMediaFile(stream_url).valid_url():
-                    continue
-                host = stream_url.split('//')[1].replace('www.','')
-                host = host.split('/')[0].split('.')[0].title()
-                count +=1
-                self.sources.append({'source': host, 'quality': 'SD', 'scraper': self.name, 'url': stream_url,'direct': False})
+                if urlresolver.HostedMediaFile(stream_url).valid_url():
+                    host = stream_url.split('//')[1].replace('www.','')
+                    host = host.split('/')[0].split('.')[0].title()
+                    count +=1
+                    self.sources.append({'source': host, 'quality': 'SD', 'scraper': self.name, 'url': stream_url,'direct': False})
+            else: 
+                if 'tocloud' in stream_url:
+                    stream_url = stream_url.replace('tocloud.co/','tocloud.co/embed-')
+                    OPEN = requests.get(stream_url).content
+                    regex = re.compile('sources:.+?file:"(.+?)"',re.DOTALL).findall(OPEN)
+                    for stream_url in regex:
+                        #print stream_url+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+                        host = stream_url.split('//')[1].replace('www.','')
+                        host = host.split('/')[0].split('.')[0].title()
+                        count +=1 
+                        self.sources.append({'source': host, 'quality': 'SD', 'scraper': self.name, 'url': stream_url,'direct': False})
+                    
             if dev_log=='true':
                 end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year, season=season,episode=episode)               

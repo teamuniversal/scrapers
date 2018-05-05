@@ -2,8 +2,8 @@
 <window>
 	<defaultcontrol always="true">100</defaultcontrol>
 	<coordinates>
-		<posx>0</posx>
-		<posy>0</posy>
+		<posx>290</posx>
+		<posy>110</posy>
 	</coordinates>
 	<animation effect="fade" time="250">WindowOpen</animation>
 	<animation effect="fade" time="250">WindowClose</animation>
@@ -11,15 +11,15 @@
 		<control type="image">
 			<posx>0</posx>
 			<posy>0</posy>
-			<width>1280</width>
-			<height>720</height>
-			<texture border="40" colordiffuse="e5120B52">DialogBack.png</texture>
+			<width>700</width>
+			<height>500</height>
+			<texture border="40" colordiffuse="ff000000">DialogBack.png</texture>
 		</control>
 		<control type="image">
 			<description>Dialog Header image</description>
 			<posx>40</posx>
 			<posy>16</posy>
-			<width>1200</width>
+			<width>620</width>
 			<height>40</height>
 			<texture>dialogheader.png</texture>
 		</control>
@@ -27,13 +27,13 @@
 			<description>header label</description>
 			<posx>40</posx>
 			<posy>20</posy>
-			<width>1200</width>
+			<width>620</width>
 			<height>30</height>
 			<font>font13_title</font>
 			<label>$INFO[Window(Home).Property(PK_Header)]</label>
 			<align>center</align>
 			<aligny>center</aligny>
-			<textcolor>FF63D0FF</textcolor>
+			<textcolor>gold</textcolor>
 			<shadowcolor>FF000000</shadowcolor>
 		</control>
 		<control type="button" id="98">
@@ -54,16 +54,24 @@
 			<visible>system.getbool(input.enablemouse)</visible>
 		</control>
 		<control type="group">
+			<control type="image">
+				<description>Icon image</description>
+				<posx>470</posx>
+				<posy>65</posy>
+				<width>150</width>
+				<height>150</height>
+				<texture>/Users/whufclee/Library/Application Support/Kodi/addons/plugin.video.doku5.com/resources/icon.png</texture>
+			</control>
 			<control type="textbox" id="15">
 				<description>terms details</description>
 				<posx>30</posx>
 				<posy>75</posy>
-				<width>1200</width>
-				<height>550</height>
+				<width>620</width>
+				<height>330</height>
 				<label>$INFO[Window(Home).Property(PK_Main_Text)]</label>
 				<font>font13</font>
 				<align>justify</align>
-				<textcolor>FFFFFFFF</textcolor>
+				<textcolor>white</textcolor>
 				<shadowcolor>black</shadowcolor>
 				<pagecontrol>99</pagecontrol>
 			</control>
@@ -71,7 +79,7 @@
 				<posx>scroll_pos</posx>
 				<posy>73</posy>
 				<width>25</width>
-				<height>550</height>
+				<height>330</height>
 				<texturesliderbackground border="0,14,0,14">ScrollBarV.png</texturesliderbackground>
 				<texturesliderbar border="0,14,0,14">ScrollBarV_bar.png</texturesliderbar>
 				<texturesliderbarfocus border="0,14,0,14">ScrollBarV_bar_focus.png</texturesliderbarfocus>
@@ -85,16 +93,16 @@
 				<orientation>vertical</orientation>
 			</control>
            <control type="button" id="100">
-                <posx>293</posx>
-                <posy>640</posy>
+                <posx>25</posx>
+                <posy>420</posy>
                 <width>200</width>
                 <height>40</height>
-                <label>Decline</label>
-                <texturefocus colordiffuse="ffFFE76E">DialogBack.png</texturefocus>
-                <texturenofocus colordiffuse="7f49526B">DialogBack.png</texturenofocus>
+                <label>Ausführen</label>
+                <texturefocus colordiffuse="ff4e91cf">DialogBack.png</texturefocus>
+                <texturenofocus colordiffuse="7f586381">DialogBack.png</texturenofocus>
                 <font>font12_title</font>
-                <textcolor>FFFFFFFF</textcolor>
-                <focusedcolor>FFFF8E1C</focusedcolor>
+                <textcolor>white</textcolor>
+                <focusedcolor>gold</focusedcolor>
                 <align>center</align>
                 <onleft>99</onleft>
                 <onright>101</onright>
@@ -102,19 +110,36 @@
                 <ondown>99</ondown>
             </control>
            <control type="button" id="101">
-                <posx>786</posx>
-                <posy>640</posy>
+                <posx>250</posx>
+                <posy>420</posy>
                 <width>200</width>
                 <height>40</height>
-                <label>Accept</label>
-                <texturefocus colordiffuse="ffFFE76E">DialogBack.png</texturefocus>
-                <texturenofocus colordiffuse="7f49526B">DialogBack.png</texturenofocus>
+                <label>Konfigurieren</label>
+                <texturefocus colordiffuse="ff4e91cf">DialogBack.png</texturefocus>
+                <texturenofocus colordiffuse="7f586381">DialogBack.png</texturenofocus>
                 <font>font12_title</font>
-                <textcolor>FFFFFFFF</textcolor>
-                <focusedcolor>FFFF8E1C</focusedcolor>
+                <textcolor>white</textcolor>
+                <focusedcolor>gold</focusedcolor>
                 <align>center</align>
                 <onleft>100</onleft>
                 <onright>102</onright>
+                <onup>99</onup>
+                <ondown>99</ondown>
+            </control>
+           <control type="button" id="102">
+                <posx>475</posx>
+                <posy>420</posy>
+                <width>200</width>
+                <height>40</height>
+                <label>Abbrechen</label>
+                <texturefocus colordiffuse="ff4e91cf">DialogBack.png</texturefocus>
+                <texturenofocus colordiffuse="7f586381">DialogBack.png</texturenofocus>
+                <font>font12_title</font>
+                <textcolor>white</textcolor>
+                <focusedcolor>gold</focusedcolor>
+                <align>center</align>
+                <onleft>101</onleft>
+                <onright>103</onright>
                 <onup>99</onup>
                 <ondown>99</ondown>
             </control>

@@ -13,7 +13,7 @@
 			<posy>0</posy>
 			<width>dialog_width</width>
 			<height>dialog_height</height>
-			<texture border="40" colordiffuse="PK_TransparencyPK_Color">DialogBack.png</texture>
+			<texture border="40" colordiffuse="PK_TransparencyPK_Color">PK_Fanart</texture>
 		</control>
 		<control type="image">
 			<description>Dialog Header image</description>
@@ -54,6 +54,14 @@
 			<visible>system.getbool(input.enablemouse)</visible>
 		</control>
 		<control type="group">
+			<control type="image">
+				<description>Icon image</description>
+				<posx>PK_I_X</posx>
+				<posy>65</posy>
+				<width>150</width>
+				<height>150</height>
+				<texture>PK_Icon</texture>
+			</control>
 			<control type="textbox" id="15">
 				<description>terms details</description>
 				<posx>30</posx>

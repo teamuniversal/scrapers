@@ -7,12 +7,12 @@ dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log
 User_Agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
 
 class mvlinks(Scraper):
-    domains = ['http://dl.newmyvideolink.xyz']
+    domains = ['http://dl.newmyvideolink.xyz/dl']
     name = "MyVideoLinks"
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://en.newmyvideolink.xyz'
+        self.base_link = 'http://en.newmyvideolink.xyz/dl'
         self.uniques = []
         self.sources = []
         self.count = 0

@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-# 
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -24,10 +21,11 @@ import shutil
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 import filetools
 
-ADDONS      = xbmc.translatePath('special://home/addons')
+ADDONS      = 'special://home/addons'
 XBMC_PATH   = xbmc.translatePath('special://xbmc')
 kodi_ver    = int(float(xbmc.getInfoLabel("System.BuildVersion")[:2]))
 dialog      = xbmcgui.Dialog()
@@ -42,16 +40,26 @@ CODE: Addon_Genre([genre, custom_url])
 
 AVAILABLE PARAMS:
     
-    genre  -  By default this is set to 'adult' which will return
-    a dictionary of all known adult add-ons. The genre details are pulled from the
-    Add-on Portal at noobsandnerds.com so you can use any of the supported genre tags
-    listed on this page: http://noobsandnerds.com/latest/?p=3762
+    genre  -  By default this is set to 'adult' which will return a dictionary of all known
+    adult add-ons. We recommend using the genre labels listed below as they are already in use
+    by some add-on developers, however you can of course create your very own genre keys in
+    your custom genre file if you wish.
 
     custom_url  -  If you have your own custom url which returns a dictionary
-    of genres you can enter it here and use that rather than rely on NaN categorisation.
+    of genres and add-ons you can enter it here. The page must adhere to the format shown below.
+
+    Recommended Genre Keys:
+    adult, anime, audiobooks, comedy, comics, documentary, food, gaming, health, howto, kids,
+    livetv, movies, music, news, podcasts, radio, religion, space, sports, subscription,
+    tech, trailers, tvshows, world
+
+    Correct Genre Dictionary Structure:
+    The dictionary must be a dictionary of genres with each genre dictionary containing keys for
+    each add-on ID and the value being the name you want displayed. See below for an example:
+    { "movies":{"plugin.video.mymovie":"My movie add-on","plugin.video.trailers":"My Trailer add-on"}, "sports":{"plugin.video.sports":"Sport Clips"} }
 
 EXAMPLE CODE:
-dialog.ok('[COLOR gold]ADD-ON GENRES[/COLOR]','We will now list all known comedy based add-ons. If you have add-ons installed which you feel should be categorised as supplying comedy but they aren\'t then you can help tag them up correctly via the Add-on Portal at NaN.')
+dialog.ok('ADD-ON GENRES','We will now list all known comedy based add-ons. If you have add-ons installed which you feel should be categorised as supplying comedy but they aren\'t then you can help tag them up correctly via the Add-on Portal at NaN.')
 comedy_addons = koding.Addon_Genre(genre='comedy')
 if comedy_addons:
     my_return = 'LIST OF AVAILABLE COMEDY BASED ADD-ONS:\n\n'
@@ -66,17 +74,19 @@ if comedy_addons:
     from __init__       import converthex
     from filetools      import Text_File
     from systemtools    import Timestamp
+    from vartools       import Merge_Dicts
     from web            import Open_URL
     
     download_new = True
-    local_path   = binascii.hexlify('addons')
-    cookie_path  = xbmc.translatePath("special://profile/addon_data/script.module.python.koding.aio/cookies/")
+    local_path   = binascii.hexlify('genre_list')
+    cookie_path  = "special://profile/addon_data/script.module.python.koding.aio/cookies/"
+    custom_genres= "special://profile/addon_data/script.module.python.koding.aio/genres.txt"
     final_path   = os.path.join(cookie_path,local_path)
-    if not os.path.exists(cookie_path):
-        os.makedirs(cookie_path)
+    if not xbmcvfs.exists(cookie_path):
+        xbmcvfs.mkdirs(cookie_path)
 
-    if os.path.exists(final_path):
-        modified = os.path.getmtime(final_path)
+    if xbmcvfs.exists(final_path):
+        modified = xbmcvfs.Stat(final_path).st_mtime()
         old = int(modified)
         now = int(Timestamp('epoch'))
 # Add a 24hr wait so we don't kill server
@@ -84,22 +94,27 @@ if comedy_addons:
             download_new = False
 
 # Create new file
-    if download_new:
-        if custom_url == '':
-            custom_url = converthex('687474703a2f2f6e6f6f6273616e646e657264732e636f6d2f6164646f6e732f6164646f6e5f6c6973742e747874')
+    if download_new and custom_url != '':
         addon_list = Open_URL(custom_url)
         Text_File(final_path, "w", addon_list)
 
 # Grab details of the relevant genre
-    if os.path.exists(final_path):
+    if xbmcvfs.exists(final_path):
         try:
             addon_list = eval( Text_File(final_path, 'r') )
-            return addon_list[genre]
+            addon_list = addon_list[genre]
         except:
-            os.remove(final_path)
-            return False
-    else:
-        return False
+            xbmcvfs.delete(final_path)
+            addon_list = {}
+
+    if xbmcvfs.exists(custom_genres):
+        try:
+            custom_list = eval( Text_File(custom_genres, 'r') )
+            custom_list = custom_list[genre]
+            addon_list = Merge_Dicts(addon_list,custom_list)
+        except:
+            pass
+    return addon_list
 #----------------------------------------------------------------
 # TUTORIAL #
 def Addon_Info(id='',addon_id=''):
@@ -133,11 +148,6 @@ dialog.ok('NAME AND VERSION','[COLOR=dodgerblue]Add-on Name:[/COLOR] %s' % name,
         dialog.ok('ENTER A VALID ID','You\'ve called the Addon_Info function but forgot to add an ID. Please correct your code and enter a valid id to pull info on (e.g. "version")')
     else:
         return ADDON.getAddonInfo(id=id)
-#----------------------------------------------------------------
-def Addon_Install(addon_id,confirm=True,silent=0,repo_install=1):
-    xbmc.log('### DUE TO SERVER PROBLEMS AT NAN THE ADDON INSTALL FUNCTION YOU\'VE ATTEMPTED TO CALL IS CURRENTLY DISABLED. PLEASE REMOVE FROM YOUR CODE.',2)
-    xbmc.log('### AT THIS MOMENT IN TIME IT\'S UNSURE WHETHER OR NOT THIS FUNCTION WILL BE GETTING ADDED BACK TO PYTHON KODING OR NOT - SORRY FOR ANY INCONVENIENCE.',2)
-    pass
 #----------------------------------------------------------------
 # TUTORIAL #
 def Addon_List(enabled=True, inc_new=False):
@@ -198,7 +208,7 @@ koding.Text_Box('ADDON STATUS',my_return)
         return disabled_list
 #----------------------------------------------------------------
 # TUTORIAL #
-def Addon_Service(addons='all', mode='list', skip_service='all'):
+def Addon_Service(addons='all', mode='list', skip_service=[]):
     """
 Send through an add-on id, list of id's or leave as the default which is "all". This
 will loop through the list of add-ons and return the ones which are run as services.
@@ -221,24 +231,26 @@ AVAILABLE PARAMS:
     "enable" and that will uncomment out the service item. Please note that by uncommenting
     the service will not automatically start - you'll need to reload the profile for that.
 
-    skip_service  -  This function can fail if certain dependencies are
-    run as a service, if they are causing problems you can send through
-    the id or a list of id's which you want to disable the service for.
-    This will comment out the service part in the addon.xml before attempting
-    to enable the add-on. Don't forget to re-enable this if you want the service
-    running.
+    skip_service  -  When running the enable or disable mode you can choose to add a list of
+    add-ons you'd like to skip the process for. Of course you may be thinking why would I send
+    through a list of addons I want the service enabled/disabled for but then I also add them
+    to the skip_service list to say DON'T enable/disable - it makes no sense?! Well you'd be
+    correct that doesn't make any sense as presumably you've already filtered out the add-ons
+    you don't want affected, this command is designed more for those who don't send through a
+    list of add-ons and instead use the default "all" value for the addons paramater. This
+    then makes it very easy to just skip a handful of add-on services and enable all others.
 
 EXAMPLE CODE:
-dialog.ok('[COLOR gold]CHECKING FOR SERVICES[/COLOR]','We will now check for all add-ons installed which contain services')
+dialog.ok('CHECKING FOR SERVICES','We will now check for all add-ons installed which contain services')
 service_addons = Addon_Service(mode='list')
 my_text = 'List of add-ons running as a service:\n\n'
 for item in service_addons:
     my_text += item+'\n'
 koding.Text_Box('[COLOR gold]SERVICE ADDONS[/COLOR]',my_text)
 ~"""
-    from filetools   import Get_Contents, Text_File
-    from systemtools import Data_Type
-    from guitools    import Text_Box
+    from filetools  import Get_Contents, Physical_Path, Text_File
+    from vartools   import Data_Type
+    from guitools   import Text_Box
     service_addons = []
     if addons=='all':
         addons = Get_Contents(path=ADDONS, exclude_list=['packages','temp'],full_path=False)
@@ -246,32 +258,29 @@ koding.Text_Box('[COLOR gold]SERVICE ADDONS[/COLOR]',my_text)
         if Data_Type(addons) == 'str':
             addons = [addons]
 
-    if skip_service=='all':
-        skip_service = addons
-    else:
-        if Data_Type(skip_service) == 'str':
-            skip_service = [skip_service]
+    if Data_Type(skip_service) == 'str':
+        skip_service = [skip_service]
 
     service_line = '<extension point="xbmc.service"'
     
     for item in addons:
         addon_path = os.path.join(ADDONS,item,'addon.xml')
-        if os.path.exists(addon_path) and item not in skip_service:
-            content = Text_File(addon_path,'r')
-            if service_line in content:
-                xbmc.log('%s contains a service,'%item,2)
-                for line in content.splitlines():
-                    if service_line in line:
-                        if item not in service_addons:
-                            service_addons.append(item)
-                            if not (line.strip().startswith('<!--')) and (mode == 'disable'):
-                                replace_line = '<!--%s-->'%line
-                                Text_File(addon_path,'w',content.replace(line,replace_line))
-                                break
-                            elif line.strip().startswith('<!--') and mode == 'enable':
-                                replace_line = line.replace(r'<!--','').replace(r'-->','')
-                                Text_File(addon_path,'w',content.replace(line,replace_line))
-                                break
+        content = Text_File(addon_path,'r')
+        if service_line in content:
+            if item not in service_addons:
+                service_addons.append(item)
+                if mode != 'list':
+                    if not item in skip_service:
+                        for line in content.splitlines():
+                            if service_line in line:
+                                if not (line.strip().startswith('<!--')) and (mode == 'disable'):
+                                    replace_line = '<!--%s-->'%line
+                                    Text_File(addon_path,'w',content.replace(line,replace_line))
+                                    break
+                                elif line.strip().startswith('<!--') and mode == 'enable':
+                                    replace_line = line.replace(r'<!--','').replace(r'-->','')
+                                    Text_File(addon_path,'w',content.replace(line,replace_line))
+                                    break
     return service_addons
 #----------------------------------------------------------------
 # TUTORIAL #
@@ -333,12 +342,12 @@ AVAILABLE PARAMS:
     (disable auto updates).
 
 ~"""
-    from filetools   import Move_Tree, End_Path
+    from filetools import End_Path, Move_Tree, Physical_Path
 
-    adult_store  = xbmc.translatePath("special://profile/addon_data/script.module.python.koding.aio/adult_store")
+    adult_store  = Physical_Path("special://profile/addon_data/script.module.python.koding.aio/adult_store")
     disable_list = []
-    if not os.path.exists(adult_store):
-        os.makedirs(adult_store)
+    if not xbmcvfs.exists(adult_store):
+        xbmcvfs.mkdirs(adult_store)
     my_addons = Installed_Addons()
     if disable:
         for item in my_addons:
@@ -352,7 +361,7 @@ AVAILABLE PARAMS:
             try:
                 addon_path = xbmcaddon.Addon(id=item).getAddonInfo("path")
             except:
-                addon_path = os.path.join(ADDONS,item)
+                addon_path = Physical_Path(os.path.join(ADDONS,item))
             path_id = End_Path(addon_path)
             if os.path.exists(addon_path):
                 Move_Tree(addon_path,os.path.join(adult_store,path_id))
@@ -363,9 +372,10 @@ AVAILABLE PARAMS:
             for item in os.listdir(adult_store):
                 store_dir = os.path.join(adult_store,item)
                 addon_dir = os.path.join(ADDONS, item)
-                if os.path.isdir(store_dir):
+                if os.path.exists(store_dir):
                     Move_Tree(store_dir,addon_dir)
                     addon_vault.append(item)
+
         if KODI_VER >= 16:
             Toggle_Addons(addon=addon_vault, safe_mode=True, refresh=True, update_status=update_status)
         else:
@@ -446,7 +456,7 @@ def Check_Deps(addon_path, depfiles = []):
     exclude_list  = ['xbmc.gui', 'script.module.metahandler', 'metadata.common.allmusic.com',\
                     'kodi.resource','xbmc.core','xbmc.metadata','xbmc.addon','xbmc.json','xbmc.python']
     file_location = os.path.join(addon_path,'addon.xml')
-    if os.path.exists(file_location):
+    if xbmcvfs.exists(file_location):
         readxml = Text_File(file_location,'r')
         dmatch   = re.compile('import addon="(.+?)"').findall(readxml)
         for requires in dmatch:
@@ -481,7 +491,7 @@ AVAILABLE PARAMS:
     to the repo url will take before timing out and returning False.
 
 EXAMPLE CODE:
-repo_status = Check_Repo('repository.xxxecho',show_busy=False,timeout=10)
+repo_status = Check_Repo('special://xbmc',show_busy=False,timeout=10)
 if repo_status:
     dialog.ok('REPO STATUS','The repository modules4all is: [COLOR=lime]ONLINE[/COLOR]')
 else:
@@ -493,18 +503,18 @@ else:
     from filetools import Text_File
     from guitools  import Show_Busy
     from web       import Validate_Link
-    dolog('### CHECKING %s'%repo)
+    xbmc.log('### CHECKING %s'%repo,2)
     status = True
     if show_busy:
         Show_Busy()
-    if repo.startswith('special://'):
-        repo_path = xbmc.translatePath(repo)
-    elif not ADDONS in repo and not XBMC_PATH in repo:
+    if not ADDONS in repo and not XBMC_PATH in repo:
         repo_path = os.path.join(ADDONS,repo)
     else:
         repo_path = repo
+    repo_path = Physical_Path(repo_path)
+    xbmc.log(repo_path,2)
     repo_path = os.path.join(repo_path,'addon.xml')
-    dolog(repo_path)
+    xbmc.log(repo_path,2)
     if os.path.exists(repo_path):
         content  = Text_File(repo_path,'r')
         md5_urls = re.findall(r'<checksum>(.+?)</checksum>', content, re.DOTALL)
@@ -552,7 +562,7 @@ else:
 ~"""
     import re
     from filetools   import Text_File
-    from systemtools import Data_Type
+    from vartools import Data_Type
 
     if addon_id == '':
         addon_id = Caller()
@@ -608,14 +618,14 @@ koding.Text_Box('Modules required for %s'%current_id,clean_text)
 ~"""
     import xbmcaddon
     import re
-    from filetools      import Text_File
-    from systemtools    import Data_Type 
+    from filetools  import Text_File
+    from vartools   import Data_Type 
     
     processed    = []
     depfiles     = []    
     
     if addon_id == 'all':
-        addon_id = os.listdir(ADDONS)
+        addon_id = xbmcvfs.listdir(ADDONS)
     elif Data_Type(addon_id) == 'str':
         addon_id = [addon_id]
 
@@ -668,13 +678,14 @@ AVAILABLE PARAMS:
     folder  -  This is folder name of the add-on. Just the name not the path.
 
 EXAMPLE CODE:
+dialog.ok('ABOUT','This function allows us to pass through a folder name found in the addons folder and it will return the real id. The vast majority of add-ons use the same folder name as id but there are exceptions. Let\'s check Python Koding...')
 my_id = koding.Get_Addon_ID(folder='script.module.python.koding.aio')
-dialog.ok('ADDON ID','The add-on id found is:','[COLOR=dodgerblue]%s[/COLOR]'%my_id)
+dialog.ok('PYTHON KODING ID','The add-on id found for this folder folder is:','[COLOR=dodgerblue]%s[/COLOR]'%my_id)
 ~"""
     from filetools import Text_File
     import re
     xmlpath = os.path.join(ADDONS, folder, 'addon.xml')
-    if os.path.exists(xmlpath):
+    if xbmcvfs.exists(xmlpath):
         contents = Text_File(xmlpath,'r')
         addon_id = re.compile('id="(.+?)"').findall(contents)
         addon_id = addon_id[0] if (len(addon_id) > 0) else ''
@@ -852,7 +863,8 @@ koding.Refresh('container')
     from __init__       import dolog
     from filetools      import DB_Path_Check, Get_Contents
     from database       import DB_Query
-    from systemtools    import Data_Type, Last_Error, Refresh, Set_Setting, Sleep_If_Function_Active, Timestamp
+    from systemtools    import Last_Error, Refresh, Set_Setting, Sleep_If_Function_Active, Timestamp
+    from vartools       import Data_Type
 
     Set_Setting('general.addonupdates', 'kodi_setting', '2')
     dolog('disabled auto updates for add-ons')
@@ -889,7 +901,6 @@ koding.Refresh('container')
     temp_list = []
     for addon_id in addon:
         if not addon_id in exclude_list and addon_id != '':
-            dolog('CHECKING: %s'%addon_id)
             if addon_id in disabled_list and not new_only and enable:
                 temp_list.append(addon_id)
             elif addon_id not in disabled_list and addon_id not in enabled_list:
@@ -932,7 +943,6 @@ koding.Refresh('container')
 
         # If enabling the add-on then we also check for dependencies and enable them first
             if state:
-                dolog('Checking dependencies for : %s'%my_addon)
                 dependencies = Dependency_Check(addon_id=my_addon, recursive=True)
                 mydeps.append(dependencies)
 
@@ -952,21 +962,15 @@ koding.Refresh('container')
                         enable_dep = True
                     if enable_dep:
                         if not item in exclude_list and not item in final_enabled and not item in enabled_list:
-                            dolog('Attempting to enable: %s'%item)
                             if Set_Setting(setting_type='addon_enable', setting=item, value = 'true'):
-                                dolog('%s now %s' % (item, log_value))
                                 final_enabled.append(item)
                     counter += 1
 
     # Now the dependencies are enabled we need to enable the actual main add-ons
         for my_addon in final_addons:
             if not my_addon in final_enabled:
-                dolog('Attempting to enable: %s'%my_addon)
                 if Set_Setting(setting_type='addon_enable', setting=my_addon, value = my_value):
-                    dolog('%s now %s' % (my_addon, log_value))
                     final_enabled.append(addon)
-            else:
-                dolog('Already enabled, skipping: %s'%my_addon)
     if refresh:
         Refresh(['addons','container'])
     Set_Setting('general.addonupdates', 'kodi_setting', '%s'%update_status)

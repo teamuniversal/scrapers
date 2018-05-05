@@ -1,7 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 
 # script.module.python.koding.aio
-# Python Koding AIO (c) by whufclee (info@totalrevolution.tv)
+# Python Koding AIO (c) by TOTALREVOLUTION LTD (support@trmc.freshdesk.com)
 
 # Python Koding AIO is licensed under a
 # Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
@@ -9,9 +9,6 @@
 # You should have received a copy of the license along with this
 # work. If not, see http://creativecommons.org/licenses/by-nc-nd/4.0.
 
-# IMPORTANT: If you choose to use the special noobsandnerds features which hook into their server
-# please make sure you give approptiate credit in your add-on description (noobsandnerds.com)
-# 
 # Please make sure you've read and understood the license, this code can NOT be used commercially
 # and it can NOT be modified and redistributed. If you're found to be in breach of this license
 # then any affected add-ons will be blacklisted and will not be able to work on the same system
@@ -24,14 +21,15 @@ import sys
 import xbmc
 import xbmcaddon
 import xbmcgui
+import xbmcvfs
 
 from systemtools    import Last_Error
 from xml.etree      import ElementTree
 
 dp       = xbmcgui.DialogProgress()
 dialog   = xbmcgui.Dialog()
-HOME     = xbmc.translatePath('special://home')
-PROFILE  = xbmc.translatePath('special://profile')
+HOME     = 'special://home'
+PROFILE  = 'special://profile'
 DATABASE = os.path.join(PROFILE,'Database')
 
 #----------------------------------------------------------------    
@@ -59,19 +57,18 @@ myXmlFile = "special://userdata/addon_data/script.module.python.koding.aio/timef
 timefile = koding.xml(myXmlFile)
 getSetting = timefile.ParseValue
 setSetting = timefile.SetValue
-dialog.ok('[COLOR gold]CHECK SETTINGS[/COLOR]','If you take a look in the addon_data folder for python koding a new file called timefile.xml will be created when you click OK.')
+dialog.ok('CHECK SETTINGS','If you take a look in the addon_data folder for python koding a new file called timefile.xml will be created when you click OK.')
 setSetting("autorun", "true")
 autoRun = getSetting("autorun")
-dialog.ok('[COLOR gold]AUTORUN VALUE[/COLOR]','The value of autorun in these new settings is [COLOR dodgerblue]%s[/COLOR].[CR][CR]Press OK to delete this file.'%autoRun)
-os.remove(xbmc.translatePath(myXmlFile))
+dialog.ok('AUTORUN VALUE','The value of autorun in these new settings is [COLOR dodgerblue]%s[/COLOR].[CR][CR]Press OK to delete this file.'%autoRun)
+os.remove(koding.Physical_Path(myXmlFile))
 ~"""
 
     def __init__(self, xmlFile, masterTag="settings", childTag="setting"):
         self.xmlFile = xmlFile
         self.masterTag = masterTag
         self.childTag = childTag
-        if self.xmlFile.startswith('special://'):
-            self.xmlFile = xbmc.translatePath(self.xmlFile)
+        self.xmlFile = Physical_Path(self.xmlFile)
 
     def ParseValue(self, settingID, settingIDTag="id", settingValueTag="value", addChild=False, formatXML=True):
         if not os.path.exists(self.xmlFile):
@@ -105,8 +102,9 @@ os.remove(xbmc.translatePath(myXmlFile))
             pretty = self.Prettify(content, asString=True)
         else:
             pretty = self.Prettify(self.xmlFile)
-        with open(self.xmlFile, "w") as f:
-            f.write(pretty)
+        f = open(self.xmlFile, "w")
+        f.write(pretty)
+        f.close()
 
     def CreateXML(self, settingIDTag="id", settingValueTag="value", addChild=False, formatXML=True):
         root = ElementTree.Element("%s" % self.masterTag)
@@ -119,8 +117,9 @@ os.remove(xbmc.translatePath(myXmlFile))
         tree.write(self.xmlFile)
         if formatXML:
             pretty = self.Prettify(self.xmlFile)
-            with open(self.xmlFile, "w") as f:
-                f.write(pretty)
+            f = open(self.xmlFile, "w")
+            f.write(pretty)
+            f.close()
 
     def AppendChild(self, root, settingID, newValue, settingIDTag="id", settingValueTag="value"):
         ElementTree.SubElement(root, self.childTag, attrib={settingIDTag: settingID, settingValueTag: newValue})
@@ -150,7 +149,8 @@ IMPORTANT: There was a known bug where some certain compressed tar.gz files can 
 and a bad zipfile will continue to be made until it runs out of space on your storage device. In the unlikely
 event you encounter this issue just add the problematic file(s) to your exclude list. I think this has since
 been fixed since a complete re-code to this function, or at least I've been unable to recreate it. If you
-find this problem is still occuring please let me know (whufclee on noobsandnerds.com forum), thankyou.
+find this problem is still occuring please let me know on the forum at http://totalrevolution.tv/forum
+(user: trevdev), thankyou.
 
 CODE: Compress(src,dst,[compression,parent])
 
@@ -179,11 +179,11 @@ AVAILABLE PARAMS:
     'kodi.log','kodi.old.log','xbmc.log','xbmc.old.log','spmc.log','spmc.old.log'
 
 EXAMPLE CODE:
-koding_path = xbmc.translatePath('special://home/addons/script.module.python.koding.aio')
-zip_dest = xbmc.translatePath('special://home/test_addon.zip')
-zip_dest2 = xbmc.translatePath('special://home/test_addon2.zip')
-tar_dest = xbmc.translatePath('special://home/test_addon.tar')
-tar_dest2 = xbmc.translatePath('special://home/test_addon2.tar')
+koding_path = koding.Physical_Path('special://home/addons/script.module.python.koding.aio')
+zip_dest = koding.Physical_Path('special://home/test_addon.zip')
+zip_dest2 = koding.Physical_Path('special://home/test_addon2.zip')
+tar_dest = koding.Physical_Path('special://home/test_addon.tar')
+tar_dest2 = koding.Physical_Path('special://home/test_addon2.tar')
 koding.Compress(src=koding_path,dst=zip_dest,compression='zip',parent=True)
 koding.Compress(src=koding_path,dst=zip_dest2,compression='zip',parent=False)
 koding.Compress(src=koding_path,dst=tar_dest,compression='tar',parent=True)
@@ -252,7 +252,10 @@ koding.Create_Paths(path=my_path)
 dialog.ok('PATH CREATED','Check in your Kodi home folder and you should now have sub-folders of /test/testing/.','[COLOR=gold]Press ok to remove these folders.[/COLOR]')
 shutil.rmtree(xbmc.translatePath('special://home/test'))
 ~"""
-    if path != '' and not os.path.isdir(path) and not os.path.exists(path):
+    home_path = Physical_Path('special://home')
+    path = path.replace(home_path,'')
+    newpath = os.path.join('special://home',path)
+    if path != '' and not os.path.exists(Physical_Path(newpath)):
         root_path = path.split(os.sep)
         if root_path[-1] == '':
             root_path.pop()
@@ -260,8 +263,8 @@ shutil.rmtree(xbmc.translatePath('special://home/test'))
         final_path = ''
         for item in root_path:
             final_path = os.path.join(final_path,item)
-        if not os.path.exists(final_path):
-            os.makedirs(final_path)
+        final_path = os.path.join('special://home',final_path)
+        xbmcvfs.mkdirs(final_path)
 #----------------------------------------------------------------    
 # TUTORIAL #
 def DB_Path_Check(db_path):
@@ -285,15 +288,15 @@ dbpath = koding.DB_Path_Check(db_path='addons')
 dialog.ok('ADDONS DB','The path to the current addons database is:',dbpath)
 ~"""
     finalfile = 0
-    databasepath = os.listdir(DATABASE)
+    dirs,databasepath = xbmcvfs.listdir(DATABASE)
     for item in databasepath:
         if item.lower().endswith('.db') and item.lower().startswith(db_path.lower()):
             mydb         = os.path.join(DATABASE,item)
-            lastmodified = os.path.getmtime(mydb)
+            lastmodified = xbmcvfs.Stat(mydb).st_mtime()
             if lastmodified>finalfile:
                 finalfile = lastmodified
                 gooddb   = mydb
-    return gooddb
+    return Physical_Path(gooddb)
 #---------------------------------------------------------------------------------------------------
 # TUTORIAL #
 def Delete_Crashlogs(extra_paths=[]):
@@ -322,7 +325,7 @@ else:
     dialog.ok('NO CRASHLOGS','No crashlogs could be found on the system.')
 ~"""
     import glob
-    log_path =  xbmc.translatePath('special://logpath/')
+    log_path =  'special://logpath/'
     xbmc_path = (os.path.join(log_path, 'xbmc_crashlog*.*'))
     kodi_path = (os.path.join(log_path, 'kodi_crashlog*.*'))
     spmc_path = (os.path.join(log_path, 'spmc_crashlog*.*'))
@@ -331,7 +334,7 @@ else:
     for items in paths:
         for file in glob.glob(items):
             try:
-                 os.remove(file)
+                 xbmcvfs.delete(file)
                  total+=1
             except:
                 pass
@@ -358,10 +361,16 @@ WARNING: This is an extremely powerful and dangerous tool! If you wipe your whol
 by putting in the wrong path then it's your own stupid fault!
 
 EXAMPLE CODE:
-delete_path = xbmc.translatePath('special://profile/addon_data/test')
+delete_path = 'special://profile/addon_data/test'
+xbmcvfs.mkdirs(delete_path)
+test1 = os.path.join(delete_path,'test1.txt')
+test2 = os.path.join(delete_path,'test2.txt')
+koding.Text_File(test1,'w','testing1')
+koding.Text_File(test2,'w','testing2')
 dialog.ok('DELETE FILES','All *.txt files will be deleted from:', '', '/userdata/addon_data/test/')
 koding.Delete_Files(filepath=delete_path, filetype='.txt', subdirectories=True)
-~"""    
+~"""
+    filepath = Physical_Path(filepath)
     if filepath == '/' or filepath == '.' or filepath == '' or (filepath[1]==':' and len(filepath)<4):
         dialog.ok('IDTenT ERROR!!!','You are trying to wipe your whole system!!!','Be more careful in future, not everyone puts checks like this in their code!')
         return
@@ -373,14 +382,14 @@ koding.Delete_Files(filepath=delete_path, filetype='.txt', subdirectories=True)
             for parent, dirnames, filenames in os.walk(filepath):
                 for fn in filenames:
                     if fn.lower().endswith(filetype):
-                        os.remove(os.path.join(parent, fn))
+                        xbmcvfs.delete(os.path.join(parent, fn))
 
         else:
-            for delete_file in os.listdir(filepath):
+            for delete_file in xbmcvfs.listdir(filepath):
                 delete_path = os.path.join(filepath,delete_file)
                 if delete_path.endswith(filetype):
                     try:
-                        os.remove(delete_path)
+                        xbmcvfs.delete(delete_path)
                     except:
                         xbmc.log(Last_Error(),2)
     else:
@@ -396,10 +405,11 @@ CODE: Delete_Folders(filepath, [ignore])
 
 AVAILABLE PARAMS:
     
-    (*) filepath  -  Use the physical path you want to remove (not special://)
+    (*) filepath  -  Use the physical path you want to remove, this must be converted
+    to the physical path and will not work with special://
 
     ignore  -  A list of paths you want to ignore. These need to be sent
-    through as physical paths so just use xbmc.translatePath when creating
+    through as physical paths so just use koding.Physical_Path() when creating
     your list and these can be folder paths or filepaths.
 
 WARNING: This is an extremely powerful and dangerous tool! If you wipe important
@@ -408,7 +418,7 @@ your own stupid fault! A check has been put in place so you can't accidentally
 wipe the whole root.
 
 EXAMPLE CODE:
-delete_path = xbmc.translatePath('special://profile/py_koding_test')
+delete_path = koding.Physical_Path('special://profile/py_koding_test')
 
 # Create new test directory to remove
 if not os.path.exists(delete_path):
@@ -422,10 +432,10 @@ koding.Dummy_File(dst=file1, size=10, size_format='kb')
 koding.Dummy_File(dst=file2, size=10, size_format='kb')
 koding.Dummy_File(dst=file3, size=10, size_format='kb')
 
-dialog.ok('[COLOR gold]TEST FILE CREATED[/COLOR]','If you look in your userdata folder you should now see a new test folder containing 3 dummy files. The folder name is \'py_koding_test\'.')
+dialog.ok('TEST FILE CREATED','If you look in your userdata folder you should now see a new test folder containing 3 dummy files. The folder name is \'py_koding_test\'.')
 if dialog.yesno('[COLOR gold]DELETE FOLDER[/COLOR]','Everything except file1.txt will now be removed from:', '/userdata/py_koding_test/','Do you want to continue?'):
     koding.Delete_Folders(filepath=delete_path, ignore=[file1])
-    dialog.ok('[COLOR gold]DELETE LEFTOVERS[/COLOR]','When you press OK we will delete the whole temporary folder we created including it\'s contents')
+    dialog.ok('DELETE LEFTOVERS','When you press OK we will delete the whole temporary folder we created including it\'s contents')
     koding.Delete_Folders(filepath=delete_path)
 ~"""
     exclude_list = ['','/','\\','C:/','storage']
@@ -448,23 +458,22 @@ if dialog.yesno('[COLOR gold]DELETE FOLDER[/COLOR]','Everything except file1.txt
                         file_path = os.path.join(root,file)
                         if file_path not in ignore:
                             try:
-                                os.remove(file_path)
+                                xbmcvfs.delete(file_path)
                             except:
-                                pass
-
+                                xbmc.log('Failed to delete: %s'%file_path,2)
                     if len(os.listdir(root)) == 0:
                         try:
-                            os.rmdir(root)
+                            xbmcvfs.rmdir(root)
                         except:
                             pass
 
 # If a simple complete wipe of a directory and all sub-directories is required we use this
-    elif os.path.exists(filepath) and filepath != '':
+    elif os.path.exists(filepath):
         shutil.rmtree(filepath, ignore_errors=True)
-        xbmc.executebuiltin('Container.Refresh')
+        # xbmc.executebuiltin('Container.Refresh')
 #----------------------------------------------------------------
 # TUTORIAL #
-def Dummy_File(dst= xbmc.translatePath('special://home/dummy.txt'), size='10', size_format='mb'):
+def Dummy_File(dst= 'special://home/dummy.txt', size='10', size_format='mb'):
     """
 Create a dummy file in whatever location you want and with the size you want.
 Use very carefully, this is designed for testing purposes only. Accidental
@@ -477,9 +486,8 @@ CODE: koding.Dummy_File(dest, [size, size_format])
 
 AVAILABLE PARAMS:
 
-    dst          - This is the destination folder, make sure it's a physical path and not
-    "special://...". This needs to be a FULL path including the file extension. By default
-    this is set to special://home/dummy.txt
+    dst          - This is the destination folder. This needs to be a FULL path including
+    the file extension. By default this is set to special://home/dummy.txt
 
     size         -  This is an optional integer, by default a file of 10 MB will be created.
 
@@ -487,11 +495,13 @@ AVAILABLE PARAMS:
     'b' (bytes), 'kb' (kilobytes), 'gb' (gigabytes)
 
 EXAMPLE CODE:
-dummy = xbmc.translatePath('special://home/test_dummy.txt')
+dummy = 'special://home/test_dummy.txt'
 koding.Dummy_File(dst=dummy, size=100, size_format='b')
 dialog.ok('DUMMY FILE CREATED','Check your Kodi home folder and you should see a 100 byte test_dummy.txt file.','[COLOR=gold]Press OK to delete this file.[/COLOR]')
-os.remove(dummy)
+xbmcvfs.delete(dummy)
 ~"""
+    dst = Physical_Path(dst)
+    xbmc.log('dst: %s'%dst,2)
     if size_format == 'kb':
         size = float(size*1024)
     elif size_format == 'mb':
@@ -520,10 +530,10 @@ AVAILABLE PARAMS:
     path  -  This is the path where you want to grab the end item name.
 
 EXAMPLE CODE:
-addons_path = xbmc.translatePath('special://home/addons')
+addons_path = 'special://home/addons'
 file_name = koding.End_Path(path=addons_path)
 dialog.ok('ADDONS FOLDER','Path checked:',addons_path,'Folder Name: [COLOR=dodgerblue]%s[/COLOR]'%file_name)
-file_path = xbmc.translatePath('special://home/addons/script.module.python.koding.aio/addon.xml')
+file_path = 'special://home/addons/script.module.python.koding.aio/addon.xml'
 file_name = koding.End_Path(path=file_path)
 dialog.ok('FILE NAME','Path checked:',file_path,'File Name: [COLOR=dodgerblue]%s[/COLOR]'%file_name)
 ~"""
@@ -567,15 +577,15 @@ AVAILABLE PARAMS:
     will appear showing details of the file which failed to extract.
 
 EXAMPLE CODE:
-koding_path = xbmc.translatePath('special://home/addons/script.module.python.koding.aio')
-zip_dest = xbmc.translatePath('special://home/test_addon.zip')
-extract_dest = xbmc.translatePath('special://home/TEST')
+koding_path = koding.Physical_Path('special://home/addons/script.module.python.koding.aio')
+zip_dest = koding.Physical_Path('special://home/test_addon.zip')
+extract_dest = koding.Physical_Path('special://home/TEST')
 koding.Compress(src=koding_path,dst=zip_dest,compression='zip',parent=True)
 dp = xbmcgui.DialogProgress()
 dp.create('Extracting Zip','Please Wait')
 if koding.Extract(_in=zip_dest,_out=extract_dest,dp=dp,show_error=True):
     dialog.ok('YAY IT WORKED!','We just zipped up your python koding add-on then extracted it to a new folder in your Kodi root directory called TEST. Press OK to delete these files.')
-    os.remove(zip_dest)
+    xbmcvfs.delete(zip_dest)
     shutil.rmtree(extract_dest)
 else:
     dialog.ok('BAD NEWS!','UH OH SOMETHING WENT HORRIBLY WRONG')
@@ -589,7 +599,7 @@ else:
     nFiles      = 0
     count       = 0
 
-    if os.path.exists(_in):
+    if xbmcvfs.exists(_in):
         if zipfile.is_zipfile(_in):
             zin      = zipfile.ZipFile(_in,  'r')
             nFiles   = float(len(zin.infolist()))
@@ -652,11 +662,12 @@ AVAILABLE PARAMS:
         'tb' = terabytes (float to 4 decimal places)
 
 EXAMPLE CODE:
-HOME = xbmc.translatePath('special://home')
+HOME = Physical_Path('special://home')
 my_space = koding.Free_Space(HOME, 'gb')
 dialog.ok('Free Space','Available space in HOME: %s GB' % my_space)
 ~"""
     import ctypes
+    dirname = Physical_Path(dirname)
     filesize = filesize.lower()
     if xbmc.getCondVisibility('system.platform.windows'):
         free_bytes = ctypes.c_ulonglong(0)
@@ -702,7 +713,7 @@ AVAILABLE PARAMS:
         'tb' = terabytes (float to 4 decimal places)
 
 EXAMPLE CODE:
-HOME = xbmc.translatePath('special://home')
+HOME = Physical_Path('special://home')
 home_size = Folder_Size(HOME, 'mb')
 dialog.ok('Folder Size','KODI HOME: %s MB' % home_size)
 ~"""
@@ -847,7 +858,7 @@ AVAILABLE PARAMS:
     through filter='.xml'.
 
 EXAMPLE CODE:
-ADDONS = xbmc.translatePath('special://home/addons')
+ADDONS = Physical_Path('special://home/addons')
 addon_folders = koding.Get_Contents(path=ADDONS, folders=True, exclude_list=['packages','temp'], full_path=False)
 results = ''
 for item in addon_folders:
@@ -855,24 +866,24 @@ for item in addon_folders:
 koding.Text_Box('ADDON FOLDERS','Below is a list of folders found in the addons folder (excluding packages and temp):\n\n%s'%results)
 ~"""
     final_list = []
+    path = Physical_Path(path)
 # Check all items in the given path
     if not subfolders:
-        for item in os.listdir(path):
-            item_path = os.path.join(path,item)
-            if folders and os.path.isdir(item_path) and item not in exclude_list:
+        dirs,files = xbmcvfs.listdir(path)
+        if folders:
+            active_list = dirs
+        else:
+            active_list = files
+        for item in active_list:
+            if item not in exclude_list:
                 if full_path:
-                    final_list.append(item_path)
-                else:
-                    final_list.append(item)
-
-            elif not folders and not os.path.isdir(item_path) and item not in exclude_list:
-                if full_path:
-                    final_list.append(item_path)
+                    final_list.append(os.path.join(path,item))
                 else:
                     final_list.append(item)
 
 # Traverse through all subfolders
     else:
+        path = Physical_Path(path)
         for root, dirnames, filenames in os.walk(path):
             if not folders:
                 for filename in filenames:
@@ -916,7 +927,7 @@ AVAILABLE PARAMS:
 
 EXAMPLE CODE:
 dp = xbmcgui.DialogProgress()
-source = xbmc.translatePath('special://profile/move_test')
+source = koding.Physical_Path('special://profile/move_test')
 
 # Lets create a 500MB dummy file so we can move and see dialog progress
 dummy = os.path.join(source,'dummy')
@@ -933,11 +944,13 @@ dialog.ok('DUMMY FILE CREATED','If you want to check in your userdata folder you
 # This is optional but if you want to see a dialog progress then you'll need this
 dp.create('MOVING FILES','Please Wait')
 
-destination = xbmc.translatePath('special://home/My MOVED Dummy File')
+destination = koding.Physical_Path('special://home/My MOVED Dummy File')
 koding.Move_Tree(source, destination, dp)
 dialog.ok('CHECK YOUR KODI HOME FOLDER','Please check your Kodi home folder, the dummy file should now have moved in there. When you press OK it will be removed')
 shutil.rmtree(destination)
 ~"""
+    src = Physical_Path(src)
+    dst = Physical_Path(dst)
     if dp:
         totalfiles = 0
         for root, dirs, files in os.walk(src):
@@ -946,14 +959,23 @@ shutil.rmtree(destination)
 
     for src_dir, dirs, files in os.walk(src):
         dst_dir = src_dir.replace(src, dst, 1)
+        if os.path.exists(dst_dir) and not os.path.isdir(dst_dir):
+            try:
+                os.remove(dst_dir)
+            except:
+                xbmc.log('File with same name as folder exists, need to manually delete:',2)
+                xbmc.log(dst_dir,2)
         if not os.path.exists(dst_dir):
             os.makedirs(dst_dir)
         for file_ in files:
             src_file = os.path.join(src_dir, file_)
             dst_file = os.path.join(dst_dir, file_)
-            if os.path.exists(dst_file):
+            if os.path.exists(dst_file) and dst_file != dst:
                 os.remove(dst_file)
-            shutil.move(src_file, dst_dir)
+            try:
+                os.rename(src_file,dst_file)
+            except:
+                shutil.move(src_file, dst_dir)
             if dp:
                 try:
                     count += 1
@@ -968,6 +990,43 @@ shutil.rmtree(destination)
 
     if dp:
         dp.close()
+#----------------------------------------------------------------
+# TUTORIAL #
+def Physical_Path(path='special://home'):
+    """
+Send through a special:// path and get the real physical path returned.
+This has been written due to the problem where if you're running the Windows Store
+version of Kodi the built-in xbmc.translatePath() function is returning bogus results
+making it impossible to access databases.
+
+CODE: koding.Physical_Path([path])
+
+AVAILABLE PARAMS:
+    
+    path  -  This is the path to the folder/file you want returned. This is optional,
+    if you leave this out it will just return the path to the root directory (special://home)
+
+EXAMPLE CODE:
+location = 'special://home/addons/script.module.python.koding.aio'
+real_location = koding.Physical_Path(location)
+xbmc.log(real_location,2)
+dialog.ok('PHYSICAL PATH','The real path of special://home/addons/script.module.python.koding.aio is:','[COLOR=dodgerblue]%s[/COLOR]'%real_location)
+~"""
+    xbmc_install = xbmc.translatePath('special://xbmc')
+    if not "WindowsApps" in xbmc_install:
+        clean = xbmc.translatePath(path)
+        if sys.platform == 'win32':
+            clean = clean.replace('\/','\\')
+    else:
+        clean = xbmc.translatePath(path)
+        if clean.startswith(xbmc_install):
+            if sys.platform == 'win32':
+                clean = clean.replace('\/','\\')
+        else:
+            return clean.replace('AppData\\Roaming\\','AppData\\Local\\Packages\\XBMCFoundation.Kodi_4n2hpmxwrvr6p\\LocalCache\\Roaming\\')
+            if sys.platform == 'win32':
+                clean = clean.replace('\/','\\')
+    return clean
 #----------------------------------------------------------------
 # TUTORIAL #
 def Text_File(path, mode, text = ''):
@@ -987,7 +1046,7 @@ AVAILABLE PARAMS:
     text already in the file.
 
 EXAMPLE CODE:
-HOME = xbmc.translatePath('special://home')
+HOME = koding.Physical_Path('special://home')
 koding_test = os.path.join(HOME, 'koding_test.txt')
 koding.Text_File(path=koding_test, mode='w', text='Well done, you\'ve created a text file containing this text!')
 dialog.ok('CREATE TEXT FILE','If you check your home Kodi folder and you should now have a new koding_test.txt file in there.','[COLOR=gold]DO NOT DELETE IT YET![/COLOR]')
@@ -999,10 +1058,10 @@ except:
     dialog.ok('FAILED TO REMOVE','Could not remove the file, looks like you might have it open in a text editor. Please manually remove yourself')
 ~"""
     try:
-        textfile = open(path, mode)
+        textfile = xbmcvfs.File(path, mode)
 
         if mode == 'r':
-            content  = textfile.read()
+            content = textfile.read()
             textfile.close()
             return content
 
