@@ -6,12 +6,12 @@ from ..common import clean_title,clean_search,random_agent,filter_host,send_log,
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 class darewatch(Scraper):
-    domains = ['mydarewatch.com']
+    domains = ['ondarewatch.com/']
     name = "DareWatch"
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://www.mydarewatch.com'
+        self.base_link = 'http://www.ondarewatch.com/'
         self.search_url = self.base_link + '/index.php'
         self.sources = []
         if dev_log=='true':
