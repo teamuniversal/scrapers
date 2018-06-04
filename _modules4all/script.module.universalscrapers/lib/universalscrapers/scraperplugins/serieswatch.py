@@ -14,7 +14,7 @@ class serieswatch(Scraper):
     name = "serieswatch"
     sources = []
     def __init__(self):
-        self.base_link = 'https://watch-series.co'
+        self.base_link = 'https://ww1.watch-series.co'
         self.search_link = '/search.html?keyword='
         self.scraper = cfscrape.create_scraper()
 

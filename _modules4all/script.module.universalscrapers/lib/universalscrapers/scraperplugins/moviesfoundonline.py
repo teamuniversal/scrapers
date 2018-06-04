@@ -52,24 +52,22 @@ class moviesfoundonline(Scraper):
         try:
             count = 0
             headers={'User-Agent':random_agent()}
-            OPEN = requests.get(item_url,headers=headers,timeout=5).content             # open page passed
+            OPEN = requests.get(item_url,headers=headers,timeout=5).content             
             #print 'moviesfoundonline - scrape_movie - OPEN: '+OPEN
             Endlinks = re.compile('<iframe width=.+?src="(.+?)"',re.DOTALL).findall(OPEN)
-#            print 'moviesfoundonline - scrape_movie - EndLinks: '+str(Endlinks)
+            #print 'moviesfoundonline - scrape_movie - EndLinks: '+str(Endlinks)
             for link in Endlinks:
-#                print 'moviesfoundonline - scrape_movie - link: '+str(link)
+                #print 'moviesfoundonline - scrape_movie - link: '+str(link)
                 if 'youtube' in link:
-                    try:
-                        headers= {'User-Agent':User_Agent}
-                        get_res= request.get(link,headers=headers,timeout=5).content
-                        rez= re.compile('',re.DOTALL).findall(get_res)[0]
-                        if '1080' in rez:
-                            qual = '1080p'
-                        if '720' in rez:
-                            qual = '720p'
-                        else:
-                            qual = 'DVD'
-                    except: qual = 'DVD'
+                    headers= {'User-Agent':User_Agent}
+                    get_res= request.get(link,headers=headers,timeout=5).content
+                    rez= re.compile('',re.DOTALL).findall(get_res)[0]
+                    if '1080' in rez:
+                        qual = '1080p'
+                    elif '720' in rez:
+                        qual = '720p'
+                    else:
+                        qual = 'DVD'
                     count+=1
                     self.sources.append({'source':'Youtube', 'quality':qual, 'scraper':self.name, 'url':link, 'direct':True})
             if dev_log=='true':

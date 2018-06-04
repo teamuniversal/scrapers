@@ -14,7 +14,7 @@ class joymovies(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://oceanofmovies.de'
+        self.base_link = 'http://oceanofmovies.info'
         self.scraper = cfscrape.create_scraper()
                       
 

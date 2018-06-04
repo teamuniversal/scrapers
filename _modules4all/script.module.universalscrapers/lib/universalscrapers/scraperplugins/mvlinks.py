@@ -12,7 +12,7 @@ class mvlinks(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://en.newmyvideolink.xyz/dl'
+        self.base_link = 'http://dl.myvideolinks.net'
         self.uniques = []
         self.sources = []
         self.count = 0

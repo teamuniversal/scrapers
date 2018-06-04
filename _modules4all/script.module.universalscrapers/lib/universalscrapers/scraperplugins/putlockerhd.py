@@ -52,8 +52,11 @@ class putlockerhd(Scraper):
                         res='720p'
                     else:
                         res='DVD'
-                    count +=1    
-                    self.sources.append({'source': 'Googlelink','quality': res,'scraper': self.name,'url': movie_link,'direct': True})
+                    
+                    check = requests.head(urllib.unquote_plus(link),timeout=3).status_code
+                    if str(check) == '200': 
+                        count +=1  
+                        self.sources.append({'source': 'Googlelink','quality': res,'scraper': self.name,'url': movie_link,'direct': True})
                 if dev_log=='true':
                     end_time = time.time() - start_time
                     send_log(self.name,end_time,count,title,year)   

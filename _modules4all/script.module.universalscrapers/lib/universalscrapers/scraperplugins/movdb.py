@@ -27,7 +27,7 @@ class movdb(Scraper):
             #print 'movdb - scrape_movie - start_url:  ' + start_url                                  
             
             headers={'User-Agent':random_agent()}
-            html = requests.get(start_url,headers=headers,timeout=5).content            
+            html = requests.get(start_url,headers=headers,timeout=10).content            
             
             match = re.compile('class="short_entry grid".+?href="(.+?)".+?<b>(.+?)</b>.+?class="year">(.+?)</span>',re.DOTALL).findall(html) 
             for item_url2, name, rls in match:
@@ -54,21 +54,18 @@ class movdb(Scraper):
         try:
             count = 0
             headers={'User-Agent':random_agent()}
-            OPEN = requests.get(item_url,headers=headers,timeout=5).content
+            OPEN = requests.get(item_url,headers=headers,timeout=10).content
             Endlinks = re.compile('id: "player".+?"(.+?)"',re.DOTALL).findall(OPEN)
             #print 'movdb - scrape_movie - EndLinks: '+str(Endlinks)
             for link in Endlinks:
                 #print 'movdb - scrape_movie - link: '+str(link)
                 if 'movdb' in link:
-                    try:
-                        
-                        if '1080' in link:
-                            qual = '1080p'
-                        if '720' in link:
-                            qual = '720p'
-                        else:
-                            qual = 'DVD'
-                    except: qual = 'DVD'
+                    if '1080' in link:
+                        qual = '1080p'
+                    elif '720' in link:
+                        qual = '720p'
+                    else:
+                        qual = 'DVD'
                     count+=1
                     self.sources.append({'source':'Movdb', 'quality':qual, 'scraper':self.name, 'url':link, 'direct':False})
             if dev_log=='true':
