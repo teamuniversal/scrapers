@@ -7,12 +7,12 @@ User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 class zoocinema(Scraper):
-    domains = ['http://zoocine.net/']
+    domains = ['http://zocine.net/']
     name = "ZooCinema"
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://zoocine.net/'
+        self.base_link = 'http://zocine.com/'
         self.scraper = cfscrape.create_scraper()
         self.sources = []
 

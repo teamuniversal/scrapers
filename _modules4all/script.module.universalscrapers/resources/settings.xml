@@ -25,6 +25,8 @@
 		<setting id="DareWatch_enabled" type="bool" label="Enabled" default="true"/>
 		<setting label="Direct Download" type="lsep"/>
 		<setting id="Direct Download_enabled" type="bool" label="Enabled" default="true"/>
+		<setting label="Free Online Cinema" type="lsep"/>
+		<setting id="Free Online Cinema_enabled" type="bool" label="Enabled" default="true"/>
 		<setting label="Freemusic" type="lsep"/>
 		<setting id="Freemusic_enabled" type="bool" label="Enabled" default="true"/>
 		<setting label="Housemovies" type="lsep"/>
@@ -58,10 +60,10 @@
 		<setting id= "Pron.tv_pw" type="text" label="Password" default=Password />
 		<setting label="PutlockerHD" type="lsep"/>
 		<setting id="PutlockerHD_enabled" type="bool" label="Enabled" default="true"/>
-		<setting label="Putlockers" type="lsep"/>
-		<setting id="Putlockers_enabled" type="bool" label="Enabled" default="true"/>
 	</category>
 	<category label="Scrapers 2">
+		<setting label="Putlockers" type="lsep"/>
+		<setting id="Putlockers_enabled" type="bool" label="Enabled" default="true"/>
 		<setting label="Releasebb" type="lsep"/>
 		<setting id="Releasebb_enabled" type="bool" label="Enabled" default="true"/>
 		<setting label="SeeHD.pl" type="lsep"/>
