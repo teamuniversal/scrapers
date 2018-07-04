@@ -7,6 +7,7 @@ import xbmcaddon,time
 import base64
 from ..jsunpack import unpack
 from ..scraper import Scraper
+from universalscrapers.modules import cfscrape
 from ..common import clean_title,clean_search,random_agent,send_log,error_log
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
@@ -18,6 +19,7 @@ class cenflix(Scraper):
 
     def __init__(self):
         self.base_link = 'https://www.cenflix.co'
+        self.scraper = cfscrape.create_scraper()
 
 
     def scrape_movie(self, title, year, imdb, debrid = False):
@@ -30,8 +32,8 @@ class cenflix(Scraper):
             #print 'scrapercheck - scrape_movie - start_url:  ' + start_url                                  
             
             headers={'User-Agent':random_agent()}
-            html = requests.get(start_url,headers=headers,timeout=5).content            
-            
+            html = self.scraper.get(start_url,headers=headers,timeout=5).content            
+            #print html
             match = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)".+?class="year">(.+?)</span>',re.DOTALL).findall(html) 
             for item_url, name,rel in match:
                 #print 'scrapercheck - scrape_movie - name: '+name + '   '+rel
@@ -53,13 +55,13 @@ class cenflix(Scraper):
             search_id = clean_search(title.lower())
             start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             headers={'User-Agent':random_agent()}
-            html = requests.get(start_url,headers=headers,timeout=10).content
+            html = self.scraper.get(start_url,headers=headers,timeout=10).content
             #print html
             match = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)
             for tvshow_url, title in match:
                 #print tvshow_url +' '+ title
                 headers = {'User-Agent':random_agent()}
-                html = requests.get(tvshow_url,headers=headers,timeout=10).content
+                html = self.scraper.get(tvshow_url,headers=headers,timeout=10).content
                 match = re.compile('class="imagen"><a href="(.+?)"',re.DOTALL).findall(html)
                 for sea_ep in match:
                     #print sea_ep+'<<<<'
@@ -67,31 +69,40 @@ class cenflix(Scraper):
                         continue
                     #print 'PASSED OK ??????'+ sea_ep    
                     headers={'User-Agent':random_agent()}
-                    html1 = requests.get(sea_ep,headers=headers,timeout=10).content
+                    html1 = self.scraper.get(sea_ep,headers=headers,timeout=10).content
                     match1 = re.compile('class="play-box-iframe fixidtab".+?src="(.+?)"',re.DOTALL).findall(html1)
                     for link in match1:
-                        #print link +'::::::::::::::::::::::'
-                        if urlresolver.HostedMediaFile(link):
-                            host = link.split('//')[1].replace('www.','')
-                            host = host.split('/')[0].split('.')[0].title()
-                            self.sources.append({'source':host, 'quality':'DVD', 'scraper':self.name, 'url':link, 'direct':False})
-                        else:
-                            if 'sibeol' in link:
-                                #print link + 'SIBEOL LINK??????????????'
-                                get_link_page = requests.get(link,headers=headers,timeout=10).content
-                                #print get_link_page + 'UNJUICE?????????????????'
-                                juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
-                                for juicified in juicify:
-                                    dejuice5= juicified.replace('"+"','')
-                                    dejuice4 = base64.b64decode(dejuice5)
-                                    dejuice3 = unpack(dejuice4)
-                                    #for dejuice in dejuice3:
-                                    Endlinks2 = re.compile('"file":"(.+?)","label":"(.+?)","type"',re.DOTALL).findall(dejuice3)
-                                    for link, qual in Endlinks2:
-                                        print link 
-                                        host = link.split('//')[1].replace('www.','')
+                        #print link +'    ::::::::::::::::::::::'
+
+                        if 'sibeol' in link:
+                            #print link + 'SIBEOL LINK??????????????'
+                            get_link_page = self.scraper.get(link,headers=headers,timeout=10).content
+                            #print get_link_page + 'UNJUICE?????????????????'
+                            juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
+                            for juicified in juicify:
+                                dejuice5= juicified.replace('"+"','')
+                                dejuice4 = base64.b64decode(dejuice5)
+                                dejuice3 = unpack(dejuice4)
+                                #for dejuice in dejuice3:
+                                Endlinks2 = re.compile('"file":"(.+?)","label":"(.+?)"',re.DOTALL).findall(dejuice3)
+                                for end_url, rez in Endlinks2:
+
+                                    if '/link/' in end_url:
+                                        host = end_url.split('//')[1].replace('www.','')
                                         host = host.split('/')[0].split('.')[0].title()
-                                        self.sources.append({'source':host, 'quality':qual, 'scraper':self.name, 'url':link, 'direct':True})
+                                        if '1080' in rez:
+                                            qual = '1080p'
+                                        elif '720' in rez:
+                                            qual='720p'
+                                        else:
+                                            qual='SD'
+                                        end_url = end_url+'|User-Agent=Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36&Referer='+link
+                                        self.sources.append({'source':host, 'quality':qual, 'scraper':self.name, 'url':end_url, 'direct':True})
+                        else:
+                            if urlresolver.HostedMediaFile(link):
+                                host = link.split('//')[1].replace('www.','')
+                                host = host.split('/')[0].split('.')[0].title()
+                                self.sources.append({'source':host, 'quality':'DVD', 'scraper':self.name, 'url':link, 'direct':False})
                 return self.sources
         except Exception, argument:
             if dev_log=='true':
@@ -102,36 +113,44 @@ class cenflix(Scraper):
 
     def get_source(self,item_url,title,year,start_time):
         try:
-            #print 'PASSEDURL >>>>>>'+item_url
+            print 'PASSEDURL >>>>>>'+item_url
             count = 0
             headers={'User-Agent':random_agent()}
-            OPEN = requests.get(item_url,headers=headers,timeout=10).content
+            OPEN = self.scraper.get(item_url,headers=headers,timeout=10).content
             Endlinks1 = re.compile('<iframe class.+?src="(.+?)"',re.DOTALL).findall(OPEN)
-            for link in Endlinks1:     
-                if urlresolver.HostedMediaFile(link):
-                    count+=1
-                    host = link.split('//')[1].replace('www.','')
-                    host = host.split('/')[0].split('.')[0].title()
-                    self.sources.append({'source':host, 'quality':'DVD', 'scraper':self.name, 'url':link, 'direct':False})
+            for link in Endlinks1:
+                if 'sibeol' in link:
+                    #print link + 'IF SIBEOL LINK??????????????'
+                    get_link_page = requests.get(link,headers=headers,timeout=10).content
+                    #print get_link_page + 'UNJUICE?????????????????'
+                    juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
+                    for juicified in juicify:
+                        dejuice5= juicified.replace('"+"','')
+                        dejuice4 = base64.b64decode(dejuice5)
+                        dejuice3 = unpack(dejuice4)
+                        #print dejuice3
+                        Endlinks2 = re.compile('"file":"(.+?)","label":"(.+?)"',re.DOTALL).findall(dejuice3)
+                        for end_url, rez in Endlinks2:
+
+                            if '/link/' in end_url:
+                                host = end_url.split('//')[1].replace('www.','')
+                                host = host.split('/')[0].split('.')[0].title()
+                                
+                                if '1080' in rez:
+                                    qual = '1080p'
+                                elif '720' in rez:
+                                    qual='720p'
+                                else:
+                                    qual='SD'
+                                count+=1
+                                end_url = end_url+'|User-Agent=Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36&Referer='+item_url
+                                self.sources.append({'source':host, 'quality':qual, 'scraper':self.name, 'url':end_url, 'direct':True})
                 else:
-                    if 'sibeol' in link:
-                                #print link + 'SIBEOL LINK??????????????'
-                                get_link_page = requests.get(link,headers=headers,timeout=10).content
-                                #print get_link_page + 'UNJUICE?????????????????'
-                                juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
-                                for juicified in juicify:
-                                    dejuice5= juicified.replace('"+"','')
-                                    dejuice4 = base64.b64decode(dejuice5)
-                                    dejuice3 = unpack(dejuice4)
-                                    #for dejuice in dejuice3:
-                                    Endlinks2 = re.compile('"file":"(.+?)","label":"(.+?)","type"',re.DOTALL).findall(dejuice3)
-                                    for link, qual in Endlinks2:
-                                        #print link 
-                                        host = link.split('//')[1].replace('www.','')
-                                        host = host.split('/')[0].split('.')[0].title()
-                                        self.sources.append({'source':host, 'quality':qual, 'scraper':self.name, 'url':link, 'direct':True})
-
-
+                    if urlresolver.HostedMediaFile(link):
+                        count+=1
+                        host = link.split('//')[1].replace('www.','')
+                        host = host.split('/')[0].split('.')[0].title()
+                        self.sources.append({'source':host, 'quality':'DVD', 'scraper':self.name, 'url':link, 'direct':False})
             if dev_log=='true':
                 end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year)

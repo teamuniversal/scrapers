@@ -292,9 +292,9 @@ class HostedLink:
                     quality = link['quality']
                 if not quality:
                     quality = "SD"
-                label = link["source"] + " - " + link["scraper"] + " (" + quality + ")"
+                label = link["scraper"] + " | " + link["source"] + " | " + " " + quality + ""
                 if link.get("debridonly", ""):
-                    label += " (RD)"
+                    label += "  | DEBRID"
                 # grouping_label = link["source"] + " (" + quality + ")"
                 # if not grouping_label in labels:
                 #     labels[grouping_label] = []

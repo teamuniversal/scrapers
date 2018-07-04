@@ -13,7 +13,7 @@ class twoddl(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://2ddl.io'
+        self.base_link = 'http://2ddl.ws'
         self.sources = []
         self.scraper = cfscrape.create_scraper()
 

@@ -9,7 +9,7 @@ dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log
 
 class seehd(Scraper):
     domains = ['http://www.seehd.pl']
-    name = "SeeHD.pl"
+    name = "SeeHD"
     sources = []
 
     def __init__(self):
@@ -46,17 +46,11 @@ class seehd(Scraper):
             OPEN = self.scraper.get(item_url,headers=headers,timeout=5).content             
             Endlinks = re.compile('<iframe.+?src="(.+?)"',re.DOTALL).findall(OPEN)      
             for link in Endlinks:
-                if 'seehd' not in link:      
-                    if '1080' in link:
-                        label = '1080p'
-                    elif '720' in link:
-                        label = '720p'
-                    else:
-                        label = 'SD'
-                    host = link.split('//')[1].replace('www.','')
-                    host = host.split('/')[0].split('.')[0].title()
-                    count += 1
-                    self.sources.append({'source': host, 'quality': label, 'scraper': self.name, 'url': link,'direct': False})
+                if 'streamango.com' in link:
+                    holder = self.scraper.get(link).content
+                    qual = re.compile('type:"video/mp4".+?height:(.+?),',re.DOTALL).findall(holder)[0]
+                    count +=1
+                    self.sources.append({'source': 'streamango', 'quality': qual, 'scraper': self.name, 'url': link,'direct': False})
 
             if dev_log=='true':
                 end_time = time.time() - start_time
