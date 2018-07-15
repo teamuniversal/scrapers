@@ -15,14 +15,14 @@ class hdpopcorn(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://hdpopcorns.com'
+        self.base_link = 'http://hdpopcorns.co'
         self.sources = []
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
             start_time = time.time() 
             search_id = clean_search(title.lower())
-            start_url ='%s/search/%s' %(self.base_link,search_id.replace(' ','+'))
+            start_url ='%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             #print 'starturl > '+start_url
             headers={'User-Agent':User_Agent}
             html = requests.get(start_url,headers=headers,timeout=5).content

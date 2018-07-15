@@ -13,7 +13,6 @@ class tvmoviestream(Scraper):
 
     def __init__(self):
         self.base_link = 'https://tvmoviestream.me/'
-        self.scraper = cfscrape.create_scraper()
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
@@ -23,7 +22,8 @@ class tvmoviestream(Scraper):
             print start_url
 
             headers = {'User_Agent':User_Agent}
-            html = self.scraper.get(start_url,headers=headers, timeout=5).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(start_url,headers=headers, timeout=5).content
 #            print html
             match = re.compile('<div class="result-item">.+?href="(.+?)".+?alt="(.+?)".+?class="year">(.+?)</span>',re.DOTALL).findall(html)
             for item_url,name,yrs in match:
@@ -47,7 +47,8 @@ class tvmoviestream(Scraper):
         try:
             count = 0
             headers = {'User_Agent':User_Agent}
-            OPEN = self.scraper.get(item_url,headers=headers,timeout=10).content
+            scraper = cfscrape.create_scraper()
+            OPEN = scraper.get(item_url,headers=headers,timeout=10).content
  #           print OPEN
             # match = re.compile('<iframe.+?src="(.+?)"',re.DOTALL).findall(OPEN)
             # for link in match:

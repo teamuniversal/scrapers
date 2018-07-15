@@ -1,6 +1,5 @@
 import re
-import requests
-import xbmc,xbmcaddon,time
+import xbmcaddon,time
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,send_log,error_log 
 from universalscrapers.modules import cfscrape
@@ -16,7 +15,6 @@ class yify(Scraper):
 
     def __init__(self):
         self.base_link = 'http://yifymovies.tv'
-        self.scraper = cfscrape.create_scraper()
         self.sources = []
 		
     def scrape_movie(self, title, year, imdb, debrid=False):
@@ -25,7 +23,8 @@ class yify(Scraper):
             search_id = clean_search(title.lower())
             start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             headers = {'User_Agent':User_Agent}
-            html = self.scraper.get(start_url,headers=headers,timeout=5).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(start_url,headers=headers,timeout=5).content
 
             Regex = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)   
             for item_url,name in Regex:
@@ -49,7 +48,8 @@ class yify(Scraper):
             search_id = clean_search(title.lower())
             start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
             headers = {'User_Agent':User_Agent}
-            html = self.scraper.get(start_url,headers=headers,timeout=5).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(start_url,headers=headers,timeout=5).content
             Regex = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)
             for item_url,name in Regex:
                 if not clean_title(title).lower() == clean_title(name).lower():
@@ -69,7 +69,8 @@ class yify(Scraper):
         try:
             print 'passed show '+movie_link
             headers = {'User_Agent':User_Agent}
-            html = self.scraper.get(movie_link,headers=headers,timeout=5).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(movie_link,headers=headers,timeout=5).content
             # grab_id = re.compile('data-ids="(.+?)"',re.DOTALL).findall(html)[0]
             # nonce = re.compile('ajax_get_video_info":"(.+?)"',re.DOTALL).findall(html)[0]
             # print grab_id
@@ -80,7 +81,7 @@ class yify(Scraper):
             # data = {'action':'ajax_get_video_info','ids':grab_id,
             #         'server':'1','nonce':nonce}
             
-            # get_links = self.scraper.post(req_post,headers=headers,data=data,verify=False).content
+            # get_links = scraper.post(req_post,headers=headers,data=data,verify=False).content
             # print get_links
             links = re.compile('"file":"(.+?)","label":"(.+?)"',re.DOTALL).findall(html)
             count = 0

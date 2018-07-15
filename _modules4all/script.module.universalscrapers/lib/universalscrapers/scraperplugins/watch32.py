@@ -2,8 +2,8 @@ import requests,re,time
 import urllib
 import xbmcaddon
 from ..scraper import Scraper
-from ..common import clean_title,clean_search,send_log,error_log
-from ..jsunpack import unpack
+from ..common import clean_search,send_log,error_log
+from ..modules.jsunpack import unpack
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 

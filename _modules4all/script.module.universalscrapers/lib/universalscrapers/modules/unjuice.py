@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-
 from .jsunpack import unpack
 
 Juice = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
@@ -47,5 +46,4 @@ def run(e):
     except:
         t = None
 
-    print '@#@XIMOULIS:%s' % t
     return t

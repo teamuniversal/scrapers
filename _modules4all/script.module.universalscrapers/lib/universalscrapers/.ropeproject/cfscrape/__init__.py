@@ -2,7 +2,6 @@ from time import sleep
 import logging
 import random
 import re
-import os
 from requests.sessions import Session
 from universalscrapers.modules.cfscrape import cfdecoder #change to just cfdecoder if doesn't work
 from copy import deepcopy

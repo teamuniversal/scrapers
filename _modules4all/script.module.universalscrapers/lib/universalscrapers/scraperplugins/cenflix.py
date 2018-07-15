@@ -1,156 +1,121 @@
-import requests
-import urlparse
-import re
+# -*- coding: utf-8 -*-
+
+import re, urllib, urlparse, json
 import resolveurl as urlresolver
-import xbmc
-import xbmcaddon,time
-import base64
-from ..jsunpack import unpack
+import xbmcaddon, time
+
 from ..scraper import Scraper
-from universalscrapers.modules import cfscrape
-from ..common import clean_title,clean_search,random_agent,send_log,error_log
+from ..modules import cfscrape, client, unjuice
+from ..modules.dom_parser import parse_dom as dom
+from ..common import clean_title, send_log, error_log
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 
 class cenflix(Scraper):
-    domains = ['https://www.cenflix.co']
+    domains = ['moviego.cx']
     name = "CenFlix"
     sources = []
 
     def __init__(self):
-        self.base_link = 'https://www.cenflix.co'
-        self.scraper = cfscrape.create_scraper()
-
+        self.base_link = 'https://moviego.cx'
+        self.search_link = '/?s=%s'
 
     def scrape_movie(self, title, year, imdb, debrid = False):
-        try:
-            start_time = time.time()                                                   
-            search_id = clean_search(title.lower())                                      
-                                                                                        
+        #try:
+            start_time = time.time()
+            scraper = cfscrape.create_scraper()
+            search_id = urllib.quote_plus(title)
 
-            start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))         
-            #print 'scrapercheck - scrape_movie - start_url:  ' + start_url                                  
+            start_url = urlparse.urljoin(self.base_link, self.search_link % search_id)
+            #print 'scrapercheck - scrape_movie - start_url:  ' + start_url
             
-            headers={'User-Agent':random_agent()}
-            html = self.scraper.get(start_url,headers=headers,timeout=5).content            
-            #print html
-            match = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)".+?class="year">(.+?)</span>',re.DOTALL).findall(html) 
-            for item_url, name,rel in match:
+            headers={'User-Agent': client.agent()}
+            html = scraper.get(start_url, headers=headers).content
+            #match = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)".+?class="year">(.+?)</span>',re.DOTALL).findall(html)
+            match = client.parseDOM(html, 'div', attrs={'class': 'result-item'})
+            match = [(dom(i, 'a', req='href')[1],
+                      dom(i, 'span', {'class': 'year'})[0]) for i in match if i]
+
+            match = [(i[0].attrs['href'], i[0].content, i[1].content) for i in match if i]
+
+            for item_url, name, rel in match:
                 #print 'scrapercheck - scrape_movie - name: '+name + '   '+rel
                 #print 'scrapercheck - scrape_movie - item_url: '+item_url                                                           
-                if clean_title(search_id).lower() == clean_title(name).lower():
-                    if rel == year:    
+                if not clean_title(title) == clean_title(name): continue
+                if not rel == year: continue
                                                                                         
-                        #print 'scrapercheck - scrape_movie - Send this URL: ' + item_url                             
-                        self.get_source(item_url,title,year,start_time)                                      
+                print 'scrapercheck - scrape_movie - Send this URL: ' + item_url
+                self.get_source(item_url, title, year, start_time)
             return self.sources
-        except Exception, argument:
-            if dev_log=='true':
-                error_log(self.name,argument) 
+        #except Exception, argument:
+            #if dev_log=='true':
+             #   error_log(self.name,argument)
 
     def scrape_episode(self,title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
             start_time = time.time()
+            scraper = cfscrape.create_scraper()
             seaepi_chk = '%sx%s' %(season,episode)
-            search_id = clean_search(title.lower())
-            start_url = '%s/?s=%s' %(self.base_link,search_id.replace(' ','+'))
-            headers={'User-Agent':random_agent()}
-            html = self.scraper.get(start_url,headers=headers,timeout=10).content
+            search_id = urllib.quote_plus(title)
+            start_url = urlparse.urljoin(self.base_link, self.search_link % search_id)
+            headers={'User-Agent': client.agent()}
+            html = scraper.get(start_url, headers=headers, timeout=10).content
             #print html
-            match = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)
-            for tvshow_url, title in match:
+            #match = re.compile('class="result-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)
+            match = client.parseDOM(html, 'div', attrs={'class': 'result-item'})
+            match = dom(match, 'a', req='href')[1]
+            match = [(i[0].attrs['href']) for i in match if clean_title(title) == clean_title(i[0].content)][0]
                 #print tvshow_url +' '+ title
-                headers = {'User-Agent':random_agent()}
-                html = self.scraper.get(tvshow_url,headers=headers,timeout=10).content
-                match = re.compile('class="imagen"><a href="(.+?)"',re.DOTALL).findall(html)
-                for sea_ep in match:
-                    #print sea_ep+'<<<<'
-                    if not seaepi_chk in sea_ep:
-                        continue
-                    #print 'PASSED OK ??????'+ sea_ep    
-                    headers={'User-Agent':random_agent()}
-                    html1 = self.scraper.get(sea_ep,headers=headers,timeout=10).content
-                    match1 = re.compile('class="play-box-iframe fixidtab".+?src="(.+?)"',re.DOTALL).findall(html1)
-                    for link in match1:
-                        #print link +'    ::::::::::::::::::::::'
 
-                        if 'sibeol' in link:
-                            #print link + 'SIBEOL LINK??????????????'
-                            get_link_page = self.scraper.get(link,headers=headers,timeout=10).content
-                            #print get_link_page + 'UNJUICE?????????????????'
-                            juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
-                            for juicified in juicify:
-                                dejuice5= juicified.replace('"+"','')
-                                dejuice4 = base64.b64decode(dejuice5)
-                                dejuice3 = unpack(dejuice4)
-                                #for dejuice in dejuice3:
-                                Endlinks2 = re.compile('"file":"(.+?)","label":"(.+?)"',re.DOTALL).findall(dejuice3)
-                                for end_url, rez in Endlinks2:
+            tvshow = re.findall('tvshows/(.+?)/', match)[0]
+            epi_link = self.base_link + 'episodes/%s-%s/' % (tvshow, seaepi_chk)
 
-                                    if '/link/' in end_url:
-                                        host = end_url.split('//')[1].replace('www.','')
-                                        host = host.split('/')[0].split('.')[0].title()
-                                        if '1080' in rez:
-                                            qual = '1080p'
-                                        elif '720' in rez:
-                                            qual='720p'
-                                        else:
-                                            qual='SD'
-                                        end_url = end_url+'|User-Agent=Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36&Referer='+link
-                                        self.sources.append({'source':host, 'quality':qual, 'scraper':self.name, 'url':end_url, 'direct':True})
-                        else:
-                            if urlresolver.HostedMediaFile(link):
-                                host = link.split('//')[1].replace('www.','')
-                                host = host.split('/')[0].split('.')[0].title()
-                                self.sources.append({'source':host, 'quality':'DVD', 'scraper':self.name, 'url':link, 'direct':False})
-                return self.sources
+            self.get_source(epi_link, title, year, start_time)
+            return self.sources
         except Exception, argument:
-            if dev_log=='true':
-                error_log(self.name,argument) 
+            if dev_log == 'true':
+                error_log(self.name, argument)
 
-
-
-
-    def get_source(self,item_url,title,year,start_time):
+    def get_source(self, item_url, title, year, start_time):
         try:
             print 'PASSEDURL >>>>>>'+item_url
+            scraper = cfscrape.create_scraper()
             count = 0
-            headers={'User-Agent':random_agent()}
-            OPEN = self.scraper.get(item_url,headers=headers,timeout=10).content
-            Endlinks1 = re.compile('<iframe class.+?src="(.+?)"',re.DOTALL).findall(OPEN)
-            for link in Endlinks1:
-                if 'sibeol' in link:
-                    #print link + 'IF SIBEOL LINK??????????????'
-                    get_link_page = requests.get(link,headers=headers,timeout=10).content
-                    #print get_link_page + 'UNJUICE?????????????????'
-                    juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
-                    for juicified in juicify:
-                        dejuice5= juicified.replace('"+"','')
-                        dejuice4 = base64.b64decode(dejuice5)
-                        dejuice3 = unpack(dejuice4)
-                        #print dejuice3
-                        Endlinks2 = re.compile('"file":"(.+?)","label":"(.+?)"',re.DOTALL).findall(dejuice3)
-                        for end_url, rez in Endlinks2:
+            headers={'User-Agent': client.agent()}
+            OPEN = scraper.get(item_url, headers=headers, timeout=10).content
+            links = client.parseDOM(OPEN, 'div', attrs={'class': 'playex'})[0]
+            links = client.parseDOM(links, 'iframe', ret='src')
 
-                            if '/link/' in end_url:
-                                host = end_url.split('//')[1].replace('www.','')
-                                host = host.split('/')[0].split('.')[0].title()
-                                
-                                if '1080' in rez:
-                                    qual = '1080p'
-                                elif '720' in rez:
-                                    qual='720p'
-                                else:
-                                    qual='SD'
-                                count+=1
-                                end_url = end_url+'|User-Agent=Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36&Referer='+item_url
-                                self.sources.append({'source':host, 'quality':qual, 'scraper':self.name, 'url':end_url, 'direct':True})
+            print '@#@LINKS: %s' % links
+            for link in links:
+                # print link +'    ::::::::::::::::::::::'
+                if 'sibeol' in link:
+                    print 'SIBEOL LINK??????????????' + link
+                    r = scraper.get(link, headers=headers, timeout=10).content
+                    # print get_link_page + 'UNJUICE?????????????????'
+                    # juicify = re.compile('>JuicyCodes.Run\("(.+?)\)\;\<',re.DOTALL).findall(get_link_page)
+                    data = unjuice.run(r)
+                    data = re.findall('sources:([^]]+\])', data, re.DOTALL)[0]
+                    data = json.loads(data)
+                    data = [(i['file'], i['label']) for i in data if data]
+                    for end_url, rez in data:
+
+                        if '/link/' in end_url:
+                            if '1080' in rez:
+                                qual = '1080p'
+                            elif '720' in rez:
+                                qual ='720p'
+                            else:
+                                qual = 'SD'
+                            count += 1
+                            end_url = '%s|User_Agent=%s&Referer=%s' % (end_url, client.agent(), item_url)
+                            self.sources.append({'source': 'DirectLink', 'quality': qual, 'scraper': self.name, 'url':end_url, 'direct': True})
                 else:
                     if urlresolver.HostedMediaFile(link):
-                        count+=1
+                        count += 1
                         host = link.split('//')[1].replace('www.','')
                         host = host.split('/')[0].split('.')[0].title()
-                        self.sources.append({'source':host, 'quality':'DVD', 'scraper':self.name, 'url':link, 'direct':False})
+                        self.sources.append({'source': host, 'quality': 'DVD', 'scraper': self.name, 'url': link, 'direct':False})
             if dev_log=='true':
                 end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year)

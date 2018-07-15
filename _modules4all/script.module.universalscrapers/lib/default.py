@@ -11,10 +11,8 @@ import time
 import urllib
 import xbmc
 import xbmcgui
-import xbmcplugin
 import requests
-from universalscrapers.common import clean_title
-from BeautifulSoup import BeautifulStoneSoup
+
 dialog = xbmcgui.Dialog()
 pDialog = xbmcgui.DialogProgress()
 No_of_scrapers = []

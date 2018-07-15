@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     urlresolver XBMC Addon
     Copyright (C) 2013 Bstrdsmkr

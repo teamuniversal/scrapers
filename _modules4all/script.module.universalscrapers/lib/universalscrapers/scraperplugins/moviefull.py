@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
+# Universal Scrapers
 import re, requests, time, urllib
-import xbmcaddon, json, xbmc
+import xbmcaddon, json
 from ..scraper import Scraper
-from ..common import clean_title, filter_host, send_log, error_log
-from ..unjuice import run
+from ..common import clean_title, send_log, error_log
+from ..modules.unjuice import run
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 

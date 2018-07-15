@@ -4,7 +4,8 @@ from ..common import random_agent,send_log,error_log
 requests.packages.urllib3.disable_warnings()
 s = requests.session()
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
-from universalscrapers.modules import cfscrape 
+
+
 class watchstream(Scraper):
     domains = ['https://putlockers.movie']
     name = "Watchstream"

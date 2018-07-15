@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
+# Universal Scrapers
 import requests,re,time,xbmcaddon
 import base64,resolveurl
 from ..scraper import Scraper
-from universalscrapers.modules import cfscrape
-from ..common import clean_title,clean_search,random_agent,send_log,error_log
+from ..common import clean_search,random_agent,send_log,error_log
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")  
 

@@ -1,7 +1,6 @@
 import re,time,xbmcaddon
 from ..scraper import Scraper
-import requests
-from ..common import clean_title,clean_search, filter_host, get_rd_domains,send_log,error_log
+from ..common import clean_title,clean_search, get_rd_domains,send_log,error_log
 from universalscrapers.modules import cfscrape
 User_Agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
@@ -15,7 +14,6 @@ class twoddl(Scraper):
     def __init__(self):
         self.base_link = 'http://2ddl.ws'
         self.sources = []
-        self.scraper = cfscrape.create_scraper()
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
@@ -25,7 +23,8 @@ class twoddl(Scraper):
             start_url = "%s/?s=%s" % (self.base_link, title.replace(' ','+').lower())
             search_id = clean_search(title.lower()) 
             headers = {'User_Agent':User_Agent}
-            OPEN = self.scraper.get(start_url,headers=headers,timeout=5).content
+            scraper = cfscrape.create_scraper()
+            OPEN = scraper.get(start_url,headers=headers,timeout=5).content
             
             content = re.compile('<h2><a href="(.+?)"',re.DOTALL).findall(OPEN)
             for url in content:
@@ -48,7 +47,8 @@ class twoddl(Scraper):
             
             start_url = "%s/?s=%s+%s" % (self.base_link, title.replace(' ','+').lower(),sea_epi)
             headers = {'User_Agent':User_Agent}
-            OPEN = self.scraper.get(start_url,headers=headers,timeout=5).content
+            scraper = cfscrape.create_scraper()
+            OPEN = scraper.get(start_url,headers=headers,timeout=5).content
             content = re.compile('<h2><a href="([^"]+)"',re.DOTALL).findall(OPEN)
             for url in content:
                 if not clean_title(title).lower() in clean_title(url).lower():
@@ -64,7 +64,8 @@ class twoddl(Scraper):
     def get_source(self,url, title, year, season, episode, start_time):
         try:        
             headers = {'User_Agent':User_Agent}
-            links = self.scraper.get(url,headers=headers,timeout=3).content   
+            scraper = cfscrape.create_scraper()
+            links = scraper.get(url,headers=headers,timeout=3).content   
             LINK = re.compile('href="([^"]+)" rel="nofollow"',re.DOTALL).findall(links)
             count = 0             
             for url in LINK:

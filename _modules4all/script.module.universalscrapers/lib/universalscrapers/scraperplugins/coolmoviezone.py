@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+# Universal Scrapers
 import requests
-import resolveurl as urlresolver
-import urlparse
-import re,xbmcaddon,time 
+import urllib
+import re, xbmcaddon, time, xbmc
 from ..scraper import Scraper
-from ..common import clean_title,clean_search,random_agent,send_log,error_log
+from ..common import clean_title, send_log, error_log
+from ..modules import client, dom_parser
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
   
 class coolmoviezone(Scraper):
@@ -12,82 +14,68 @@ class coolmoviezone(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://coolmoviezone.fun'
+        self.base_link = 'http://coolmoviezone.biz'
 
-
-    def scrape_movie(self, title, year, imdb, debrid = False):
+    def scrape_movie(self, title, year, imdb, debrid=False):
         try:
             start_time = time.time()                                                    
-            search_id = clean_search(title.lower())                                                                                                                           #(movie name keeping spaces removing excess characters)
+            search_id = urllib.quote_plus('%s %s' % (title, year))
 
-            start_url = '%s/index.php?s=%s' %(self.base_link,search_id.replace(' ','+'))  
-            #print 'CoolMovieZone - scrape_movie - start_url:  ' + start_url           
+            # search_id.replace(' ','+') = urllib.quote_plus(search_id)
+            start_url = '%s/index.php?s=%s' % (self.base_link, search_id)
+            #print 'CoolMovieZone - scrape_movie - start_url:  ' + start_url
             
-            headers={'User-Agent':random_agent()}
-            html = requests.get(start_url,headers=headers,timeout=5).content     
-            
-            match = re.compile('<h1><a href="(.+?)" rel="bookmark">(.+?)</a></h1>',re.DOTALL).findall(html)
+            headers = {'User-Agent': client.agent()}
+            html = client.request(start_url, headers=headers)
+
+            match = client.parseDOM(html, 'h1')
+            match = [dom_parser.parse_dom(i, 'a', req='href') for i in match if i]
+            match = [(i[0].attrs['href'], i[0].content) for i in match if i]
             for item_url, name in match:
-                if year in name:                                                        
-                    if clean_title(search_id).lower() == clean_title(name).lower():  
-                        self.get_source(item_url,title,year,'','',start_time)  
+                if year not in name: continue
+                if not clean_title(title) == clean_title(name): continue #.lower() added on clean_title function
+
+                self.get_source(item_url, title, year, '', '', start_time)
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)
             return self.sources
 
-            
-    def get_source(self,item_url,title,year,season,episode,start_time):
+    def get_source(self, item_url, title, year, season, episode, start_time):
         try:
             #print 'coolmovies pass ' + item_url
-            headers={'User-Agent':random_agent()}
-            OPEN = requests.get(item_url,headers=headers,timeout=5).content
+            headers={'User-Agent': client.agent()}
+            r = client.request(item_url, headers=headers)
+            #xbmc.log('@#@HTML:%s' % r, xbmc.LOGNOTICE)
 
-            Endlinks = re.compile('<td align="center"><strong><a href="(.+?)"',re.DOTALL).findall(OPEN)
+            data = client.parseDOM(r, 'table', attrs={'class': 'source-links'})[0]
+            data = client.parseDOM(data, 'tr')
+            data = [(client.parseDOM(i, 'a', ret='href')[0],
+                     client.parseDOM(i, 'td')[1]) for i in data if 'version' in i.lower()] #Watch Version
+            Endlinks = [(i[0], re.sub('<.+?>', '', i[1])) for i in data if i]
+
+            #Endlinks = re.compile('<td align="center"><strong><a href="(.+?)"',re.DOTALL).findall(r)
             #print 'coolmoviezone - scrape_movie - EndLinks: '+str(Endlinks)
             count = 0
-            for link in Endlinks:
-                if 'openload' in link:
-                    try:
-                        headers = {'User_Agent':User_Agent}
-                        get_res=requests.get(link,headers=headers,timeout=5).content
-                        rez = re.compile('target="_blank">(.+?)</a></td>',re.DOTALL).findall(get_res)[0]
-                        if 'High-Definition' in rez:
-                            qual = 'HD'
-                        elif '720p' in rez:
-                            qual='720p'
-                        else:
-                            qual='DVD'
-                    except: qual='DVD' 
+            for link, host in Endlinks:
+                if 'filebebo' in host: continue #host with captcha
+                if 'fruitad' in host:
+                    link = client.request(link)
+                    link = client.parseDOM(link, 'meta', attrs={'name': 'og:url'}, ret='content')[0]#returns the real url
+                    if not link: continue
+
+                import resolveurl
+                if resolveurl.HostedMediaFile(link):
+                    from ..modules import quality_tags
+                    quality, info = quality_tags.get_release_quality(link,link)
+                    if quality == 'SD':
+                        quality = 'DVD'
+                    host = host.split('/')[0].split('.')[0].title()
                     count +=1
-                    self.sources.append({'source': 'Openload','quality': qual,'scraper': self.name,'url': link,'direct': False})
-
-                elif 'streamango' in link:
-                    try:  
-                        headers = {'User_Agent':User_Agent}
-                        get_res=requests.get(link,headers=headers,timeout=5).content
-                        rez = re.compile('target="_blank">(.+?)</a></td>',re.DOTALL).findall(get_res)[0]
-                        if 'High-Definition' in rez:
-                            qual = 'HD'
-                        elif '720' in rez:
-                            qual='720p'
-                        else:
-                            qual='DVD'
-                    except: qual='DVD'  
-                    count +=1
-                    self.sources.append({'source': 'Streamango','quality': qual,'scraper': self.name,'url': link,'direct': False})
-
-
-                else:
-                    if urlresolver.HostedMediaFile(link):
-                        
-                        host = link.split('//')[1].replace('www.','')
-                        host = host.split('/')[0].split('.')[0].title()
-                        count +=1
-                        self.sources.append({'source': host,'quality': 'DVD','scraper': self.name,'url': link,'direct': False})
-            if dev_log=='true':
+                    self.sources.append({'source': host, 'quality': quality, 'scraper': self.name, 'url': link, 'direct': False})
+            if dev_log == 'true':
                 end_time = time.time() - start_time
-                send_log(self.name,end_time,count,title,year, season='',episode='')       
+                send_log(self.name, end_time, count, title, year, season='', episode='')
         except:
             pass 

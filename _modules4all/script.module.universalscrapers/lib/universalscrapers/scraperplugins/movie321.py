@@ -1,4 +1,6 @@
-import requests,re,xbmcaddon,time 
+# -*- coding: utf-8 -*-
+# Universal Scrapers
+import requests,re,xbmcaddon,time
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,send_log,error_log         
 requests.packages.urllib3.disable_warnings()
@@ -13,18 +15,18 @@ class Movie321(Scraper):
 
     def __init__(self):
         self.base_link = 'https://321movies.cc'
-        self.scraper = cfscrape.create_scraper()
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
             start_time = time.time() 
-            movie_id= clean_search(title.lower().replace(' ','-'))
+            movie_id= clean_search(title.lower().replace(' ', '-'))
             show_url = '%s/episodes/%s-%sx%s' %(self.base_link,movie_id,season,episode)
             
             #print '321tv url> '+show_url
             
             headers={'User-Agent':User_Agent}
-            html = self.scraper.get(show_url,headers=headers,timeout=5).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(show_url,headers=headers,timeout=5).content
 
             match = re.compile('class="metaframe rptss" src="(.+?)"').findall(html)
             count = 0
@@ -67,7 +69,8 @@ class Movie321(Scraper):
                     movie_url=movie_url.replace('watch-','')[:-1]
                 #print 'allurls '+movie_url
                 headers={'User-Agent':User_Agent}
-                html = self.scraper.get(movie_url,headers=headers,timeout=5).content
+                scraper = cfscrape.create_scraper()
+                html = scraper.get(movie_url,headers=headers,timeout=5).content
                 #print 'PAGE > '+html
                 match = re.compile('name="title" value="(.+?)"',re.DOTALL).findall(html)
                 for item_title in match:

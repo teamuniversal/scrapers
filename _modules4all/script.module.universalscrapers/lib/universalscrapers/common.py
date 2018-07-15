@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import HTMLParser
 import json
 import random
@@ -11,14 +12,20 @@ USERDATA_PATH = xbmc.translatePath('special://home/userdata/addon_data')
 ADDON_DATA = os.path.join(USERDATA_PATH,'script.module.universalscrapers')
 full_file = os.path.join(ADDON_DATA,'Log.txt')
 
+
 def clean_title(title):
-    if title == None: return
-    title = str(title)
-    title = re.sub('&#(\d);', '', title)
+    if title is None:
+        return
+    try:
+        title = title.encode('utf-8')
+    except:
+        pass
+    title = re.sub('&#(\d+);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
     title = title.replace('&quot;', '\"').replace('&amp;', '&')
-    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\_|\.|\?)|\s', '', title)
-    return title.lower()
+    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
+    return title
+
 
 def clean_search(title):
     if title == None: return

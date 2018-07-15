@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import concurrent.futures
 from itertools import islice
 import xbmc

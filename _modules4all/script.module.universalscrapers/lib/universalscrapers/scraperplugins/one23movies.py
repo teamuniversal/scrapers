@@ -23,7 +23,7 @@ class one23movies(Scraper):
             search_id = clean_search(title.lower())                                      
                                                                                         
 
-            start_url = '%s/browse-word/%s' %(self.base_link,search_id.replace(' ','+'))         
+            start_url = '%s/browse-key/%s' %(self.base_link,search_id.replace(' ','+'))         
             print 'scrapercheck - scrape_movie - start_url:  ' + start_url                                  
             
             headers={'User-Agent':random_agent()}
@@ -49,7 +49,7 @@ class one23movies(Scraper):
             season_chk = '- Season %s' %(season)
             #print season_chk
             search_id = clean_search(title.lower())
-            start_url = '%s/browse-word/%s' %(self.base_link,search_id.replace(' ','+'))
+            start_url = '%s/browse-key/%s' %(self.base_link,search_id.replace(' ','+'))
             headers={'User-Agent':random_agent()}
             html = requests.get(start_url,headers=headers,timeout=5).content
             match = re.compile('class="ml-item".+?href="(.+?)".+?title="(.+?)"',re.DOTALL).findall(html)

@@ -1,11 +1,11 @@
 import re
 import requests,time
 import difflib
-import xbmc,xbmcaddon
+import xbmcaddon
 from ..scraper import Scraper
-from ..common import clean_search, random_agent,send_log,error_log
+from ..common import random_agent,send_log,error_log
 from ..modules import cfscrape
-scraper = cfscrape.create_scraper()
+
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 heads = {'User-Agent':random_agent}
 
@@ -16,14 +16,14 @@ class serieswatch(Scraper):
     def __init__(self):
         self.base_link = 'https://ww1.watch-series.co'
         self.search_link = '/search.html?keyword='
-        self.scraper = cfscrape.create_scraper()
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
             start_time = time.time()
             start_url = self.base_link+self.search_link+title.replace(' ','%20')+'%20season%20'+season
             #print start_url
-            html = self.scraper.get(start_url,timeout=10).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(start_url,timeout=10).content
             match = re.compile('<div class="video-thumbimg">.+?href="(.+?)".+?title="(.+?)"',re.DOTALL).findall(html)
             for url,name in match:
                 season_name_check = title.lower().replace(' ','')+'season'+season
@@ -31,7 +31,7 @@ class serieswatch(Scraper):
                 check = difflib.SequenceMatcher(a=season_name_check,b=name_check)
                 d = check.ratio()*100
                 if int(d)>80:
-                    html2 = self.scraper.get(self.base_link+url+'/season',timeout=10).content
+                    html2 = scraper.get(self.base_link+url+'/season',timeout=10).content
                     episodes = re.findall('<div class="video_container">.+?<a href="(.+?)" class="view_more"></a></div>.+?class="videoHname"><b>(.+?)</b></a></span>.+?<div class="video_date icon-calendar">.+?, (.+?)</div>',html2,re.DOTALL)
                     for url2,ep_no,aired_year in episodes:
                         url2 = self.base_link+url2
@@ -46,11 +46,12 @@ class serieswatch(Scraper):
                 error_log(self.name,argument)
             return []                           
 
-    def scrape_movie(self, title, year, debrid = False):
+    def scrape_movie(self, title, year, imdb, debrid = False):
         try:
             start_time = time.time()
             start_url = self.base_link+self.search_link+title.replace(' ','%20')
-            html = self.scraper.get(start_url,timeout=10).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(start_url,timeout=10).content
             match = re.compile('<div class="video-thumbimg">.+?href="(.+?)".+?title="(.+?)"',re.DOTALL).findall(html)
             for url,name in match:
                 season_name_check = title.lower().replace(' ','')

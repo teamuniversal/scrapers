@@ -2,7 +2,7 @@ import requests
 import re,xbmcaddon,time    
 import urllib
 from ..scraper import Scraper
-from ..common import random_agent, clean_title, filter_host, clean_search,send_log,error_log
+from ..common import clean_title, send_log,error_log
 requests.packages.urllib3.disable_warnings()
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
@@ -16,16 +16,16 @@ class thewatchseries(Scraper):
     def __init__(self):
         self.base_link = 'https://ww2.gowatchseries.co'
         self.sources = []
-        self.scraper = cfscrape.create_scraper()
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
-            start_time = time.time() 
+            start_time = time.time()
+            scraper = cfscrape.create_scraper()
             scrape = urllib.quote_plus(title.lower())
             start_url = '%s/search.html?keyword=%s' %(self.base_link,scrape)
             #print 'SEARCH  > '+start_url
             headers = {'User_Agent':User_Agent}
-            html = self.scraper.get(start_url, headers=headers,timeout=10).content
+            html = scraper.get(start_url, headers=headers,timeout=10).content
             #print html
             thumbs = re.compile('<ul class="listing items">(.+?)</ul> ',re.DOTALL).findall(html)
             thumb = re.compile('href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(str(thumbs))  
@@ -34,7 +34,7 @@ class thewatchseries(Scraper):
                     #print "<<<<<<<<<<<<<link>>>>>>>>>>"+link
                     page_link = self.base_link+link
                     headers = {'User_Agent':User_Agent}
-                    holdpage = self.scraper.get(page_link, headers=headers,timeout=5).content
+                    holdpage = scraper.get(page_link, headers=headers,timeout=5).content
                     datecheck = re.compile('<span>Release: </span>(.+?)</li>',re.DOTALL).findall(holdpage)[0]
                     if year in datecheck:
                         movie_link = re.compile('<li class="child_episode".+?href="(.+?)"',re.DOTALL).findall(holdpage)[0]
@@ -50,12 +50,13 @@ class thewatchseries(Scraper):
 
     def scrape_episode(self,title, show_year, year, season, episode, imdb, tvdb, debrid = False):
         try:
-            start_time = time.time() 
+            start_time = time.time()
+            scraper = cfscrape.create_scraper()
             scrape = urllib.quote_plus(title.lower())
             start_url = '%s/search.html?keyword=%s' %(self.base_link,scrape)
             #print 'SEARCH  > '+start_url
             headers = {'User_Agent':User_Agent}
-            html = self.scraper.get(start_url, headers=headers,timeout=10).content
+            html = scraper.get(start_url, headers=headers,timeout=10).content
             thumbs = re.compile('<ul class="listing items">(.+?)</ul> ',re.DOTALL).findall(html)
             thumb = re.compile('href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(str(thumbs))  
             for link,link_title in thumb:
@@ -66,7 +67,7 @@ class thewatchseries(Scraper):
                         page_link = self.base_link + link
                         #print 'page_link:::::::::::::: '+page_link
                         headers = {'User_Agent':User_Agent}
-                        holdpage = self.scraper.get(page_link, headers=headers,timeout=5).content
+                        holdpage = scraper.get(page_link, headers=headers,timeout=5).content
                         series_links = re.compile('<li class="child_episode".+?href="(.+?)"',re.DOTALL).findall(holdpage)
                         for movie_link in series_links:
                             episode_chk = '-episode-%sBOLLOX' %episode
@@ -85,7 +86,8 @@ class thewatchseries(Scraper):
     def get_source(self,movie_link,title,year,season,episode,start_time):
         print '###'+movie_link
         try:
-            html = self.scraper.get(movie_link).content
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(movie_link).content
             links = re.compile('data-video="(.+?)"',re.DOTALL).findall(html)
             count = 0 
             for link in links:

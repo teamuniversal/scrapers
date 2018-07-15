@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Universal Scrapers
 import re
 import requests
 import xbmc,xbmcaddon
