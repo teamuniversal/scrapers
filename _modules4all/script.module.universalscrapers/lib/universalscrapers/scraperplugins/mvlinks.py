@@ -9,14 +9,15 @@ dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log
 
 User_Agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
 
+
 class mvlinks(Scraper):
     domains = ['http://dl.newmyvideolink.xyz/dl']
     name = "MyVideoLinks"
     sources = []
 
     def __init__(self):
-        self.base_link = 'http://go.myvideolinks.net/'
-        self.search_link = 'post/search/%s/feed/rss2/'
+        self.base_link = 'http://iwantmyshow.tk/'
+        self.search_link = '?s=%s'
         self.count = 0
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
@@ -25,26 +26,33 @@ class mvlinks(Scraper):
 
             #season_pull = '%02d' % int(season) #"0%s"%season if len(season)<2 else season
             #episode_pull = '%02d' % int(episode) #"0%s"%episode if len(episode)<2 else episode
-            sepi = 'S%02dE0%d' % (int(season), int(episode))
+            sepi = 'S%02dE%02d' % (int(season), int(episode))
             search_id = '%s %s' % (title, sepi)
                    
             movie_url = self.base_link + self.search_link % urllib.quote_plus(search_id)
+            print ' ##MOVIE URL##  %s' % movie_url
             headers = {'User_Agent':User_Agent}
             r = client.request(movie_url, headers=headers)
-            items = client.parseDOM(r, 'item')
+            items = client.parseDOM(r, 'article', attrs={'id': 'post-\d+'})
             for item in items:
-                name = client.parseDOM(item, 'title')[0]
+                name = client.parseDOM(item, 'a')[0]
                 name = client.replaceHTMLCodes(name)
                 t = re.sub('(\.|\(|\[|\s)(\d{4}|S\d+E\d+|S\d+|3D)(\.|\)|\]|\s|)(.+|)', '', name, flags=re.I)
-
-                if not sepi.lower() in name.lower():
-                    continue
                 if not clean_title(title).lower() in clean_title(t).lower():
                     continue
 
-                link = client.parseDOM(item, 'link')[0]
-                link += '/2/'
-                #print ' ##Item to pass## %s | %s' %(self.name,m_url)
+                y = re.findall('[\.|\(|\[|\s](S\d*E\d*|S\d*)[\.|\)|\]|\s]', name, flags=re.I)[-1].upper()
+
+                if y not in sepi:
+                    continue
+
+                link = client.parseDOM(item, 'a', ret='href')[0]
+
+                if not y == sepi:
+                    link = link
+                else:
+                    link += '2' if link.endswith('/') else '/2'
+                #print ' ##final Item to pass## %s' % link
                 self.get_source(link, title, year, season, episode, start_time)
             return self.sources
         except Exception, argument:        
@@ -57,14 +65,13 @@ class mvlinks(Scraper):
             start_time = time.time()
             search_id = '%s %s' % (title, year)
             movie_url = self.base_link + self.search_link % urllib.quote_plus(search_id)
-            #print ' ##search## %s' % movie_url
             headers = {'User_Agent': User_Agent}
             
             r = client.request(movie_url, headers=headers)
-            items = client.parseDOM(r, 'item')
+            items = client.parseDOM(r, 'article', attrs={'id': 'post-\d+'})
             links = []
             for item in items:
-                name = client.parseDOM(item, 'title')[0]
+                name = client.parseDOM(item, 'a')[0]
                 name = client.replaceHTMLCodes(name)
                 t = re.sub('(\.|\(|\[|\s)(\d{4}|S\d+E\d+|S\d+|3D)(\.|\)|\]|\s|)(.+|)', '', name, flags=re.I)
 
@@ -72,7 +79,7 @@ class mvlinks(Scraper):
                     continue
                 if not year in name:
                     continue
-                link = client.parseDOM(item, 'link')[0]
+                link = client.parseDOM(item, 'a', ret='href')[0]
                 link += '/2/'
                 links.append(link)
 
@@ -92,16 +99,28 @@ class mvlinks(Scraper):
             return self.sources
 
     def get_source(self, m_url, title, year, season, episode, start_time):
-
+        #import xbmc
         try:
+            hdlr = 'S%02dE%02d' % (int(season), int(episode)) if not season == '' else year
             r = client.request(m_url)
-            quality = client.parseDOM(r, 'h4')[0]
-            data = client.parseDOM(r, 'div', attrs={'class': 'entry-content'})[0]
-            data = client.parseDOM(data, 'ul')[0]
-            links = client.parseDOM(data, 'a', ret='href')
-            for link in links:
-                if not resolveurl.HostedMediaFile(link).valid_url(): 
-                    continue                
+            if not hdlr in m_url.upper():
+                quality = client.parseDOM(r, 'h4')[0]
+                regex = '<p>\s*%s\s*</p>(.+?)</ul>' % hdlr
+                data = re.search(regex, r, re.DOTALL | re.I).groups()[0]
+                frames = client.parseDOM(data, 'a', ret='href')
+
+            else:
+                data = client.parseDOM(r, 'div', attrs={'class': 'entry-content'})[0]
+                data = re.compile('<h4>(.+?)</h4>(.+?)</ul>', re.DOTALL).findall(data)
+                #xbmc.log('DATAAAA:%s' % data, xbmc.LOGNOTICE)
+                frames = []
+                for qual, links in data:
+                    quality = qual
+                    frames += client.parseDOM(links, 'a', ret='href')
+
+            for link in frames:
+                if not resolveurl.HostedMediaFile(link).valid_url():
+                    continue
                 host = link.split('//')[1].replace('www.', '')
                 host = host.split('/')[0].split('.')[0].title()
                 if 'filebebo' in link: continue
@@ -112,7 +131,6 @@ class mvlinks(Scraper):
                     rez = 'SD'
                 else:
                     rez, info = quality_tags.get_release_quality(link, link)
-                    import xbmc
 
                 self.count += 1
                 self.sources.append({'source': host, 'quality': rez, 'scraper': self.name, 'url': link, 'direct': False})
