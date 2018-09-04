@@ -20,8 +20,8 @@ class filepursuit(Scraper):
 
     def __init__(self):
         self.base_link = 'https://filepursuit.com'
-        self.search_links = ['/search4/%s/type/video/', '/search4/%s/type/video//startrow/49/',
-                             '/search4/%s/type/video//startrow/98', '/search4/%s/type/video//startrow/147']
+        self.search_links = ['/search4/%s/type/videos/', '/search4/%s/type/videos/startrow/49/',
+                             '/search4/%s/type/videos/startrow/98', '/search4/%s/type/videos/startrow/147']
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
@@ -32,9 +32,8 @@ class filepursuit(Scraper):
             for link in self.search_links:
                 try:
                     url = urlparse.urljoin(self.base_link, link % query)
-                    headers = {'User-Agent': client.agent()}
                     url = urlparse.urljoin(self.base_link, url)
-                    r = client.request(url, headers=headers)
+                    r = client.request(url)
                     posts = client.parseDOM(r, 'tbody')
                     posts = client.parseDOM(posts, 'tr')
                     urls += [(client.parseDOM(i, 'button', ret='data-clipboard-text')[0]) for i in posts if i]
@@ -86,9 +85,8 @@ class filepursuit(Scraper):
             for link in self.search_links:
                 try:
                     url = urlparse.urljoin(self.base_link, link % query)
-                    headers = {'User-Agent': client.agent()}
                     url = urlparse.urljoin(self.base_link, url)
-                    r = client.request(url, headers=headers)
+                    r = client.request(url)
                     posts = client.parseDOM(r, 'tbody')
                     posts = client.parseDOM(posts, 'tr')
                     urls += [(client.parseDOM(i, 'button', ret='data-clipboard-text')[0]) for i in posts if i]
@@ -133,3 +131,7 @@ class filepursuit(Scraper):
             if dev_log == 'true':
                 error_log(self.name, argument)
             return self.sources
+
+
+
+filepursuit().scrape_movie('Black Panther', '2018', '')

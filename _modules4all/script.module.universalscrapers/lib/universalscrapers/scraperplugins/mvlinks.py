@@ -17,7 +17,7 @@ class mvlinks(Scraper):
 
     def __init__(self):
         self.base_link = 'http://iwantmyshow.tk/'
-        self.search_link = '?s=%s'
+        self.search_link = 'new/?s=%s'
         self.count = 0
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
@@ -30,7 +30,7 @@ class mvlinks(Scraper):
             search_id = '%s %s' % (title, sepi)
                    
             movie_url = self.base_link + self.search_link % urllib.quote_plus(search_id)
-            print ' ##MOVIE URL##  %s' % movie_url
+            #print ' ##MOVIE URL##  %s' % movie_url
             headers = {'User_Agent':User_Agent}
             r = client.request(movie_url, headers=headers)
             items = client.parseDOM(r, 'article', attrs={'id': 'post-\d+'})

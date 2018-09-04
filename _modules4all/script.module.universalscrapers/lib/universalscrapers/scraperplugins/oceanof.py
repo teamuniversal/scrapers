@@ -73,11 +73,11 @@ class joymovies(Scraper):
                 stream_url = re.search('url=(.+?)"', stream_url, re.DOTALL).groups()[0]
             except:
                 pass
-            stream_url = client.replaceHTMLCodes(stream_url)#stream_url.replace('#038;','')
+            stream_url = client.replaceHTMLCodes(stream_url).replace('1; url=','')+'|User-Agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:61.0) Gecko/20100101 Firefox/61.0'#stream_url.replace('#038;','')
             count +=1
             self.sources.append({'source': 'DirectLink', 'quality': qual, 'scraper': self.name,'url': stream_url, 'direct': True})
             if dev_log=='true':
                 end_time = time.time() - start_time
-                send_log(self.name,end_time,count,title,year, season=season,episode=episode)                               
+                send_log(self.name,end_time,count,title+stream_url,year, season=season,episode=episode)                               
         except:
             pass
