@@ -1,9 +1,11 @@
+#checked 3/9/2108
 import requests
 import urlparse
 import re
 import resolveurl as urlresolver
 import xbmc,xbmcaddon,time
 import base64
+from universalscrapers.modules import cfscrape
 from ..scraper import Scraper
 from ..common import clean_title,clean_search,random_agent,send_log,error_log
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
@@ -24,7 +26,8 @@ class streamango(Scraper):
             start_url = '%s?s=%s' %(self.base_link,search_id.replace(' ','+'))         
             #print 'scraperchk - scrape_movie - start_url:  ' + start_url                                  
             headers={'User-Agent':random_agent()}
-            html = requests.get(start_url,headers=headers,timeout=5).content            
+            scraper = cfscrape.create_scraper()
+            html = scraper.get(start_url,headers=headers,timeout=5).content            
             match = re.compile('<li class="TPostMv".+?class="TPMvCn">.+?<a href="(.+?)"><div class="Title">(.+?)</div></a>.+?class="Date">(.+?)</span><span class="Qlty">(.+?)</span>',re.DOTALL).findall(html) 
             for item_url, name, date, res in match:
                 #print 'scraperchk - scrape_movie - name: '+name+ ' '+date
@@ -43,8 +46,9 @@ class streamango(Scraper):
         try:
             #print 'PASSEDURL >>>>>>'+item_url
             count = 0
+            scraper = cfscrape.create_scraper()
             headers={'User-Agent':random_agent()}
-            OPEN = requests.get(item_url,headers=headers,timeout=5).content
+            OPEN = scraper.get(item_url,headers=headers,timeout=5).content
             Endlinks = re.compile('TrvideoFirst\">(.+?)</div>',re.DOTALL).findall(OPEN)
             #print 'scraperchk - scrape_movie - EndLinks: '+str(Endlinks)
             for link2 in Endlinks:

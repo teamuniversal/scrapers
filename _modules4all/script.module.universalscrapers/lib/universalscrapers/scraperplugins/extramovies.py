@@ -50,22 +50,44 @@ class extramovies(Scraper):
             headers={'User-Agent':random_agent()}
             OPEN = requests.get(item_url,headers=headers,timeout=10).content
             #print OPEN
-            Regex = re.compile('href="/download.php.+?link=(.+?)"',re.DOTALL).findall(OPEN)
+            Regexs = re.compile('<h4 style="(.+?)</h4>',re.DOTALL).findall(OPEN)
+            #print Regexs
+            Regex = re.compile('link=(.+?)"',re.DOTALL).findall(str(Regexs))
+            stream = re.compile('href="(.+?)"',re.DOTALL).findall(str(Regexs))
             count = 0
+            for links in stream:
+                #print links
+                if 'video.php' in links:
+                    link = 'https://lh3.googleusercontent.com/'+links.split('=')[1].replace('&#038;s','')+'=m18|User-Agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:61.0) Gecko/20100101 Firefox/61.0'
+                    #print link
+                    count +=1
+                    self.sources.append({'source': 'Google', 'quality': res, 'scraper': self.name, 'url': link,'direct': True})
+                elif '/openload.php?url=' in links:
+                    link = 'https://openload.co/embed/'+links.split('=')[1]
+                    #print link
+                    host = link.split('//')[1].replace('www.','')
+                    host = host.split('/')[0].split('.')[0].title()
+                    if 'Www' not in host:
+                        count +=1
+                        #print link
+                        
+                        #print ' ##finalurl## %s | >%s<' %(self.name,link)
+                        self.sources.append({'source': host, 'quality': res, 'scraper': self.name, 'url': link,'direct': False})
             for link in Regex:
+                
                 #print link
                 try:
                     link = base64.b64decode(link)
                 except:pass
-                if not resolveurl.HostedMediaFile(link).valid_url(): 
+            
+                if not resolveurl.HostedMediaFile(link).valid_url():
                     continue
                 host = link.split('//')[1].replace('www.','')
                 host = host.split('/')[0].split('.')[0].title()
                 if 'Www' not in host:
                     count +=1
-                    print link
-                    if 'google' in link:
-                        continue
+                    #print link
+                    
                     #print ' ##finalurl## %s | >%s<' %(self.name,link)
                     self.sources.append({'source': host, 'quality': res, 'scraper': self.name, 'url': link,'direct': False})
             if dev_log=='true':

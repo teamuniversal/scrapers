@@ -94,5 +94,5 @@ class cooltv(Scraper):
         except:
             pass
 
-cooltv().scrape_episode('the flash','2014','','1','1','','')
+#cooltv().scrape_episode('the flash','2014','','1','1','','')
 
