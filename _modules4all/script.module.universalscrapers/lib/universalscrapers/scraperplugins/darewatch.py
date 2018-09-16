@@ -19,7 +19,7 @@ dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting('dev_log
 class darewatch(Scraper):
     domains = ['ondarewatch.com/', 'dailytvfix.com']
     name = "DareWatch"
-
+    
     def __init__(self):
         self.base_link = 'http://www.dailytvfix.com/'
         self.search_url = self.base_link + 'ajax/search.php'
@@ -46,9 +46,10 @@ class darewatch(Scraper):
         
         start_time = time.time()
         
-        page_url = None
         r = requests.post(self.search_url, data=data, headers=search_headers, timeout=8)
         if r.ok and r.text != 'Restricted access':
+            page_url = None
+            
             if is_movie:
                 for entry in r.json():
                     entry_title = entry['title'].lower()
@@ -68,14 +69,16 @@ class darewatch(Scraper):
                             best_sources.insert(0, entry['permalink'])                            
                 if best_sources:
                     page_url = self.base_link + best_sources[0] + '/season/%s/episode/%s' % (season, episode)
+            
+            if page_url:
+                self.get_sources(page_url, title, year, season, episode, start_time)
         else:
             if dev_log:
                 error_log(self.name, '%s %s' % (r, r.text))
-        
-        self.sources = tuple(self.get_sources(page_url, title, year, season, episode, start_time)) if page_url else [ ]
+                
         if dev_log:
             elapsed = time.time() - start_time
-            send_log(self.name, elapsed, len(sources), title, year, season=season, episode=episode)
+            send_log(self.name, elapsed, len(self.sources), title, year, season=season, episode=episode)
         return self.sources
 
 
@@ -121,13 +124,17 @@ class darewatch(Scraper):
                         qual = '1080p' if '1080' in rez else '720p' if '720' in rez else 'SD'
                     except:
                         qual='SD'
-                    yield {'source': 'Openload', 'quality': qual, 'scraper': self.name, 'url': host_url, 'direct': False}
+                    self.sources.append(
+                        {'source': 'Openload', 'quality': qual, 'scraper': self.name, 'url': host_url, 'direct': False}
+                    )
                 else:
                     hoster = host_url.split('//')[1].replace('www.', '', 1)
                     hoster = hoster[ : hoster.find('/')].lower()
                     if not filter_host(hoster):
                         continue
-                    yield {'source': hoster, 'quality': 'DVD', 'scraper': self.name, 'url': host_url, 'direct': False}
+                    self.sources.append(
+                        {'source': hoster, 'quality': 'DVD', 'scraper': self.name, 'url': host_url, 'direct': False}
+                    )
         except:
             return
         
