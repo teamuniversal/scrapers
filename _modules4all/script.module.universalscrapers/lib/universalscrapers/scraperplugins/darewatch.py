@@ -118,7 +118,7 @@ class darewatch(Scraper):
                 
                 if 'openload' in host_url:
                     try:
-                        openload_page = requests.get(host_url, headers=headers, timeout=8).text
+                        openload_page = requests.get(host_url, headers={'User-Agent': self.ua}, timeout=8).text
                         rez = re.compile('description" content="(.+?)"', openload_page, re.DOTALL|re.IGNORECASE)[0]
                         qual = '1080p' if '1080' in rez else '720p' if '720' in rez else 'SD'
                     except:
