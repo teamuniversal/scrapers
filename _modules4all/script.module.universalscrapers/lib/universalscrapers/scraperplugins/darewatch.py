@@ -4,7 +4,6 @@ import re
 import time
 import base64
 import requests
-from urllib import quote_plus
 
 import xbmcaddon
 
