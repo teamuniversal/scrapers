@@ -1,7 +1,7 @@
 import re
 import xbmcaddon,time
-from ..scraper import Scraper
-from ..common import clean_search,send_log,error_log
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_search,send_log,error_log
 from universalscrapers.modules import cfscrape 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
@@ -33,7 +33,7 @@ class OpenLoadMovie(Scraper):
                 # movie_link = item_url
                 # #print 'Grabbed movie url to pass > ' + movie_link   
             movie_link = '%s/movies/%s-%s/' %(self.base_link,search_id.replace(' ','-'),year)
-            print 'Grabbed movie url to pass > ' + movie_link 
+            #print 'Grabbed movie url to pass > ' + movie_link
             self.get_source(movie_link,title,year,'','',start_time)
                 
             return self.sources

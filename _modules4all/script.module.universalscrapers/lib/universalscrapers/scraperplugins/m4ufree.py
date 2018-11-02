@@ -9,11 +9,11 @@
 #######################################################################
 
 # Universal Scrapers scraper convirted from tantrum scrapers to work with SMUS
-import re, requests, time, urllib,json,urlparse,base64
+import re, requests, time, urllib,json,urlparse
 import xbmcaddon, xbmc
-from ..scraper import Scraper
-from ..common import clean_title, filter_host, send_log, error_log
-from ..modules import client, dom_parser, quality_tags
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_title, filter_host, send_log, error_log
+from universalscrapers.modules import client, dom_parser, quality_tags
 
 dev_log =xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
@@ -46,7 +46,7 @@ class m4ufree(Scraper):
         try:
             #print url
             count = 0
-            if url == None: return sources
+            if url == None: return self.sources
         
             r = client.request(url)
             quality = re.findall(">(\w+)<\/p",r)
@@ -62,19 +62,17 @@ class m4ufree(Scraper):
                 url = {'url': i.attrs['href'], 'data-film': i.attrs['data-film'], 'data-server': i.attrs['data-server'], 'data-name' : i.attrs['data-name']}
                 url = urllib.urlencode(url)
                 #print url
-                url = self.resolve(url)
+
                 count +=1
-                #print url
                 self.sources.append({'source': i.content, 'quality': quality, 'scraper': self.name, 'url': url, 'direct': False})
             if dev_log == 'true':
                 end_time = time.time() - start_time
                 send_log(self.name, end_time, count, title, year, season='', episode='')
-            return self.sources
         except:
-            return self.sources
+            pass
     
 
-    def resolve(self,url):
+    def resolve(self, url):
         try:
             #print 'passed'
             urldata = urlparse.parse_qs(url)

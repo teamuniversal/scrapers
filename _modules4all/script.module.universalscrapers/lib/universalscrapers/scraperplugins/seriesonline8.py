@@ -29,7 +29,7 @@ class seriesonline8(Scraper):
             match = re.compile('class="ml-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)
             for item_url1, name in match:
                 item_url = 'https://www2.series9.io'+item_url1+'/watching.html'
-                print 'series8 - scrape_movie - item_url: '+item_url
+                #print 'series8 - scrape_movie - item_url: '+item_url
                 if clean_title(search) == clean_title(name):
                     #print 'series8 - scrape_movie - Send this URL: ' + item_url                             
                     self.get_source(item_url, title, year, start_time)
@@ -69,7 +69,7 @@ class seriesonline8(Scraper):
 
     def get_source(self, item_url, title, year, start_time):
         try:
-            print 'PASSEDURL >>>>>>'+item_url
+            #print 'PASSEDURL >>>>>>'+item_url
             count = 0
             headers = {'User-Agent': client.agent()}
             OPEN = client.request(item_url, headers=headers)

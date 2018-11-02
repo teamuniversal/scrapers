@@ -45,7 +45,7 @@ class bnw(Scraper):
             link = urllib.quote(link, ':/-_|&+=')
             count += 1
             self.sources.append({'source': 'bnw', 'quality': 'SD', 'scraper': self.name, 'url': link, 'direct': True})
-            if dev_log=='true':
+            if dev_log == 'true':
                 end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year)
 
@@ -54,7 +54,6 @@ class bnw(Scraper):
             if dev_log == 'true':
                 error_log(self.name,argument)
             return self.sources
-
 #bnw().scrape_movie('Black Panther', '1998', '', False)
 #bnw().scrape_movie('going my way', '1944', '', False)
 # Movie (Trail Riders) 1942             

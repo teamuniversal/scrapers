@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+# Universal Scrapers
+
 import re
 import requests
-from ..scraper import Scraper
+from universalscrapers.scraper import Scraper
 import xbmc,xbmcaddon
 import time
-from ..common import clean_search,clean_title,send_log,error_log
+from universalscrapers.common import clean_search,clean_title,send_log,error_log
 import urlparse
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
@@ -84,7 +86,6 @@ class Animetoon(Scraper):
                 error_log(self.name,argument)
             return self.sources
 
-
     def check_for_play(self, link,title,year,season,episode,start_time):
         try:
             #print 'Pass url '+ link   
@@ -111,7 +112,7 @@ class Animetoon(Scraper):
     def resolve(self, url):
 #        print 'resolveME url '+ url
         try:        
-            open = requests.get(url,timeout=3).content
+            open = requests.get(url, timeout=3).content
 
             if 'playpanda' in url:
                 url = re.compile("url: '(.+?)'",re.DOTALL).findall(open)[0]

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
+# Universal Scrapers
+# checked 2/11/2018 -BUG
 
-import requests, urllib, urlparse
-import re, xbmcaddon, time
-from ..scraper import Scraper
-from ..common import clean_title, send_log, error_log
-from ..modules import client, quality_tags
+import urllib, re, time
+import xbmc, xbmcaddon
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_title, send_log, error_log
+from universalscrapers.modules import client, quality_tags
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
-s = requests.session()
-User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36'
-                                           
+
 class joymovies(Scraper):
     domains = ['oceanofmovies.bz']
     name = "OceanofMovies"
@@ -25,18 +25,15 @@ class joymovies(Scraper):
             search_id = '%s %s' % (title, year)
             start_url = self.base_link + self.search_link % urllib.quote_plus(search_id)
             #print 'STARTURL:::::::::::::::: '+start_url
-            headers = {'User-Agent': User_Agent}
 
-            r = client.request(start_url, headers=headers)
+            r = client.request(start_url)
             items = client.parseDOM(r, 'item')
             for item in items:
                 name = re.search('Movie\s*Name\s*:\s*(.+?)<br', item, re.DOTALL).groups()[0]
                 name = client.replaceHTMLCodes(name)
-                t = re.sub('(\.|\(|\[|\s)(\d{4}|S\d+E\d+|S\d+|3D)(\.|\)|\]|\s|)(.+|)', '', name, flags=re.I)
+                t = re.sub('(\.|\(|\[|\s)(\d{4})(\.|\)|\]|\s|)(.+|)', '', name, re.I)
 
-                if not clean_title(title) == clean_title(t):
-                    continue
-                if not year in name:
+                if not clean_title(title) == clean_title(t) and year not in name:
                     continue
 
                 self.get_source(item, title, year, '', '', start_time)
@@ -50,14 +47,13 @@ class joymovies(Scraper):
     def get_source(self, item_url, title, year, season, episode, start_time):
         try:
             #print '%s %s %s' %(item_url,title,year)
-            headers={'User-Agent':User_Agent}
 
             qual = re.search('uality\s*:(.+?)<br', item_url, re.DOTALL).groups()[0]
             qual, info = quality_tags.get_release_quality(qual, qual)
 
             count = 0
             headers = {'Origin': self.base_link, 'Referer': client.parseDOM(item_url, 'link')[0],
-                       'X-Requested-With': 'XMLHttpRequest', 'User_Agent': User_Agent}
+                       'X-Requested-With': 'XMLHttpRequest', 'User_Agent': client.agent()}
             try:
                 fn = client.parseDOM(item_url, 'input', attrs={'name': 'FName'}, ret='value')[0]
                 fs = client.parseDOM(item_url, 'input', attrs={'name': 'FSize'}, ret='value')[0]
@@ -76,8 +72,8 @@ class joymovies(Scraper):
             stream_url = client.replaceHTMLCodes(stream_url).replace('1; url=','')+'|User-Agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:61.0) Gecko/20100101 Firefox/61.0'#stream_url.replace('#038;','')
             count +=1
             self.sources.append({'source': 'DirectLink', 'quality': qual, 'scraper': self.name,'url': stream_url, 'direct': True})
-            if dev_log=='true':
+            if dev_log == 'true':
                 end_time = time.time() - start_time
-                send_log(self.name,end_time,count,title+stream_url,year, season=season,episode=episode)                               
+                send_log(self.name, end_time, count, title + stream_url, year, season=season, episode=episode)
         except:
             pass

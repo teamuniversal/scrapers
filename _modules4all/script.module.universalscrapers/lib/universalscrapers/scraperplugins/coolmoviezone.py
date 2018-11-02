@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
-import requests
+# 30/10/2018 -BUG
+
 import urllib
 import re, xbmcaddon, time, xbmc
-from ..scraper import Scraper
-from ..common import clean_title, send_log, error_log
-from ..modules import client, dom_parser
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_title, send_log, error_log
+from universalscrapers.modules import client, dom_parser
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
   
 class coolmoviezone(Scraper):
@@ -40,7 +41,6 @@ class coolmoviezone(Scraper):
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)
-            return self.sources
 
     def get_source(self, item_url, title, year, season, episode, start_time):
         try:
@@ -67,7 +67,7 @@ class coolmoviezone(Scraper):
 
                 import resolveurl
                 if resolveurl.HostedMediaFile(link):
-                    from ..modules import quality_tags
+                    from universalscrapers.modules import quality_tags
                     quality, info = quality_tags.get_release_quality(link,link)
                     if quality == 'SD':
                         quality = 'DVD'

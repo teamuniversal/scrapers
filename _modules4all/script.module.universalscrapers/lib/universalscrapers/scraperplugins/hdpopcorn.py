@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# Universal Scrapers
+# 30/10/2018 -BUG
+
 import requests
 import re, urllib, urlparse
 import xbmc, xbmcaddon, time
@@ -34,7 +38,6 @@ class hdpopcorn(Scraper):
             data = client.parseDOM(data, 'h2') #returns a list with all search results
             data = [dom_parser.parse_dom(i, 'a', req=['href', 'title'])[0] for i in data if i] #scraping url-title
             links = [(i.attrs['href'], i.attrs['title']) for i in data if i] #list with link-title for each result
-            #links = re.compile('<header>.+?href="(.+?)" title="(.+?)"',re.DOTALL).findall(html)
             #xbmc.log('@#@LINKS:%s' % links, xbmc.LOGNOTICE)
             for m_url, m_title in links:
                 movie_year = re.findall("(\d{4})", re.sub('\d{3,4}p', '', m_title))[-1]
@@ -48,11 +51,11 @@ class hdpopcorn(Scraper):
 
                 #error_log(self.name + ' Pass',url)
                 self.get_source(url, title, year, '', '', start_time)
+            #print self.sources
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)
-            return self.sources
 
     def get_source(self,url, title, year, season, episode, start_time):
         try:
@@ -81,15 +84,16 @@ class hdpopcorn(Scraper):
 
                 url = client.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
+                url += '|User-Agent=%s' % client.agent()
                 count += 1
                 self.sources.append(
                     {'source': 'DirectLink', 'quality': quality, 'scraper': self.name, 'url': url, 'direct': True})
 
-            if dev_log=='true':
+            if dev_log == 'true':
                 end_time = time.time() - start_time
-                send_log(self.name,end_time,count,title,year, season=season,episode=episode)              
+                send_log(self.name, end_time, count, title, year, season=season,episode=episode)
         except:
             pass
 
-#hdpopcorn().scrape_movie('Blade Runner 2049', '2017', '', False) title contains 2 years
-#hdpopcorn().scrape_movie('Deadpool 2', '2018', '', False) title contains number
+#hdpopcorn().scrape_movie('Blade Runner 2049', '2017', '', False) #title contains 2 years
+#hdpopcorn().scrape_movie('Deadpool 2', '2018', '', False) #title contains number

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-
-import re, xbmcaddon, time
-import resolveurl, requests, urllib
-from ..scraper import Scraper
-from ..common import clean_title,clean_search,send_log,error_log
-from ..modules import client, quality_tags, workers
+# Universal Scrapers
+# 30/10/2018 -BUG
+import re, xbmcaddon, xbmc, time
+import urllib
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_title, filter_host, send_log, error_log
+from universalscrapers.modules import client, quality_tags, workers
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
-
-User_Agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
 
 
 class mvlinks(Scraper):
@@ -17,7 +16,7 @@ class mvlinks(Scraper):
 
     def __init__(self):
         self.base_link = 'http://iwantmyshow.tk/'
-        self.search_link = 'new/?s=%s'
+        self.search_link = '906/?s=%s'
         self.count = 0
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
@@ -31,8 +30,7 @@ class mvlinks(Scraper):
                    
             movie_url = self.base_link + self.search_link % urllib.quote_plus(search_id)
             #print ' ##MOVIE URL##  %s' % movie_url
-            headers = {'User_Agent':User_Agent}
-            r = client.request(movie_url, headers=headers)
+            r = client.request(movie_url)
             items = client.parseDOM(r, 'article', attrs={'id': 'post-\d+'})
             for item in items:
                 name = client.parseDOM(item, 'a')[0]
@@ -58,17 +56,17 @@ class mvlinks(Scraper):
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)
-            return self.sources
+
         
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
             start_time = time.time()
             search_id = '%s %s' % (title, year)
             movie_url = self.base_link + self.search_link % urllib.quote_plus(search_id)
-            headers = {'User_Agent': User_Agent}
-            
-            r = client.request(movie_url, headers=headers)
+
+            r = client.request(movie_url)
             items = client.parseDOM(r, 'article', attrs={'id': 'post-\d+'})
+            #xbmc.log('@#@ITEMS:%s' % items, xbmc.LOGNOTICE)
             links = []
             for item in items:
                 name = client.parseDOM(item, 'a')[0]
@@ -82,9 +80,9 @@ class mvlinks(Scraper):
                 link = client.parseDOM(item, 'a', ret='href')[0]
                 link += '/2/'
                 links.append(link)
-
+            #xbmc.log('@#@LINKS:%s' % links, xbmc.LOGNOTICE)
             threads = []
-            for i in links: threads.append(workers.Thread(self.get_source, i, title, year, '', '', start_time))
+            for i in links: threads.append(workers.Thread(self.get_source, i, title, year, '', '', str(start_time)))
             [i.start() for i in threads]
 
             alive = [x for x in threads if x.is_alive() is True]
@@ -96,7 +94,7 @@ class mvlinks(Scraper):
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name, argument)
-            return self.sources
+
 
     def get_source(self, m_url, title, year, season, episode, start_time):
         #import xbmc
@@ -119,10 +117,10 @@ class mvlinks(Scraper):
                     frames += client.parseDOM(links, 'a', ret='href')
 
             for link in frames:
-                if not resolveurl.HostedMediaFile(link).valid_url():
-                    continue
                 host = link.split('//')[1].replace('www.', '')
-                host = host.split('/')[0].split('.')[0].title()
+                host = host.split('/')[0]
+                if not filter_host(host):
+                    continue
                 if 'filebebo' in link: continue
                 rez, info = quality_tags.get_release_quality(quality, link)
                 if '1080p' in rez and not host.lower() in ['openload', 'oload']:

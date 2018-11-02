@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# Universal Scrapers checked 30/8/2018
+# Universal Scrapers
+# checked 30/8/2018
 
 import re
 import urllib

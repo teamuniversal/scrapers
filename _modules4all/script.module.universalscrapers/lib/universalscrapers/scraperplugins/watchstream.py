@@ -1,6 +1,6 @@
 import re,xbmcaddon,time,requests
-from ..scraper import Scraper
-from ..common import random_agent,send_log,error_log
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import random_agent,send_log,error_log
 requests.packages.urllib3.disable_warnings()
 s = requests.session()
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")

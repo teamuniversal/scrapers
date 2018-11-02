@@ -1,9 +1,13 @@
-import re,xbmcaddon,time
+# -*- coding: utf-8 -*-
+# Universal Scrapers
+#checked 29/10/2018
+
+import re, xbmcaddon, time
 import urllib
 import requests
 
-from ..common import clean_title,clean_search, random_agent,filter_host,send_log,error_log
-from ..scraper import Scraper
+from universalscrapers.common import clean_title, clean_search, filter_host, send_log, error_log
+from universalscrapers.scraper import Scraper
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 

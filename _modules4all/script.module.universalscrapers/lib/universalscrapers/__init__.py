@@ -131,6 +131,12 @@ def relevant_scrapers(names_list=None, include_disabled=False, exclude=None):
                     relevant.append(scraper)
     return relevant
 
+def resolve(scrapername, link):
+    classes = Scraper.__class__.__subclasses__(Scraper)
+    for scraper in classes:
+        if scraper.name.lower() == str(scrapername).lower():
+            #xbmc.log("$#$RESOLVE-INIT:%s" % scraper().resolve(link), xbmc.LOGNOTICE)
+            return scraper().resolve(link)
 
 def clear_cache():
     try:

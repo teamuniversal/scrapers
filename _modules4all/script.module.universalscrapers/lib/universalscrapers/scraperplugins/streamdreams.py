@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
-#checked 2/09/2018
+#checked 29/10/2018
+
 import re, requests, time, urllib
 import xbmcaddon, xbmc
-from ..scraper import Scraper
-from ..common import clean_title, filter_host, send_log, error_log
-from ..modules import client, dom_parser, quality_tags
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_title, clean_search, send_log, error_log
+from universalscrapers.modules import client
 
 dev_log =xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
@@ -23,7 +24,7 @@ class streamdreams(Scraper):
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
             start_time = time.time()
-            search_id = title.replace(' ','+').lower()
+            search_id = clean_search(title).replace(' ','+').lower()
             query = self.search_url % search_id
             #print query
 
@@ -40,8 +41,8 @@ class streamdreams(Scraper):
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid=False):
         try:
             start_time = time.time()
-            search = title.replace(' ','-').lower()
-            start_url = '%s/shows/%s?session=%s&episode=%s' % (self.base_link,search,season,episode)
+            search = clean_search(title).replace(' ','-').lower()
+            start_url = '%s/shows/%s?session=%s&episode=%s' % (self.base_link, search, season, episode)
             #print start_url
             self.get_source(start_url, title, year, season, episode, start_time)
 
@@ -53,14 +54,13 @@ class streamdreams(Scraper):
 
     def _search(self, url, title, year):
         try:
-            headers = {'User-Agent': client.agent()}
-            r = client.request(url,headers=headers)
+            r = client.request(url)
             #print r
-            mov_link = client.parseDOM(r,'div', attrs= {'class':'thumbnail  same-height big-title-thumb'})
+            mov_link = client.parseDOM(r, 'div', attrs={'class': 'thumbnail.+?'})
             #print mov_link
             for a_s in mov_link:
                 #print a_s
-                item_url = client.parseDOM(a_s,'a', ret = 'href')[0]
+                item_url = client.parseDOM(a_s, 'a', ret='href')[0]
                 #print item_url+'?????????????'    
                 data = client.parseDOM(r, 'div', attrs={'class': 'caption thumb_caption'})
                 for item in data:
@@ -80,8 +80,7 @@ class streamdreams(Scraper):
     def get_source(self, item_url, title, year, season, episode, start_time):
         try:
             count = 0
-            headers = {'User-Agent': client.agent()}
-            r = client.request(item_url,headers=headers)
+            r = client.request(item_url)
             data = client.parseDOM(r, 'tr')
             for item in data:
                 info = client.parseDOM(item,'td')
@@ -91,7 +90,8 @@ class streamdreams(Scraper):
                     if 'quality' in qual:
                         qual=qual.replace('quality_','')
                         #print qual
-                        links = client.parseDOM(item, 'a', ret='data-href')
+                        links = client.parseDOM(item, 'a', ret='href')
+                        links = [i for i in links if not '/report/' in i]
                         for link in links:
                             #print link
                             count +=1
@@ -104,3 +104,12 @@ class streamdreams(Scraper):
                 send_log(self.name, end_time, count, title, year, season='', episode='')
         except:
             pass
+
+    def resolve(self, link):
+        try:
+            url = client.request(link)
+            url = re.findall('''gotourl\(['"](.+?)['"]\)''', url)[0]
+            #xbmc.log("$#$SCRAPER-RESOLVE-LINK:%s" % url, xbmc.LOGNOTICE)
+            return url
+        except:
+            return link

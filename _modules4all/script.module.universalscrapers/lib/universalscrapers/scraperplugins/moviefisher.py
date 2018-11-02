@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
-import requests
-import re
+# 30/10/2018 -BUG
+
+import re, requests, urllib
 import xbmcaddon
 import xbmc
 import time
-from ..scraper import Scraper
-from ..common import clean_title,clean_search,random_agent,send_log,error_log
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import clean_title, clean_search, send_log, error_log
+from universalscrapers.modules import client
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
   
 class moviefishers(Scraper):
@@ -20,14 +22,15 @@ class moviefishers(Scraper):
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
             start_time = time.time()
-            search_id = clean_search(title.lower())                                     # use 'clean_search' to get clean title                                                                              #(movie name keeping spaces removing excess characters)
-            start_url = "http://moviefishers.org/wp-json/wp/v2/posts?search="+search_id.replace(' ','+')
-            self.get_source(start_url,title,year,start_time)                        
+            start_url = "http://moviefishers.org/wp-json/wp/v2/posts?search=%s" % urllib.quote_plus(clean_search(title))
+            self.get_source(start_url, title, year, start_time)
             return self.sources
         except Exception as E:
             xbmc.log(str(E),2)
                         
-    def get_source(self,item_url,title,year,start_time):
+    def get_source(self, item_url, title, year, start_time):
+        try:
+            count = 0
             data = requests.get(item_url).json()
             for item in data:
                 title = item["title"]["rendered"]
@@ -35,14 +38,19 @@ class moviefishers(Scraper):
                 year2 = item["date"][:4]
                 if int(year) != int(year2):
                     continue
-                Links = re.findall(r"(http.*streamango.com\/embed\/\w{1,}|https:\/\/openload\.co\/embed\/\w{1,}\/)",content)
+                #Links = re.findall(r"(http.*streamango.com\/embed\/\w{1,}|https:\/\/openload\.co\/embed\/\w{1,}\/)",content)
+                Links = client.parseDOM(content, 'iframe', ret='src')
                 for link in Links:
-                    host = re.findall(r"https:/\/(.*)\.",link)[0]
+                    count += 1
+                    host = link.split('//')[1].replace('www.', '')
+                    host = host.split('/')[0].split('.')[0].title()
                     label = "DVD"
                     self.sources.append({'source': host, 'quality': label, 'scraper': self.name, 'url': link,'direct': False})
-            if dev_log=='true':
+            if dev_log == 'true':
                 end_time = time.time() - start_time
-                send_log(self.name,end_time,count,title,year)       
+                send_log(self.name,end_time,count,title,year)
+        except Exception, argument:
+            if dev_log == 'true':
+                error_log(self.name, argument)
 
-# moviefishers().scrape_movie('tiger zinda hai', '2018','')
-# you will need to regex/split or rename to get host name if required from link unless available on page it self 
+#moviefishers().scrape_movie('Black Panther', '2018','')

@@ -2,9 +2,9 @@ import re
 import requests,time
 import difflib
 import xbmcaddon
-from ..scraper import Scraper
-from ..common import random_agent,send_log,error_log
-from ..modules import cfscrape
+from universalscrapers.scraper import Scraper
+from universalscrapers.common import random_agent,send_log,error_log
+from universalscrapers.modules import cfscrape
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 heads = {'User-Agent':random_agent}

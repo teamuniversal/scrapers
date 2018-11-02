@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
+# 30/10/2018 -BUG
+
 import re
-import requests
-import xbmc,xbmcaddon
+import xbmc, xbmcaddon
 import time
 import urllib
 from universalscrapers.scraper import Scraper
@@ -26,7 +27,7 @@ class cooltv(Scraper):
             search = clean_search(title)
             start_url = '%s/search.php?search=%s' % (self.base_link, urllib.quote_plus(search))
 
-            print 'SEARCH > '+start_url
+            #print 'SEARCH > '+start_url
             headers = {'User-Agent': client.agent()}
             link = client.request(start_url, headers=headers, timeout=5)
             links = link.split('class="box"')
@@ -37,21 +38,17 @@ class cooltv(Scraper):
                 if search in clean_search(media_title.lower()):
                     if 'season %s' % season in media_title.lower():
                         self.get_source(media_url, title, year, season, episode, start_time)
-                
-            print self.sources
+            #print self.sources
             return self.sources
         except Exception, argument:        
             if dev_log == 'true':
                 error_log(self.name,argument)
-            return self.sources
-                
 
-    def get_source(self,media_url, title,year,season,episode,start_time):
+    def get_source(self, media_url, title, year, season, episode, start_time):
         #print 'source season ' + media_url
         season_bollox = "0%s" % season if len(season) < 2 else season
         episode_bollox = "0%s" % episode if len(episode) < 2 else episode
         all_bollox = 's%se%s' % (season_bollox, episode_bollox)
-            
 
         try:
             headers = {'User-Agent': client.agent()}
@@ -65,11 +62,9 @@ class cooltv(Scraper):
                     link = client.request(media_url, headers=headers)
 
                     frame = client.parseDOM(link, 'iframe', ret='src')
-                    print frame
                     for frame_link in frame:
                         self.sources.append({'source': 'Openload', 'quality': 'Unknown',
                                              'scraper': self.name, 'url': frame_link, 'direct': False})
-                    
 
                     cool_links = re.compile('"dwn-box".+?ref="(.+?)" rel="nofollow">(.+?)<span',re.DOTALL).findall(link)
                     for vid_url, res in cool_links:
