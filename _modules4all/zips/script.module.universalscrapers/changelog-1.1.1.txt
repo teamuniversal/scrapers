@@ -1,3 +1,48 @@
+02/10/2018 v.1.1.1
+
+updated main addon with scraper resolve function
+
+added scrapers:
+primwire
+wepisodeseries
+WatchTVseries
+
+
+Removed scrapers:
+movie321
+streamango
+tvmoviestream
+vkflix
+wrzcraft
+
+05/09/2018 v.1.1.0
+client.py edit
+04/09/2018 v.1.0.9.9
+whoops
+04/09/2018 v.1.0.9.8
+Added:
+Streamdreams.py
+vkflix.py
+m4ufree.py
+
+Fixed:
+changes to client
+bnw.py
+movienolimit.py
+streamango.py
+extramovies.py
+filuit.py
+mvlinks.py
+oceanof.py
+cmovies.py
+movie4u.py
+
+Removed:
+darewatch.py
+yify.py
+watch32.py
+
+
 25/08/18 v.1.0.9.7
 
 Added:

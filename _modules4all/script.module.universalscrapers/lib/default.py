@@ -66,6 +66,105 @@ except:
     from pysqlite2 import dbapi2 as database
 
 movies = [
+
+    {
+        'title': 'Jurassic World: Fallen Kingdom',
+        'year': '2018',
+        'imdb': 'tt4881806'
+    },
+    
+
+    {
+        'title': 'Deadpool 2',
+        'year': '2018',
+        'imdb': 'tt5463162'
+    },
+
+
+    {
+        'title': 'Skyscraper',
+        'year': '2018',
+        'imdb': 'tt5758778'
+    },
+
+
+    {
+        'title': 'It',
+        'year': '2017',
+        'imdb': 'tt1396484'
+    },
+
+
+    {
+        'title': 'Hotel Transylvania',
+        'year': '2012',
+        'imdb': 'tt0837562'
+    },
+
+
+    {
+        'title': 'Ferdinand',
+        'year': '2017',
+        'imdb': 'tt3411444'
+    },
+
+movies = [
+    {
+        'title': 'The First Purge',
+        'year': '2018',
+        'imdb': 'tt6133466'
+    },
+
+
+    {
+        'title': 'The Greatest Showman',
+        'year': '2017',
+        'imdb': 'tt1485796'
+    },
+
+
+    {
+        'title': 'Becky Sharp',
+        'year': '1935',
+        'imdb': 'tt0026104'
+    },
+
+
+    {
+        'title': 'Renegade Girl',
+        'year': '1946',
+        'imdb': 'tt0038877'
+    },
+
+
+    {
+        'title': 'Fast & Furious 8',
+        'year': '2017',
+        'imdb': 'tt4630562'
+    },
+
+
+    {
+        'title': 'Frozen',
+        'year': '2013',
+        'imdb': 'tt2294629'
+    },  
+    
+
+    {
+        'title': 'The Shining',
+        'year': '1980',
+        'imdb': 'tt0081505'
+    },  
+    
+
+    {
+        'title': 'Kingsman: The Secret Service',
+        'year': '2014',
+        'imdb': 'tt2802144'
+    },
+
+
     {
         'title': 'Deadpool 2',
         'year': '2018',
@@ -139,6 +238,65 @@ movies = [
 ]
 
 shows = [
+    {
+        'title': "Bob's Burgers",
+        'show_year': "2011",
+        'year': "2018",
+        'season': '8',
+        'episode': '5',
+        'imdb': 'tt1561755',
+    },  
+    
+
+
+    {
+        'title': "Mindhunter",
+        'show_year': "2017",
+        'year': "2017",
+        'season': '1',
+        'episode': '4',
+        'imdb': 'tt5290382',
+    },  
+    
+
+    {
+        'title': "Ozark",
+        'show_year': "2017",
+        'year': "2018",
+        'season': '2',
+        'episode': '4',
+        'imdb': 'tt5071412',
+    },  
+
+
+    {
+        'title': "Yellowstone",
+        'show_year': "2018",
+        'year': "2018",
+        'season': '1',
+        'episode': '2',
+        'imdb': 'tt4236770',
+    },  
+
+
+    {
+        'title': "Jersey Shore Family Vacation",
+        'show_year': "2018",
+        'year': "2018",
+        'season': '1',
+        'episode': '5',
+        'imdb': 'tt7686456',
+    },      
+
+
+    {
+        'title': "Westworld",
+        'show_year': "2016",
+        'year': "2018",
+        'season': '2',
+        'episode': '3',
+        'imdb': 'tt0475784',
+    },  
     {
         'title': "American Dad",
         'show_year': "2005",
