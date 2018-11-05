@@ -108,7 +108,7 @@ movies = [
         'imdb': 'tt3411444'
     },
 
-movies = [
+
     {
         'title': 'The First Purge',
         'year': '2018',
@@ -170,71 +170,60 @@ movies = [
         'year': '2018',
         'imdb': 'tt5463162'
     },
+
     {
         'title': 'Topper Returns',
         'year': '1941',
         'imdb': 'tt0034303'
     },
+
     {
         'title': 'Mandy',
         'year': '2018',
         'imdb': 'tt6998518'
     },
+
     {
         'title': '''Avengers: Infinity War''',
         'year': '2018',
         'imdb': 'tt4154756'
     },
+
     {
         'title': 'Black Panther',
         'year': '2018',
         'imdb': 'tt1825683'
     },
+
     {
         'title': 'Blade Runner 2049',
         'year': '2017',
         'imdb': 'tt1856101'
     },
-    {
-        'title': 'The Shape of Water',
-        'year': '2017',
-        'imdb': 'tt5580390'
-    },
-    {
-        'title': 'Sing',
-        'year': '2016',
-        'imdb': 'tt3470600'
-    },
+
     {
         'title': 'Sonic The Hedgehog: The Movie',
         'year': '1996',
         'imdb': 'tt0237765'
     },
+
     {
         'title': 'Darkest Hour',
         'year': '2017',
         'imdb': 'tt4555426'
     },
+
     {
         'title': 'Kim Possible A Sitch in Time',
         'year': '2004',
         'imdb': 'tt0389074'
     },
-    {
-        'title': 'Coco',
-        'year': '2017',
-        'imdb': 'tt2380307'
-    },    
+
     {
         'title': 'Titanic',
         'year': '1997',
         'imdb': 'tt0120338'
-    },
-    {
-        'title': 'Alien: Covenant',
-        'year': '2017',
-        'imdb': 'tt2316204'
-    },
+    }
 ]
 
 shows = [
@@ -296,7 +285,8 @@ shows = [
         'season': '2',
         'episode': '3',
         'imdb': 'tt0475784',
-    },  
+    },
+
     {
         'title': "American Dad",
         'show_year': "2005",
@@ -305,6 +295,7 @@ shows = [
         'episode': '1',
         'imdb': 'tt0397306',
     },
+
     {
         'title': "The Flash",
         'show_year': "2014",
@@ -313,6 +304,7 @@ shows = [
         'episode': '8',
         'imdb': 'tt3107288',
     },
+
     {
         'title': "Young Sheldon",
         'show_year': "2017",
@@ -322,6 +314,7 @@ shows = [
         'imdb': 'tt6226232',
         'tvdb': '203706'
     },
+
     {
         'title': "Breaking Bad",
         'show_year': "2008",
@@ -330,6 +323,7 @@ shows = [
         'episode': '6',
         'imdb': 'tt0903747',
     },
+
     {
         'title': "13 Reasons Why",
         'show_year': "2017",
@@ -339,7 +333,8 @@ shows = [
         'imdb': 'tt1837492',
         'tvdb': '323168'
     },
-{
+
+    {
         'title': "The Walking Dead",
         'show_year': "2010",
         'year': "2018",
@@ -348,6 +343,7 @@ shows = [
         'imdb': 'tt1520211',
         'tvdb': '153021'
     },
+
     {
         'title': "Game of Thrones",
         'show_year': "2011",
@@ -356,6 +352,7 @@ shows = [
         'episode': '5',
         'imdb': 'tt0944947',
     },
+
     {
         'title': "House M.D.",
         'show_year': "2004",
@@ -363,7 +360,7 @@ shows = [
         'season': '1',
         'episode': '1',
         'imdb': 'tt0412142',
-    },
+    }
 
 ]
 

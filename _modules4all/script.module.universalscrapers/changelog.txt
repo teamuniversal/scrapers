@@ -1,9 +1,15 @@
+05/10/2018 v.1.1.1
+fix default.py error
+
+added scraper:
+newepisodes
+
 02/10/2018 v.1.1.1
 
 updated main addon with scraper resolve function
 
 added scrapers:
-primwire
+primewire
 wepisodeseries
 WatchTVseries
 
