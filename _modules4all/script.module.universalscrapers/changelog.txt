@@ -1,4 +1,4 @@
-05/10/2018 v.1.1.1
+05/10/2018 v.1.1.2
 fix default.py error
 
 added scraper:
