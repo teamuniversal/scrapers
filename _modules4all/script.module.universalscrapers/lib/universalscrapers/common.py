@@ -268,7 +268,19 @@ def googletag(url):
         return []
 
 def filter_host(host):
-    if host not in ['example.com', 'allvid.ch', 'anime-portal.org', 'anyfiles.pl',
+    try:
+        import resolveurl
+    except:
+        import urlresolver as resolveurl
+    try:
+        hostDict = resolveurl.relevant_resolvers(order_matters=True)
+        hostDict = [i.domains for i in hostDict if not '*' in i.domains]
+        hostDict = [i.lower() for i in reduce(lambda x, y: x + y, hostDict)]
+        hostDict = [x for y, x in enumerate(hostDict) if x not in hostDict[:y]]
+    except:
+        hostDict = []
+    
+    extra_hosts =  ['example.com', 'allvid.ch', 'anime-portal.org', 'anyfiles.pl',
                     'www.apnasave.club', 'castamp.com', 'clicknupload.com', 'clicknupload.me',
                     'clicknupload.link', 'cloud.mail.ru', 'cloudy.ec', 'cloudy.eu', 'cloudy.sx',
                     'cloudy.ch', 'cloudy.com', 'daclips.in', 'daclips.com', 'dailymotion.com',
@@ -313,9 +325,13 @@ def filter_host(host):
                     'vshare.io', 'watchvideo.us', 'watchvideo2.us', 'watchvideo3.us',
                     'watchvideo4.us', 'watchvideo5.us', 'watchvideo6.us', 'watchvideo7.us',
                     'watchvideo8.us', 'watchvideo9.us', 'watchvideo10.us', 'watchvideo11.us',
-                    'watchvideo12.us', 'zstream.to']:
+                    'watchvideo12.us', 'zstream.to']
+
+    total_hosts = hostDict + extra_hosts
+    if host.lower() in set(total_hosts):
+        return True
+    else:
         return False
-    return True
 
 def check_playable(url):
     """

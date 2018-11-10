@@ -72,49 +72,6 @@ movies = [
         'year': '2018',
         'imdb': 'tt4881806'
     },
-    
-
-    {
-        'title': 'Deadpool 2',
-        'year': '2018',
-        'imdb': 'tt5463162'
-    },
-
-
-    {
-        'title': 'Skyscraper',
-        'year': '2018',
-        'imdb': 'tt5758778'
-    },
-
-
-    {
-        'title': 'It',
-        'year': '2017',
-        'imdb': 'tt1396484'
-    },
-
-
-    {
-        'title': 'Hotel Transylvania',
-        'year': '2012',
-        'imdb': 'tt0837562'
-    },
-
-
-    {
-        'title': 'Ferdinand',
-        'year': '2017',
-        'imdb': 'tt3411444'
-    },
-
-
-    {
-        'title': 'The First Purge',
-        'year': '2018',
-        'imdb': 'tt6133466'
-    },
-
 
     {
         'title': 'The Greatest Showman',
@@ -122,46 +79,10 @@ movies = [
         'imdb': 'tt1485796'
     },
 
-
     {
         'title': 'Becky Sharp',
         'year': '1935',
         'imdb': 'tt0026104'
-    },
-
-
-    {
-        'title': 'Renegade Girl',
-        'year': '1946',
-        'imdb': 'tt0038877'
-    },
-
-
-    {
-        'title': 'Fast & Furious 8',
-        'year': '2017',
-        'imdb': 'tt4630562'
-    },
-
-
-    {
-        'title': 'Frozen',
-        'year': '2013',
-        'imdb': 'tt2294629'
-    },  
-    
-
-    {
-        'title': 'The Shining',
-        'year': '1980',
-        'imdb': 'tt0081505'
-    },  
-    
-
-    {
-        'title': 'Kingsman: The Secret Service',
-        'year': '2014',
-        'imdb': 'tt2802144'
     },
 
 
@@ -201,17 +122,6 @@ movies = [
         'imdb': 'tt1856101'
     },
 
-    {
-        'title': 'Sonic The Hedgehog: The Movie',
-        'year': '1996',
-        'imdb': 'tt0237765'
-    },
-
-    {
-        'title': 'Darkest Hour',
-        'year': '2017',
-        'imdb': 'tt4555426'
-    },
 
     {
         'title': 'Kim Possible A Sitch in Time',
@@ -234,9 +144,7 @@ shows = [
         'season': '8',
         'episode': '5',
         'imdb': 'tt1561755',
-    },  
-    
-
+    },
 
     {
         'title': "Mindhunter",
@@ -245,8 +153,7 @@ shows = [
         'season': '1',
         'episode': '4',
         'imdb': 'tt5290382',
-    },  
-    
+    },
 
     {
         'title': "Ozark",
@@ -255,8 +162,7 @@ shows = [
         'season': '2',
         'episode': '4',
         'imdb': 'tt5071412',
-    },  
-
+    },
 
     {
         'title': "Yellowstone",
@@ -265,44 +171,6 @@ shows = [
         'season': '1',
         'episode': '2',
         'imdb': 'tt4236770',
-    },  
-
-
-    {
-        'title': "Jersey Shore Family Vacation",
-        'show_year': "2018",
-        'year': "2018",
-        'season': '1',
-        'episode': '5',
-        'imdb': 'tt7686456',
-    },      
-
-
-    {
-        'title': "Westworld",
-        'show_year': "2016",
-        'year': "2018",
-        'season': '2',
-        'episode': '3',
-        'imdb': 'tt0475784',
-    },
-
-    {
-        'title': "American Dad",
-        'show_year': "2005",
-        'year': "2017",
-        'season': '15',
-        'episode': '1',
-        'imdb': 'tt0397306',
-    },
-
-    {
-        'title': "The Flash",
-        'show_year': "2014",
-        'year': "2016",
-        'season': '3',
-        'episode': '8',
-        'imdb': 'tt3107288',
     },
 
     {
@@ -322,16 +190,6 @@ shows = [
         'season': '4',
         'episode': '6',
         'imdb': 'tt0903747',
-    },
-
-    {
-        'title': "13 Reasons Why",
-        'show_year': "2017",
-        'year': "2018",
-        'season': '2',
-        'episode': '3',
-        'imdb': 'tt1837492',
-        'tvdb': '323168'
     },
 
     {
@@ -398,7 +256,7 @@ def get_scraper_results():
             for name in get_scraper_names:
                 scraper_names.append(name)
         if not os.path.exists(scraper_results_path):
-            Open = open(scraper_results_path,'w+')
+            Open = open(scraper_results_path, 'w+')
         else:
             Open = open(scraper_results_path).read()
             get_info = re.findall('<.+?Universalscraper: (.+?)\n.+?Tested with: (.+?)\n.+?Links returned: (.+?)\n.+?Time to Complete:(.+?)\n',str(Open),re.DOTALL)
