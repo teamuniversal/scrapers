@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# 30/10/2018 -BUG
+# 9/11/2018 -BUG
 
-import re, urllib
+import re, urllib, urlparse
 import xbmc, xbmcaddon, time
 from universalscrapers.scraper import Scraper
 from universalscrapers.common import clean_title, clean_search, filter_host, send_log, error_log
-from universalscrapers.modules import client
+from universalscrapers.modules import client, cfscrape
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 
@@ -19,47 +19,49 @@ class putlocker_online(Scraper):
 
     def scrape_movie(self, title, year, imdb, debrid=False):
         try:
-            start_time = time.time()                                                   
-            search_id = clean_search(title.lower())                                      
+            count = 0
+            urls = []
+            start_time = time.time()
+            search_id = clean_search(title.lower())
 
             start_url = '%s/search_movies?s=%s' %(self.base_link, urllib.quote_plus(search_id))
-            #print 'scraperchk - scrape_movie - start_url:  ' + start_url                                  
-            html = client.request(start_url)
-            match = re.compile('class="small-item".+?href="(.+?)".+?<b>(.+?)</b>.+?<b>(.+?)</b>.+?alt="(.+?)"',re.DOTALL).findall(html) 
-            for item_url1, date,res,name in match:
-                #print 'scraperchk - scrape_movie - name: '+name+ '  '+date
-                item_url = self.base_link+item_url1
-                #print 'scraperchk - scrape_movie - item_url: '+item_url+' '+res                                                           
-                if clean_title(search_id).lower() == clean_title(name).lower():     
-                                                                                        
-                    #print 'scraperchk - scrape_movie - Send this URL: ' + item_url                             
-                    self.get_source(item_url, title, year, start_time, res)
-            return self.sources
-        except Exception, argument:
-            if dev_log == 'true':
-                error_log(self.name, argument)
-            return self.sources
+            #print 'scraperchk - scrape_movie - start_url:  ' + start_url
+            headers = {'User-Agent': client.agent(),
+                       'Referer': self.base_link}
+            scraper = cfscrape.create_scraper()
 
-    def get_source(self, item_url, title, year, start_time, res):
-        try:
-            #print 'PASSEDURL >>>>>>'+item_url
-            count = 0
-            OPEN = client.request(item_url, timeout=5)
-            Endlinks = re.compile('class="movie_links"><li(.+?)<h3><b class="icon-share-alt"',re.DOTALL).findall(OPEN)
-            #print 'scraperchk - scrape_movie - EndLinks: '+str(Endlinks)
-            for block in Endlinks:
-                link1 = re.compile('target="_blank" href="(.+?)"',re.DOTALL).findall(str(block))
-                #print 'scraperchk - scrape_movie - link: >>>>>>>>>>>>>>>>'+str(link1)
-                for link in link1:
+            html = scraper.get(start_url, headers=headers).content
+            match = re.compile('class="small-item".+?href="(.+?)".+?<b>(.+?)</b>.+?<b>(.+?)</b>.+?alt="(.+?)"',re.DOTALL).findall(html)
+            for item_url1, date, res, name in match:
+                #print 'scraperchk - scrape_movie - name: '+name+ '  '+date
+                item_url = urlparse.urljoin(self.base_link, item_url1)
+                #print 'scraperchk - scrape_movie - item_url: '+item_url+' '+res
+                if not clean_title(search_id) == clean_title(name): continue
+                #print 'scraperchk - scrape_movie - Send this URL: ' + item_url
+                OPEN = scraper.get(item_url, headers=headers).content
+                Endlinks = re.compile('class="movie_links"><li(.+?)<h3><b class="icon-share-alt"', re.DOTALL).findall(OPEN)[0]
+
+                links = re.compile('target="_blank" href="(.+?)"', re.DOTALL).findall(Endlinks)
+                # print 'scraperchk - scrape_movie - link: >>>>>>>>>>>>>>>>'+str(links)
+                for link in links:
+                    if not link.startswith('http'): continue
                     count += 1
                     host = link.split('//')[1].replace('www.', '')
                     host = host.split('/')[0]
+
                     if not filter_host(host): continue
-                    self.sources.append({'source': host, 'quality': res, 'scraper': self.name, 'url': link, 'direct':False})
-            if dev_log == 'true':
-                end_time = time.time() - start_time
-                send_log(self.name, end_time, count, title, year)
+
+                    self.sources.append(
+                        {'source': host, 'quality': res, 'scraper': self.name, 'url': link, 'direct': False})
+                if dev_log == 'true':
+                    end_time = time.time() - start_time
+                    send_log(self.name, end_time, count, title, year)
+
+            return self.sources
         except Exception, argument:
             if dev_log == 'true':
                 error_log(self.name, argument)
             return self.sources
+
+
+#putlocker_online().scrape_movie('Black Panther', '2018', 'tt1825683', False)
