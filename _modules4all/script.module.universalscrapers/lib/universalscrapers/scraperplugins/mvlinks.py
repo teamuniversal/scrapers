@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
-# 30/10/2018 -BUG
+# 11/11/2018 -BUG
 import re, xbmcaddon, xbmc, time
 import urllib
 from universalscrapers.scraper import Scraper
@@ -16,7 +16,7 @@ class mvlinks(Scraper):
 
     def __init__(self):
         self.base_link = 'http://iwantmyshow.tk/'
-        self.search_link = '906/?s=%s'
+        self.search_link = '1027/?s=%s'
         self.count = 0
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid = False):
