@@ -23,7 +23,7 @@ import xbmc, xbmcaddon,time
 import re, urllib, urlparse, json
 from universalscrapers.common import clean_title, get_rd_domains, send_log, error_log
 from universalscrapers.scraper import Scraper
-from universalscrapers.modules import client, workers, dom_parser as dom, quality_tags
+from universalscrapers.modules import client, workers, dom_parser as dom, quality_tags, cfscrape
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
@@ -48,8 +48,9 @@ class Releasebb(Scraper):
             query = re.sub('(\\\|/| -|:|;|\*|\?|"|\'|<|>|\|)', ' ', query)
             query = urllib.quote_plus(query).replace('+', '%2B')
             url = urlparse.urljoin(self.search_base_link, self.search_link % query)
-            #xbmc.log('@#@#URL:%s' % url, xbmc.LOGNOTICE)
-            r = client.request(url)
+            headers = {'User-Agent': client.agent(), 'Referer': self.base_link}
+            scraper = cfscrape.create_scraper()
+            r = scraper.get(url, headers=headers).content
             posts = json.loads(r)['results']
             posts = [(i['post_title'], i['post_name']) for i in posts]
             posts = [(i[0], i[1]) for i in posts if
@@ -84,7 +85,9 @@ class Releasebb(Scraper):
 
             query = urllib.quote_plus(query).replace('+', '%2B')
             url = urlparse.urljoin(self.search_base_link, self.search_link % query)
-            r = client.request(url)
+            headers = {'User-Agent': client.agent(), 'Referer': self.base_link}
+            scraper = cfscrape.create_scraper()
+            r = scraper.get(url, headers=headers).content
             posts = json.loads(r)['results']
 
             if not posts:
@@ -92,7 +95,7 @@ class Releasebb(Scraper):
                 query = '%s %s' % (title, hdlr)
                 query = urllib.quote_plus(query)
                 url = urlparse.urljoin(self.search_base_link, self.search_link % query.replace('+', '%2B'))
-                r = client.request(url)
+                r = scraper.get(url, headers=headers).content
                 posts = json.loads(r)['results']
 
             posts = [(i['post_title'], i['post_name']) for i in posts]
@@ -124,7 +127,9 @@ class Releasebb(Scraper):
             url, hdlr = url[0], url[1]
             main = []
             try:
-                data = client.request(url, referer=self.base_link)
+                headers = {'User-Agent': client.agent(), 'Referer': self.base_link}
+                scraper = cfscrape.create_scraper()
+                data = scraper.get(url, headers=headers).content
                 main = dom.parse_dom(data, 'div', {'class': 'postContent'})
                 main = [i.content for i in main]
 
@@ -132,7 +137,7 @@ class Releasebb(Scraper):
                 main += [i.content for i in comments]
             except:
                 pass
-            xbmc.log('@#@#MAIN:%s' % main, xbmc.LOGNOTICE)
+
             for con in main:
                 try:
                     frames = client.parseDOM(con, 'a', ret='href')
@@ -167,5 +172,6 @@ class Releasebb(Scraper):
         except Exception, argument:
             if dev_log == 'true':
                 error_log(self.name, argument)
+            return self.sources
 
 #Releasebb().scrape_movie('Black Panther', '2018', '', True)
