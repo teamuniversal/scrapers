@@ -74,6 +74,42 @@ movies = [
     },
 
     {
+        'title': 'Deadpool 2',
+        'year': '2018',
+        'imdb': 'tt5463162'
+    },
+
+    {
+        'title': 'Skyscraper',
+        'year': '2018',
+        'imdb': 'tt5758778'
+    },
+
+    {
+        'title': 'It',
+        'year': '2017',
+        'imdb': 'tt1396484'
+    },
+
+    {
+        'title': 'Hotel Transylvania',
+        'year': '2012',
+        'imdb': 'tt0837562'
+    },
+
+    {
+        'title': 'Ferdinand',
+        'year': '2017',
+        'imdb': 'tt3411444'
+    },
+
+    {
+        'title': 'The First Purge',
+        'year': '2018',
+        'imdb': 'tt6133466'
+    },
+
+    {
         'title': 'The Greatest Showman',
         'year': '2017',
         'imdb': 'tt1485796'
@@ -85,58 +121,83 @@ movies = [
         'imdb': 'tt0026104'
     },
 
-
     {
-        'title': 'Deadpool 2',
-        'year': '2018',
-        'imdb': 'tt5463162'
+        'title': 'Renegade Girl',
+        'year': '1946',
+        'imdb': 'tt0038877'
     },
 
     {
-        'title': 'Topper Returns',
-        'year': '1941',
-        'imdb': 'tt0034303'
-    },
-
-    {
-        'title': 'Mandy',
-        'year': '2018',
-        'imdb': 'tt6998518'
-    },
-
-    {
-        'title': '''Avengers: Infinity War''',
-        'year': '2018',
-        'imdb': 'tt4154756'
-    },
-
-    {
-        'title': 'Black Panther',
-        'year': '2018',
-        'imdb': 'tt1825683'
-    },
-
-    {
-        'title': 'Blade Runner 2049',
+        'title': 'Fast & Furious 8',
         'year': '2017',
-        'imdb': 'tt1856101'
-    },
-
-
-    {
-        'title': 'Kim Possible A Sitch in Time',
-        'year': '2004',
-        'imdb': 'tt0389074'
+        'imdb': 'tt4630562'
     },
 
     {
-        'title': 'Titanic',
-        'year': '1997',
-        'imdb': 'tt0120338'
+        'title': 'Frozen',
+        'year': '2013',
+        'imdb': 'tt2294629'
+    },
+
+    {
+        'title': 'The Shining',
+        'year': '1980',
+        'imdb': 'tt0081505'
+    },
+
+    {
+        'title': 'Kingsman: The Secret Service',
+        'year': '2014',
+        'imdb': 'tt2802144'
     }
 ]
 
 shows = [
+    {
+        'title': "American Dad",
+        'show_year': "2005",
+        'year': "2017",
+        'season': '15',
+        'episode': '1',
+        'imdb': 'tt0397306',
+    },
+
+    {
+        'title': "The Handmaid's Tale",
+        'show_year': "2017",
+        'year': "2018",
+        'season': '2',
+        'episode': '9',
+        'imdb': 'tt5834204',
+    },
+
+    {
+        'title': "Castle Rock",
+        'show_year': "2018",
+        'year': "2018",
+        'season': '11',
+        'episode': '3',
+        'imdb': 'tt0397306',
+    },
+
+    {
+        'title': "Family Guy",
+        'show_year': "1998",
+        'year': "2017",
+        'season': '16',
+        'episode': '10',
+        'imdb': 'tt0182576',
+    },
+
+    {
+        'title': "Rick and Morty",
+        'show_year': "2013",
+        'year': "2017",
+        'season': '3',
+        'episode': '4',
+        'imdb': 'tt2861424',
+    },
+
     {
         'title': "Bob's Burgers",
         'show_year': "2011",
@@ -174,50 +235,21 @@ shows = [
     },
 
     {
-        'title': "Young Sheldon",
-        'show_year': "2017",
+        'title': "Jersey Shore Family Vacation",
+        'show_year': "2018",
+        'year': "2018",
+        'season': '1',
+        'episode': '5',
+        'imdb': 'tt7686456',
+    },
+
+    {
+        'title': "Westworld",
+        'show_year': "2016",
         'year': "2018",
         'season': '2',
-        'episode': '4',
-        'imdb': 'tt6226232',
-        'tvdb': '203706'
-    },
-
-    {
-        'title': "Breaking Bad",
-        'show_year': "2008",
-        'year': "2011",
-        'season': '4',
-        'episode': '6',
-        'imdb': 'tt0903747',
-    },
-
-    {
-        'title': "The Walking Dead",
-        'show_year': "2010",
-        'year': "2018",
-        'season': '9',
         'episode': '3',
-        'imdb': 'tt1520211',
-        'tvdb': '153021'
-    },
-
-    {
-        'title': "Game of Thrones",
-        'show_year': "2011",
-        'year': "2016",
-        'season': '6',
-        'episode': '5',
-        'imdb': 'tt0944947',
-    },
-
-    {
-        'title': "House M.D.",
-        'show_year': "2004",
-        'year': "2004",
-        'season': '1',
-        'episode': '1',
-        'imdb': 'tt0412142',
+        'imdb': 'tt0475784',
     }
 
 ]
