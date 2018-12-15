@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
-# made 11/11/2018
+# made 22/11/2018
 
 import re, xbmcaddon, xbmc, time
 import urlparse
@@ -17,7 +17,7 @@ class Watchepisodes(Scraper):
 
     def __init__(self):
         self.base_link = 'https://www1.two-movies.name/'
-        self.search_link = 'https://www1.two-movies.name/search/?criteria=all&search_query=%s' #imdb
+        self.search_link = 'https://www1.two-movies.name/search/?search_query=%s&criteria=all' #imdb
         self.sources = []
 
     def scrape_movie(self, title, year, imdb, debrid = False):
@@ -31,7 +31,7 @@ class Watchepisodes(Scraper):
             return self.sources
         except Exception as argument:
             if dev_log == 'true':
-                error_log(self.name,argument)
+                error_log(self.name, argument)
             return[]
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid=False):

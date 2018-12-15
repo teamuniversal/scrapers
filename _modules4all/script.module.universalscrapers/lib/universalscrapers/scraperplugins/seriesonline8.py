@@ -1,6 +1,8 @@
-import requests
-import re
+# -*- coding: utf-8 -*-
+# Universal Scrapers Bug
+#checked 15/12/2018
 
+import re
 import xbmc, xbmcaddon, time, urllib
 from universalscrapers.scraper import Scraper
 from universalscrapers.common import clean_title, clean_search, send_log, error_log
@@ -14,7 +16,7 @@ class seriesonline8(Scraper):
     sources = []
 
     def __init__(self):
-        self.base_link = 'https://seriesonline8.co'
+        self.base_link = 'https://www2.seriesonline8.co'
         self.search_link = '/movie/search'
 
     def scrape_movie(self, title, year, imdb, debrid=False):
@@ -24,31 +26,29 @@ class seriesonline8(Scraper):
             start_url = '%s/%s/%s' % (self.base_link, self.search_link, search.replace(' ', '-'))
             #print 'series - scrape_movie - start_url:  ' + start_url
             
-            headers={'User-Agent': client.agent()}
-            html = client.request(start_url, headers=headers)
-            match = re.compile('class="ml-item".+?href="(.+?)".+?alt="(.+?)"',re.DOTALL).findall(html)
+            html = client.request(start_url)
+            match = re.compile('class="ml-item".+?href="(.+?)".+?alt="(.+?)"', re.DOTALL).findall(html)
             for item_url1, name in match:
-                item_url = 'https://www2.series9.io'+item_url1+'/watching.html'
+                item_url = self.base_link +item_url1 + '/watching.html'
                 #print 'series8 - scrape_movie - item_url: '+item_url
                 if clean_title(search) == clean_title(name):
-                    #print 'series8 - scrape_movie - Send this URL: ' + item_url                             
+                    #print 'series8 - scrape_movie - Send this URL: ' + item_url
                     self.get_source(item_url, title, year, start_time)
 
             #print self.sources
-            return self.sources
         except Exception, argument:
-            if dev_log=='true':
-                error_log(self.name,argument) 
+            if dev_log == 'true':
+                error_log(self.name, argument)
+            return self.sources
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid=False):
         try:
             start_time = time.time()
-            season_chk = '-season-%s' %(season)
+            season_chk = '-season-%s' % season
             #print season_chk
             search_id = clean_search(title.lower())
             start_url = '%s/%s/%s' % (self.base_link, self.search_link, search_id.replace(' ', '-'))
-            headers = {'User-Agent': client.agent()}
-            html = client.request(start_url, headers=headers, redirect=True)
+            html = client.request(start_url, redirect=True)
             match = re.compile('class="ml-item".+?href="(.+?)".+?title="(.+?)"',re.DOTALL).findall(html)
             for season_url, title in match:
                 #print season_url
@@ -57,15 +57,15 @@ class seriesonline8(Scraper):
                 #print 'PASSED season URL### ' +season_url
                 episode_grab = 'Season %s Episode %s ' % (season, episode)
 
-                item_url = 'https://www2.series9.io'+season_url+'/watching.html'
+                item_url = self.base_link + season_url + '/watching.html'
 
                 self.get_source(item_url, title, episode_grab, start_time)
 
             #print self.sources
-            return self.sources
         except Exception, argument:
             if dev_log == 'true':
                 error_log(self.name, argument)
+            return self.sources
 
     def get_source(self, item_url, title, year, start_time):
         try:
@@ -91,7 +91,7 @@ class seriesonline8(Scraper):
                     data = client.request(link, headers=headers)
                     link = re.findall('''file\s*:\s*['"](.+?)['"].+?type['"]\s*:\s*['"](.+?)['"]''', data, re.DOTALL)[0]
                     host = link[1]
-                    link = link[0] + '|User-Agent=%s&Referer=https://vidcloud.icu/' % client.agent()
+                    link = link[0] + '|User-Agent=%s&Referer=https://vidcloud.icu/' % urllib.quote(client.agent())
                     direct = True
                 else:
                     host = link.split('//')[1].replace('www.', '')
@@ -100,13 +100,15 @@ class seriesonline8(Scraper):
 
                 count += 1
                 self.sources.append({'source': host, 'quality': qual, 'scraper': self.name, 'url': link, 'direct': direct})
+
             if dev_log == 'true':
                 end_time = time.time() - start_time
                 send_log(self.name, end_time, count, title, year)
+            return self.sources
         except Exception, argument:
-            if dev_log=='true':
+            if dev_log == 'true':
                 error_log(self.name, argument)
-            return[]
+            return self.sources
 
 #seriesonline8().scrape_movie('Black Panther', '2018', 'tt1825683', False)
 #seriesonline8().scrape_episode('Suits','2011','','8','5','','')
