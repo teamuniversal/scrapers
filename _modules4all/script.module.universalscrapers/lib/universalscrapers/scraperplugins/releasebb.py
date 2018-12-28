@@ -36,7 +36,7 @@ class Releasebb(Scraper):
         self.domains = ['rlsbb.ru']
         self.base_link = 'http://rlsbb.ru'
         self.search_base_link = 'http://search.rlsbb.ru'
-        self.search_link = '/lib/search6515260491260.php?phrase=%s&pindex=1&&radit=0.27766844261132769'
+        self.search_link = '/lib/search2341986049741.php?phrase=%s&pindex=1&&radit=0.27766844261132769'
         self.search_link2 = '/search/%s'
 
     def scrape_movie(self, title, year, imdb, debrid=False):

@@ -11,13 +11,13 @@ from universalscrapers.modules import client, dom_parser as dom, workers, qualit
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")
 
 class piratebay(Scraper):
-    domain = ['thepiratebay.bid']
+    domain = ['thepiratebay.app']
     name = 'PirateBay'
     sources = []
 
     def __init__(self):
-        self.base_link = ' https://pirateproxy.app'
-        self.search_link = '/s/?q={0}&video=on&category=0&page=0&orderby=99'
+        self.base_link = 'https://pirateproxy.app'
+        self.search_link = '/search/%s/0/99/0'
 
 
     def scrape_movie(self, title, year, imdb, debrid=False):
@@ -68,7 +68,8 @@ class piratebay(Scraper):
                 if 'tvshowtitle' in data else '%s %s' % (data['title'], data['year'])
             query = re.sub('(\\\|/| -|:|;|\*|\?|"|\'|<|>|\|)', ' ', query)
 
-            url = urlparse.urljoin(self.base_link, self.search_link.format(urllib.quote_plus(query)))
+            url = urlparse.urljoin(self.base_link, self.search_link%(urllib.quote(query)))
+            #xbmc.log('@#@URL:%s' % url, xbmc.LOGNOTICE)
             r = client.request(url)
             r = client.parseDOM(r, 'table', attrs={'id': 'searchResult'})[0]
             posts = client.parseDOM(r, 'td')
@@ -103,7 +104,7 @@ class piratebay(Scraper):
                 info.append(size)
                 info = ' | '.join(info)
                 qual = '{0} | {1}'.format(quality, info)
-                self.sources.append({'source': 'MAGNET', 'quality': qual, 'scraper': self.name, 'url': url,
+                self.sources.append({'source': 'Torrent', 'quality': qual, 'scraper': self.name, 'url': url,
                                      'direct': False, 'debridonly': True})
             if dev_log == 'true':
                 end_time = time.time() - float(start_time)
@@ -115,3 +116,5 @@ class piratebay(Scraper):
                 error_log(self.name, argument)
             return self.sources
 
+    def resolve(self, url):
+        return url
