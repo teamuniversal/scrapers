@@ -24,6 +24,8 @@ class zooqle(Scraper):
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
             start_time = time.time()
+            if not debrid:
+                return self.sources
             search_id = clean_search(title.lower())
             start_url = '%s/search?q=%s %s' % (self.base_link, urllib.quote_plus(search_id),year)
             #print start_url+'>>>>>>>>>>>>>>>>>>>'
