@@ -18,8 +18,8 @@ class eztv(Scraper):
 
 
     def __init__(self):
-        self.base_link = 'https://eztv.io/'
-        self.tvsearch = 'https://eztv.io/search/{0}'
+        self.base_link = 'https://eztv.d4.re'
+        self.tvsearch = 'https://eztv.d4.re/search/{0}'
 
 
     def scrape_episode(self, title, show_year, year, season, episode, imdb, tvdb, debrid=False):
@@ -78,7 +78,10 @@ class eztv(Scraper):
         items = []
         try:
             headers = {'User-Agent': client.agent()}
-            r = client.request(url, headers=headers)
+            #scraper = cfscrape.create_scraper()
+            #r = scraper.get(url, headers=headers) 
+            r= client.request(url, headers=headers)
+            #print r
             posts = client.parseDOM(r, 'tr', attrs={'name': 'hover'})
             for post in posts:
                 data = dom.parse_dom(post, 'a', {'class': 'magnet'}, req=['href', 'title'])[0]
