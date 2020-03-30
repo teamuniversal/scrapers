@@ -1,33 +1,32 @@
 # -*- coding: utf-8 -*-
 # Universal Scrapers
-# checked 12/6/2019
+# checked 30/3/2020
 
 import re
 import urllib
 import xbmc, xbmcaddon, time
 from universalscrapers.common import clean_title, clean_search, send_log, error_log
 from universalscrapers.scraper import Scraper
-from universalscrapers.modules import client
+from universalscrapers.modules import client, quality_tags
 
 dev_log = xbmcaddon.Addon('script.module.universalscrapers').getSetting("dev_log")            
 
 
-class zooqle(Scraper):
-    domains = ['https://zooqle.com/']
-    name = "Zooqle"
+class kickass2(Scraper):
+    domains = ['kickass.love']
+    name = "Kickass"
     sources = []
 
     def __init__(self):
-        self.base_link = 'https://zooqle.com/'
-        self.search_link = '%s/search?q=%s'
+        self.base_link = 'https://kickass.love'
+        self.search_link = '/usearch/%scategory:movies'
 
     def scrape_movie(self, title, year, imdb, debrid = False):
         try:
             start_time = time.time()
-            if not debrid:
-                return self.sources
             search_id = clean_search(title.lower())
-            start_url = '%s/search?q=%s %s' % (self.base_link, urllib.quote_plus(search_id),year)
+            start_url = '%s/usearch/%s %s category:movies/' % (self.base_link, urllib.quote_plus(search_id),year)
+            start_url = start_url.replace(' ','%20')
             #print start_url+'>>>>>>>>>>>>>>>>>>>'
             self.get_source(start_url, title, year, '', '', start_time)
             
@@ -44,9 +43,9 @@ class zooqle(Scraper):
                 return self.sources
             hdlr = 'S%02dE%02d' % (int(season), int(episode))
             query = '%s+S%02dE%02d' % (urllib.quote_plus(title), int(season), int(episode))
-            query = query.replace('++','')
-            start_url='%ssearch?q=%s' %(self.base_link, query)
-            print start_url
+            query = query.replace(' ','%20')
+            start_url='%s/usearch/%s category:tv/' %(self.base_link, query)
+            #print start_url
             self.get_source(start_url, title, show_year, season, episode, str(start_time))
             return self.sources
         except Exception, argument:
@@ -56,17 +55,19 @@ class zooqle(Scraper):
             
     def get_source(self,start_url,title,year,season,episode,start_time):
         try:
-            print 'URL PASSED OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK'+start_url
+            #print 'URL PASSED OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK'+start_url
             count = 0
             headers = {'User-Agent': client.agent()}
             r = client.request(start_url, headers=headers)
             #print r
-            Endlinks=re.compile('class="text-muted3 smaller pad-l2".+?style="color:green"></i>(.+?)</span>.+?rel="nofollow" href="(.+?)".+?class="progress-bar prog-blue prog-l".+?>(.+?)</div></div>',re.DOTALL).findall(r)
+            Endlinks=re.compile('class="nobr center">(.+?)</span></td>.+?title="Torrent magnet link" href="(.+?)".+?class="cellMainLink">(.+?)</a>',re.DOTALL).findall(r)
             #print 'scraperchk - scrape_movie - EndLinks: '+str(Endlinks)
-            for qual, Magnet, size in Endlinks:
-                #print Magnet + '<><><><><>'+size
+            for size, Magnet, qual in Endlinks:
+                Magnet=Magnet.replace('https://mylink.me.uk/?url=', '')
+                #print Magnet + '<><><><><>'
+                qual = quality_tags.get_release_quality(qual, None)[0]
                 count+=1
-                self.sources.append({'source':'Torrent', 'quality':size +qual, 'scraper':self.name, 'url':Magnet, 'direct':False, 'debridonly': True})
+                self.sources.append({'source':'Torrent', 'quality':qual+' '+size, 'scraper':self.name, 'url':Magnet, 'direct':False, 'debridonly': True})
             if dev_log=='true':
                 end_time = time.time() - start_time
                 send_log(self.name,end_time,count,title,year)
