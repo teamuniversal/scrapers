@@ -63,8 +63,9 @@ class kickass2(Scraper):
             Endlinks=re.compile('class="nobr center">(.+?)</span></td>.+?title="Torrent magnet link" href="(.+?)".+?class="cellMainLink">(.+?)</a>',re.DOTALL).findall(r)
             #print 'scraperchk - scrape_movie - EndLinks: '+str(Endlinks)
             for size, Magnet, qual in Endlinks:
-                Magnet=Magnet.replace('https://mylink.me.uk/?url=', '')
-                #print Magnet + '<><><><><>'
+                Magnet=Magnet.replace('https://mylink.cx/?url=', '')
+                Magnet=Magnet.replace('%3A',':').replace('%3F','?').replace('%3D','=').split('%26dn')[0]
+                print Magnet + '<><><><><>'
                 qual = quality_tags.get_release_quality(qual, None)[0]
                 count+=1
                 self.sources.append({'source':'Torrent', 'quality':qual+' '+size, 'scraper':self.name, 'url':Magnet, 'direct':False, 'debridonly': True})
